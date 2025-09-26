@@ -1,0 +1,452 @@
+/*
+ * Stylesheet for the DropMarketing landing page
+ * Inspired by modern SaaS websites with a focus on dropshipping marketing.
+ * Variables allow for easy theming and consistent colours across the site.
+ */
+
+:root {
+  --primary-colour: #ff9f1a;      /* orange accent */
+  --secondary-colour: #00bfa6;    /* teal accent for variation */
+  --text-colour: #1f2937;         /* dark grey for primary text */
+  --subtext-colour: #6b7280;       /* muted grey for secondary text */
+  --bg-light: #fffaf5;            /* pale background for sections */
+  --bg-section: #fef5ec;          /* another light background */
+  --radius: 10px;
+  --shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  color: var(--text-colour);
+  line-height: 1.6;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+ul {
+  list-style: none;
+}
+h1, h2, h3 {
+  font-weight: 700;
+  color: var(--text-colour);
+}
+h1 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+p {
+  color: var(--subtext-colour);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+small {
+  color: var(--subtext-colour);
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Navbar */
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: var(--shadow);
+  z-index: 50;
+}
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+.logo-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.dot-one { background-color: #f85149; }
+.dot-two { background-color: #fdba74; }
+.dot-three { background-color: #00bfa6; }
+.logo-text {
+  margin-left: 4px;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  font-weight: 500;
+}
+.nav-links a:hover {
+  color: var(--primary-colour);
+}
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.3rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  border: 2px solid transparent;
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+.btn.primary {
+  background-color: var(--primary-colour);
+  color: #ffffff;
+}
+.btn.primary:hover {
+  background-color: #e68c15;
+}
+.btn.secondary {
+  background-color: transparent;
+  border-color: var(--primary-colour);
+  color: var(--primary-colour);
+}
+.btn.secondary:hover {
+  background-color: var(--primary-colour);
+  color: #ffffff;
+}
+
+/* Hero section */
+.hero {
+  background: radial-gradient(circle at 75% 25%, #fff3e6 0%, #fffaf5 100%);
+  padding: 4rem 0;
+}
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+.hero-text {
+  flex: 1 1 500px;
+}
+.hero-image {
+  flex: 1 1 500px;
+  text-align: center;
+}
+.hero-image img {
+  width: 100%;
+  height: auto;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.watch-link {
+  display: flex;
+  align-items: center;
+  color: var(--primary-colour);
+  font-weight: 600;
+  transition: color 0.3s;
+}
+.watch-link i {
+  margin-right: 0.5rem;
+}
+.watch-link:hover {
+  color: #e68c15;
+}
+
+/* Features */
+.features {
+  background-color: var(--bg-light);
+  padding: 4rem 0 5rem;
+  text-align: center;
+}
+.features h2 {
+  margin-bottom: 3rem;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+.feature-item {
+  background-color: #ffffff;
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s;
+}
+.feature-item:hover {
+  transform: translateY(-4px);
+}
+.icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin: 0 auto 1rem;
+  font-size: 1.4rem;
+}
+/* Feature colours */
+.blue { background-color: #4299e1; }
+.green { background-color: #10b981; }
+.purple { background-color: #a855f7; }
+.orange { background-color: #fb923c; }
+
+.feature-item h3 {
+  margin-bottom: 0.5rem;
+}
+.feature-item p {
+  font-size: 0.95rem;
+}
+
+/* Pricing */
+.pricing {
+  padding: 4rem 0;
+  background-color: var(--bg-section);
+  text-align: center;
+}
+.pricing-container h2 {
+  margin-bottom: 2rem;
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+.pricing-card {
+  background-color: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s;
+}
+.pricing-card:hover {
+  transform: translateY(-5px);
+}
+.pricing-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.pricing-card .price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-colour);
+  margin-bottom: 1rem;
+}
+.pricing-features {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+.pricing-features li {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: var(--subtext-colour);
+}
+.pricing-features i {
+  margin-right: 0.6rem;
+  color: var(--secondary-colour);
+}
+.pricing-card.recommended {
+  border: 2px solid var(--primary-colour);
+}
+
+/* CTA */
+.cta {
+  background: radial-gradient(circle at center, #fff1e7 0%, #fff8f3 100%);
+  padding: 4rem 0;
+  text-align: center;
+}
+.cta-container h2 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+.cta-container p {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  font-size: 1rem;
+  color: var(--subtext-colour);
+}
+
+/* Blog section */
+.blog {
+  padding: 4rem 0;
+  background-color: var(--bg-light);
+  text-align: center;
+}
+.blog-container h2 {
+  margin-bottom: 1rem;
+}
+.blog-container p {
+  margin-bottom: 3rem;
+}
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+.blog-post {
+  background-color: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+.blog-post:hover {
+  transform: translateY(-5px);
+}
+.blog-post img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+.blog-info {
+  padding: 1rem;
+  text-align: left;
+}
+.blog-info h3 {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Footer */
+footer {
+  background-color: #f9fafb;
+  padding: 3rem 0 1rem;
+  font-size: 0.9rem;
+}
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+.footer-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.footer-col h4 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.footer-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.footer-col a {
+  color: var(--subtext-colour);
+  transition: color 0.3s;
+}
+.footer-col a:hover {
+  color: var(--primary-colour);
+}
+.newsletter p {
+  margin-bottom: 0.75rem;
+  color: var(--subtext-colour);
+}
+.newsletter form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.newsletter input {
+  flex: 1 1 200px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+.newsletter button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background-color: var(--primary-colour);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.newsletter button:hover {
+  background-color: #e68c15;
+}
+
+.copyright {
+  margin-top: 2rem;
+  text-align: center;
+  color: var(--subtext-colour);
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  .nav-links {
+    display: none;
+  }
+  .auth-buttons {
+    display: none;
+  }
+  .hero-container {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+  .pricing-grid, .feature-grid, .blog-grid {
+    grid-template-columns: 1fr;
+  }
+  .copyright {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}

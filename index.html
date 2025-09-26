@@ -24,6 +24,9 @@
           <li><a href="#">Accueil</a></li>
           <li><a href="#features">Outils</a></li>
           <li><a href="#pricing">Forfaits</a></li>
+          <!-- Added product research and chatbot links -->
+          <li><a href="#research">Recherche</a></li>
+          <li><a href="#chatbot">Chatbot</a></li>
           <li><a href="#blog">Blog</a></li>
         </ul>
         <div class="auth-buttons">
@@ -98,6 +101,41 @@
       </div>
     </section>
 
+    <!-- Product research section -->
+    <section class="product-research" id="research">
+      <div class="container research-container">
+        <h2>Recherche de produits</h2>
+        <p>
+          Explorez les annonces populaires sur Facebook Ads Library et TikTok Ads Library pour identifier
+          les tendances et découvrir des produits qui se vendent bien.
+        </p>
+        <div class="research-grid">
+          <div class="research-item">
+            <div class="research-icon blue"><i class="fa-solid fa-mobile-screen-button"></i></div>
+            <h3>Montre connectée</h3>
+            <p>Facebook Ads : 1 200 annonces actives</p>
+            <p>TikTok Ads : 500 k vues</p>
+          </div>
+          <div class="research-item">
+            <div class="research-icon green"><i class="fa-solid fa-bottle-water"></i></div>
+            <h3>Gourde filtrante</h3>
+            <p>Facebook Ads : 850 annonces actives</p>
+            <p>TikTok Ads : 320 k vues</p>
+          </div>
+          <div class="research-item">
+            <div class="research-icon orange"><i class="fa-solid fa-lightbulb"></i></div>
+            <h3>Lampe LED étoilée</h3>
+            <p>Facebook Ads : 1 500 annonces actives</p>
+            <p>TikTok Ads : 700 k vues</p>
+          </div>
+        </div>
+        <p class="research-note">
+          *Données fictives à titre d’exemple – utilisez la bibliothèque d’annonces réelle pour obtenir des résultats
+          mis à jour.
+        </p>
+      </div>
+    </section>
+
     <!-- Pricing section -->
     <section class="pricing" id="pricing">
       <div class="container pricing-container">
@@ -154,6 +192,24 @@
           transformer votre boutique dès aujourd’hui.
         </p>
         <a href="#" class="btn primary">Commencer l’essai</a>
+      </div>
+    </section>
+
+    <!-- Chatbot section -->
+    <section class="chatbot" id="chatbot">
+      <div class="container chatbot-container">
+        <h2>Assistant marketing IA</h2>
+        <p>
+          Déposez un produit pour recevoir des angles marketing basés sur les émotions
+          et le modèle AIDA (Attention – Intérêt – Désir – Action).
+        </p>
+        <div class="chat-box">
+          <div id="chat-log" class="chat-log"></div>
+          <div class="chat-input">
+            <input type="text" id="product-input" placeholder="Entrez votre produit (ex. « Montre connectée »)" />
+            <button id="send-btn" class="btn primary">Envoyer</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -230,5 +286,8 @@
       <small>Créé avec <span style="color:#e25555">♥</span> pour les entrepreneurs</small>
     </div>
   </footer>
+
+  <!-- Chatbot script -->
+  <script src="script.js"></script>
 </body>
 </html>

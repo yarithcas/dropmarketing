@@ -426,6 +426,108 @@ footer {
   gap: 1rem;
 }
 
+/* Product research section */
+.product-research {
+  padding: 4rem 0;
+  background-color: var(--bg-light);
+  text-align: center;
+}
+.research-container h2 {
+  margin-bottom: 1rem;
+}
+.research-container p {
+  margin-bottom: 2rem;
+  color: var(--subtext-colour);
+}
+.research-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+.research-item {
+  background-color: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 1.5rem;
+  transition: transform 0.3s;
+}
+.research-item:hover {
+  transform: translateY(-4px);
+}
+.research-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+}
+.research-note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--subtext-colour);
+}
+
+/* Chatbot section */
+.chatbot {
+  padding: 4rem 0;
+  background-color: var(--bg-section);
+  text-align: center;
+}
+.chatbot-container h2 {
+  margin-bottom: 1rem;
+}
+.chatbot-container p {
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--subtext-colour);
+}
+.chat-box {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.chat-log {
+  height: 250px;
+  padding: 1rem;
+  overflow-y: auto;
+  border-bottom: 1px solid #f3f4f6;
+  text-align: left;
+}
+.chat-message {
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+.chat-message.user {
+  font-weight: 600;
+  color: var(--text-colour);
+}
+.chat-message.bot {
+  color: var(--subtext-colour);
+}
+.chat-input {
+  display: flex;
+  padding: 0.75rem;
+  gap: 0.5rem;
+}
+.chat-input input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   h1 {

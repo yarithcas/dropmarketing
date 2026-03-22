@@ -109,30 +109,28 @@
           Explorez les annonces populaires sur Facebook Ads Library et TikTok Ads Library pour identifier
           les tendances et découvrir des produits qui se vendent bien.
         </p>
-        <div class="research-grid">
-          <div class="research-item">
-            <div class="research-icon blue"><i class="fa-solid fa-mobile-screen-button"></i></div>
-            <h3>Montre connectée</h3>
-            <p>Facebook Ads : 1 200 annonces actives</p>
-            <p>TikTok Ads : 500 k vues</p>
+        <form id="research-form" class="research-form" novalidate>
+          <label for="research-query" class="sr-only">Mot-clé pour les bibliothèques publicitaires</label>
+          <div class="research-form-row">
+            <input
+              type="text"
+              id="research-query"
+              name="query"
+              placeholder="Ex. : montre connectée, purificateur d’air…"
+              aria-describedby="research-feedback"
+              required
+            />
+            <button type="submit" class="btn primary">Analyser</button>
           </div>
-          <div class="research-item">
-            <div class="research-icon green"><i class="fa-solid fa-bottle-water"></i></div>
-            <h3>Gourde filtrante</h3>
-            <p>Facebook Ads : 850 annonces actives</p>
-            <p>TikTok Ads : 320 k vues</p>
-          </div>
-          <div class="research-item">
-            <div class="research-icon orange"><i class="fa-solid fa-lightbulb"></i></div>
-            <h3>Lampe LED étoilée</h3>
-            <p>Facebook Ads : 1 500 annonces actives</p>
-            <p>TikTok Ads : 700 k vues</p>
-          </div>
+        </form>
+        <div id="research-feedback" class="research-feedback" role="status" aria-live="polite">
+          Saisissez un mot-clé puis lancez la recherche pour découvrir les annonces correspondantes.
         </div>
-        <p class="research-note">
-          *Données fictives à titre d’exemple – utilisez la bibliothèque d’annonces réelle pour obtenir des résultats
-          mis à jour.
-        </p>
+        <div id="research-loading" class="research-loading" aria-hidden="true">
+          <span class="loader" aria-hidden="true"></span>
+          <span>Analyse des bibliothèques publicitaires en cours…</span>
+        </div>
+        <div id="research-results" class="research-grid" aria-live="polite" aria-busy="false"></div>
       </div>
     </section>
 

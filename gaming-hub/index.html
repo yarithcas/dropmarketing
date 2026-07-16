@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LuckyHub – Portail de mini-jeux gratuits</title>
+  <meta name="description" content="Regroupe tes mini-jeux préférés (Dice, Mines, Limbo, Crash, Coinflip, Plinko) en monnaie virtuelle, 100% gratuit, sans argent réel." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">🎰</span>
+        <span class="logo-text">Lucky<span class="accent">Hub</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="active">Accueil</a>
+        <a href="games/dice.html">Dice</a>
+        <a href="games/mines.html">Mines</a>
+        <a href="games/limbo.html">Limbo</a>
+        <a href="games/crash.html">Crash</a>
+        <a href="games/plinko.html">Plinko</a>
+        <a href="games/coinflip.html">Coinflip</a>
+      </nav>
+      <div class="wallet-widget">
+        <span class="coin-icon">🪙</span>
+        <span data-balance>0.00</span>
+        <span style="color:var(--text-dim); font-size:0.75rem;">GC</span>
+        <button class="btn-claim" data-claim-btn>+1000 Gratuit</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="disclaimer-bar">
+    <strong>Jeu 100% gratuit</strong> — monnaie virtuelle (GC) sans aucune valeur réelle. Aucun argent ni crypto-monnaie n'est en jeu. Divertissement uniquement.
+  </div>
+
+  <main>
+    <section class="hub-hero container">
+      <h1>Tous tes jeux préférés, <span class="accent">au même endroit</span></h1>
+      <p>Un portail façon casino en ligne, mais 100% gratuit : dés, mines, crash, plinko et plus encore, joués avec une monnaie virtuelle illimitée. Aucune inscription, aucun paiement, juste pour le fun.</p>
+    </section>
+
+    <section class="container">
+      <div class="game-grid">
+        <a href="games/dice.html" class="game-card">
+          <span class="badge">Populaire</span>
+          <div class="game-icon">🎲</div>
+          <h3>Dice</h3>
+          <p>Choisis ta cible, ta chance de gain et lance le dé. Simple, rapide, addictif.</p>
+          <span class="btn-play">Jouer →</span>
+        </a>
+
+        <a href="games/mines.html" class="game-card">
+          <div class="game-icon">💣</div>
+          <h3>Mines</h3>
+          <p>Révèle des cases sûres et fais grimper ton multiplicateur, mais attention aux mines.</p>
+          <span class="btn-play">Jouer →</span>
+        </a>
+
+        <a href="games/limbo.html" class="game-card">
+          <div class="game-icon">🚀</div>
+          <h3>Limbo</h3>
+          <p>Fixe un multiplicateur cible et tente ta chance sur un tirage instantané.</p>
+          <span class="btn-play">Jouer →</span>
+        </a>
+
+        <a href="games/crash.html" class="game-card">
+          <span class="badge">Tendance</span>
+          <div class="game-icon">📈</div>
+          <h3>Crash</h3>
+          <p>Le multiplicateur grimpe en direct. Encaisse avant qu'il ne s'effondre !</p>
+          <span class="btn-play">Jouer →</span>
+        </a>
+
+        <a href="games/plinko.html" class="game-card">
+          <div class="game-icon">🔴</div>
+          <h3>Plinko</h3>
+          <p>Lâche la bille à travers les quilles et regarde où elle atterrit.</p>
+          <span class="btn-play">Jouer →</span>
+        </a>
+
+        <a href="games/coinflip.html" class="game-card">
+          <div class="game-icon">🪙</div>
+          <h3>Coinflip</h3>
+          <p>Pile ou face, en toute simplicité. 50/50, sans détour.</p>
+          <span class="btn-play">Jouer →</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p><strong>LuckyHub</strong> est une plateforme de démonstration à but purement ludique.</p>
+      <p>Aucun jeu ne fait intervenir d'argent réel ou de crypto-monnaie. Les gains et pertes n'ont aucune valeur monétaire et ne peuvent pas être retirés ou échangés.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/wallet.js"></script>
+</body>
+</html>

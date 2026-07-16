@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dice – LuckyHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-mark">🎰</span>
+        <span class="logo-text">Lucky<span class="accent">Hub</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="../index.html">Accueil</a>
+        <a href="dice.html" class="active">Dice</a>
+        <a href="mines.html">Mines</a>
+        <a href="limbo.html">Limbo</a>
+        <a href="crash.html">Crash</a>
+        <a href="plinko.html">Plinko</a>
+        <a href="coinflip.html">Coinflip</a>
+      </nav>
+      <div class="wallet-widget">
+        <span class="coin-icon">🪙</span>
+        <span data-balance>0.00</span>
+        <span style="color:var(--text-dim); font-size:0.75rem;">GC</span>
+        <button class="btn-claim" data-claim-btn>+1000 Gratuit</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container game-page">
+    <div class="game-page-header">
+      <h1>🎲 Dice</h1>
+      <a href="../index.html" class="back-link">← Retour au portail</a>
+    </div>
+
+    <div class="game-layout">
+      <div class="panel control-panel">
+        <div class="field">
+          <label for="betAmount">Mise (GC)</label>
+          <div class="bet-input-wrap">
+            <input type="number" id="betAmount" value="10" min="0.01" step="0.01" />
+            <button class="quick-btn" id="halfBtn">1/2</button>
+            <button class="quick-btn" id="doubleBtn">x2</button>
+            <button class="quick-btn" id="maxBtn">Max</button>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <button id="modeUnder" class="active">Roll Under</button>
+          <button id="modeOver">Roll Over</button>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-box">
+            <label>Multiplicateur</label>
+            <div class="stat-value" id="multiplierValue">1.9800x</div>
+          </div>
+          <div class="stat-box">
+            <label>Chance de gain</label>
+            <div class="stat-value" id="chanceValue">50.0000%</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="targetSlider">Cible : <span id="targetValue">50.00</span></label>
+          <input type="range" id="targetSlider" class="slider-input" min="2" max="98" step="0.01" value="50" />
+        </div>
+
+        <button class="btn-main" id="rollBtn">Lancer</button>
+      </div>
+
+      <div class="stage">
+        <div class="result-flash" id="resultFlash">+0.00 GC</div>
+        <div class="dice-track">
+          <div class="dice-number-display" id="rollMarkerLabel" style="left:50%;">0.00</div>
+          <div class="dice-bar" id="diceBar" style="--split:50%;">
+            <div class="dice-marker" id="targetMarker" style="left:50%;"></div>
+          </div>
+          <div class="dice-scale">
+            <span>0</span>
+            <span>25</span>
+            <span>50</span>
+            <span>75</span>
+            <span>100</span>
+          </div>
+        </div>
+        <div class="history-strip" id="historyStrip"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Jeu 100% gratuit — aucune valeur réelle, à but ludique uniquement.</div>
+  </footer>
+
+  <script src="../assets/js/wallet.js"></script>
+  <script src="../assets/js/dice.js"></script>
+</body>
+</html>

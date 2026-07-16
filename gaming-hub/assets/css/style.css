@@ -404,6 +404,11 @@ input { font-family: inherit; }
   color: #06210a;
 }
 
+.toggle-row button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-main {
   background: var(--accent);
   color: #06210a;

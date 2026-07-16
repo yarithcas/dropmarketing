@@ -63,12 +63,19 @@ renderBuckets();
 
 riskButtons.forEach((btn) => {
   btn.addEventListener('click', () => {
+    if (btn.disabled) return;
     riskButtons.forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
     risk = btn.dataset.risk;
     renderBuckets();
   });
 });
+
+function setRiskLocked(locked) {
+  riskButtons.forEach((b) => {
+    b.disabled = locked;
+  });
+}
 
 halfBtn.addEventListener('click', () => {
   betInput.value = Math.max(0.01, (parseFloat(betInput.value) || 0) / 2).toFixed(2);
@@ -101,7 +108,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function dropBall(bet) {
+async function dropBall(bet, riskAtDrop) {
   const ball = document.createElement('div');
   ball.className = 'plinko-ball';
   ball.style.left = '50%';
@@ -130,7 +137,7 @@ async function dropBall(bet) {
     await sleep(190);
   }
 
-  const mult = TABLES[risk][bucketIndex];
+  const mult = TABLES[riskAtDrop][bucketIndex];
   const payout = bet * mult;
   const win = mult >= 1;
 
@@ -144,6 +151,7 @@ async function dropBall(bet) {
   await sleep(500);
   ball.remove();
   dropBtn.disabled = false;
+  setRiskLocked(false);
 }
 
 dropBtn.addEventListener('click', () => {
@@ -158,5 +166,6 @@ dropBtn.addEventListener('click', () => {
   }
   setBalance(getBalance() - bet);
   dropBtn.disabled = true;
-  dropBall(bet);
+  setRiskLocked(true);
+  dropBall(bet, risk);
 });

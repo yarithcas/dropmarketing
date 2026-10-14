@@ -106,7 +106,7 @@ function SaveDialog({ type, refId, label, onClose, preferSwipe }: { type: ItemTy
           <Textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} placeholder={t("collections.notePlaceholder")} />
         </Field>
         <Field label={t("collections.tags")} hint={t("collections.tagsHint")}>
-          <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="test, q4, fitness" />
+          <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t("collections.tagsPlaceholder")} />
         </Field>
       </div>
     </Dialog>

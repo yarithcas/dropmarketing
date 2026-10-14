@@ -12,7 +12,8 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "@/lib/client/session";
-import { ApiError, apiFetch, useApi } from "@/lib/client/use-api";
+import { apiFetch, useApi } from "@/lib/client/use-api";
+import { errorKey } from "@/lib/client/errors";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { useLocale } from "@/lib/i18n/provider";
 import type { AnalystResponse } from "@/lib/analyst/types";
@@ -61,7 +62,7 @@ function AnalystInner() {
       const result = await apiFetch<AnalystResponse>("/api/ai/analyst", { method: "POST", body: JSON.stringify({ question: q, productIds: products.map((p) => p.id), locale }) });
       setTurns((ts) => ts.map((x) => (x.id === id ? { ...x, result } : x)));
     } catch (e) {
-      const msg = e instanceof ApiError && e.code === "limit_reached" ? t("billing.limitReached") : t("errors.generic");
+      const msg = t(errorKey(e));
       setTurns((ts) => ts.map((x) => (x.id === id ? { ...x, error: msg } : x)));
     } finally {
       setBusy(false);

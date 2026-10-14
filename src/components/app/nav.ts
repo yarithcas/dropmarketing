@@ -19,11 +19,13 @@ export interface NavItem {
   href: string;
   key: string;
   icon: LucideIcon;
+  /** Extra routes that highlight this entry (tools that belong to the section). */
+  also?: string[];
 }
 
 export const NAV: NavItem[] = [
   { href: "/app", key: "overview", icon: LayoutDashboard },
-  { href: "/app/products", key: "products", icon: Trophy },
+  { href: "/app/products", key: "products", icon: Trophy, also: ["/app/calculator"] },
   { href: "/app/ads", key: "ads", icon: Radar },
   { href: "/app/creatives", key: "creatives", icon: Clapperboard },
   { href: "/app/trends", key: "trends", icon: TrendingUp },
@@ -36,4 +38,5 @@ export const NAV: NavItem[] = [
   { href: "/app/settings", key: "settings", icon: Settings },
 ];
 
-export const TOOLS: NavItem[] = [{ href: "/app/calculator", key: "calculator", icon: Calculator }];
+/** The profit calculator lives inside "Winning Products" (header action + product pages), keeping exactly 12 sections. */
+export const CALCULATOR = { href: "/app/calculator", key: "calculator", icon: Calculator };

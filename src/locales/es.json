@@ -20,7 +20,8 @@
     "save": "Guardar",
     "saved": "Guardado",
     "tableView": "Vista de tabla",
-    "viewAll": "Ver todo"
+    "viewAll": "Ver todo",
+    "info": "Información"
   },
   "nav": {
     "main": "Navegación principal",
@@ -50,7 +51,29 @@
     "generic": "No se pudo completar la solicitud. Inténtalo de nuevo.",
     "notFound": "Este registro no existe o ya no está disponible.",
     "notFoundTitle": "Página no encontrada",
-    "backHome": "Volver al inicio"
+    "backHome": "Volver al inicio",
+    "codes": {
+      "plan_required": "Esta función no está incluida en tu plan.",
+      "rate_limited": "Demasiadas solicitudes. Inténtalo de nuevo en un momento.",
+      "unauthenticated": "Tu sesión ha caducado. Vuelve a iniciar sesión.",
+      "not_configured": "Este servicio aún no está configurado en el servidor.",
+      "billing_not_configured": "La facturación no está configurada en este despliegue.",
+      "demo_mode": "Acción no disponible en modo demo.",
+      "demo_only": "Acción disponible solo en modo demo.",
+      "database_unavailable": "La base de datos no está disponible temporalmente.",
+      "not_connected": "No hay ninguna tienda conectada.",
+      "sync_failed": "La sincronización ha fallado. Inténtalo más tarde.",
+      "connect_failed": "La conexión con Shopify ha fallado. Inténtalo de nuevo.",
+      "invalid_shop": "Dominio de tienda no válido. Usa el formato mi-tienda.myshopify.com.",
+      "invalid_state": "La solicitud de conexión ha caducado o no es válida. Vuelve a empezar.",
+      "invalid_hmac": "No se pudo verificar la respuesta de Shopify.",
+      "missing_code": "Shopify no devolvió un código de autorización.",
+      "not_found": "Elemento no encontrado.",
+      "invalid_body": "La información enviada no es válida.",
+      "network": "Red no disponible. Comprueba tu conexión.",
+      "no_customer": "No hay ninguna suscripción de pago asociada a esta cuenta.",
+      "delete_failed": "No se pudo eliminar la cuenta. Contacta con soporte."
+    }
   },
   "search": {
     "placeholder": "Buscar productos, marcas, anuncios, tiendas, tendencias…",
@@ -94,7 +117,15 @@
     "checkEmail": "Revisa tu bandeja de entrada para confirmar tu correo.",
     "invalidEmail": "Introduce un correo electrónico válido.",
     "demoNotice": "Modo demo: la autenticación no está configurada. Tu nombre y correo solo personalizan la demo; no se crea ninguna contraseña ni cuenta.",
-    "legal": "Al continuar aceptas los"
+    "legal": "Al continuar aceptas los",
+    "errors": {
+      "invalid_credentials": "Correo o contraseña incorrectos.",
+      "user_already_exists": "Ya existe una cuenta con este correo. Inicia sesión.",
+      "weak_password": "Contraseña demasiado débil: usa al menos 10 caracteres variados.",
+      "email_not_confirmed": "Confirma primero tu dirección de correo (revisa tu bandeja de entrada).",
+      "over_email_send_rate_limit": "Se han enviado demasiados correos. Inténtalo de nuevo en unos minutos.",
+      "signup_disabled": "Los registros están desactivados en este despliegue."
+    }
   },
   "overview": {
     "title": "Resumen",
@@ -178,7 +209,11 @@
     "shipping": "Envío / abastecimiento",
     "shippingVerified": "Solo verificados",
     "shippingUnverified": "No verificado",
-    "activeOnly": "Solo anuncios activos"
+    "activeOnly": "Solo anuncios activos",
+    "warehouse": "Almacén {{region}}",
+    "maxDelivery": "Plazo de entrega máx.",
+    "deliveryWithin": "≤ {{n}} días",
+    "shippingVerifiedOnly": "Almacén y plazo: solo se tienen en cuenta los datos logísticos verificados."
   },
   "sort": {
     "label": "Ordenar por",
@@ -275,7 +310,9 @@
     "aiTip": "Conclusiones producidas por el motor de análisis a partir de las fichas mostradas. No son hechos ni garantías.",
     "demo": "Datos demo",
     "demoTip": "Datos sintéticos de ejemplo para explorar el producto. No describen el mercado real.",
-    "sourceLine": "Fuente: {{source}} · actualizado el {{date}}"
+    "sourceLine": "Fuente: {{source}} · actualizado el {{date}}",
+    "measuredShort": "Medido",
+    "estimateShort": "Est."
   },
   "ranges": {
     "24h": "24 horas",
@@ -687,7 +724,8 @@
     "decliningBadge": "En descenso",
     "compareNote": "Las señales de mercado proceden de la actividad publicitaria observada, no de las ventas de otros comerciantes.",
     "noDataTitle": "Aún no hay datos sincronizados",
-    "noDataText": "Ejecuta una sincronización para importar tus productos y pedidos recientes."
+    "noDataText": "Ejecuta una sincronización para importar tus productos y pedidos recientes.",
+    "connectedOk": "Tienda conectada. La primera sincronización está en curso."
   },
   "collections": {
     "title": "Colecciones de productos",
@@ -730,7 +768,8 @@
     "compareHint": "Marca entre 2 y 4 productos para comparar",
     "compareTitle": "Comparar productos guardados",
     "selectCompare": "Seleccionar para comparar",
-    "exportNote": "Las exportaciones incluyen tus notas, etiquetas, enlaces y métricas de TrendHunter. Las creatividades de terceros se referencian por enlace, no se copian."
+    "exportNote": "Las exportaciones incluyen tus notas, etiquetas, enlaces y métricas de TrendHunter. Las creatividades de terceros se referencian por enlace, no se copian.",
+    "tagsPlaceholder": "test, T4, fitness"
   },
   "watchlist": {
     "watch": "Seguir",
@@ -1019,7 +1058,7 @@
       "manual": "Manual"
     },
     "match": {
-      "trend_increase": "{{name}}: anuncios activos {{pct}} % en 7 días",
+      "trend_increase": "{{name}}: anuncios activos {{pct}} en 7 días",
       "new_advertiser": "{{advertiser}} empezó a anunciar {{name}}",
       "new_product": "Producto nuevo en {{category}}: {{name}}",
       "competitor_products": "{{store}} añadió {{n}} producto(s) nuevo(s)",
@@ -1499,5 +1538,15 @@
     "ruleFitness": "Tendencia fitness +30 %",
     "ruleSummary": "Resumen diario de oportunidades",
     "ruleStore": "Productos nuevos en {{name}}"
+  },
+  "meta": {
+    "title": "TrendHunter — Inteligencia e-commerce",
+    "description": "Investigación de productos, inteligencia publicitaria, tendencias y análisis de la competencia para equipos de e-commerce."
+  },
+  "email": {
+    "subject": "TrendHunter · {{rule}}",
+    "intro": "Nuevos resultados para tu alerta «{{rule}}»:",
+    "manage": "Gestiona tus alertas: {{url}}",
+    "footer": "Los valores estimados o generados por IA no son hechos medidos. Recibes este correo porque las notificaciones por correo están activadas para esta alerta."
   }
 }

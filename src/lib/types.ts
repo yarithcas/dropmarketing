@@ -77,6 +77,8 @@ export interface Product {
   source: SourceRef;
   /** Index into a deterministic gradient palette for the generated thumbnail. */
   hue: number;
+  /** Product image from an authorized source (supplier feed, licensed provider). Null → generated thumbnail. */
+  imageUrl?: string | null;
 }
 
 export interface ProductObservation {
@@ -167,7 +169,10 @@ export interface ScoreComponent {
   weight: number;
   /** Normalized 0-100, or null if the input is missing. */
   value: number | null;
+  /** Provenance of the underlying data (demo when the record is synthetic). */
   provenance: ProvenanceKind;
+  /** Nature of the input regardless of dataset: observed facts vs estimates. */
+  basis: "measured" | "estimate";
 }
 
 export type Confidence = "high" | "medium" | "low";

@@ -3,6 +3,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { env, features } from "./env";
 import type { AlertMatch } from "../alerts";
 import type { AlertRule } from "../workspace";
+import { INTL_LOCALE, isLocale, DEFAULT_LOCALE } from "../i18n/config";
+import { makeFormatters } from "../formatters";
+import { notificationParams } from "../notification-text";
+import { serverT } from "./messages";
 
 /**
  * Transactional email via Resend's HTTP API. Only active when RESEND_API_KEY is
@@ -23,7 +27,15 @@ export async function sendAlertEmail(db: SupabaseClient, userId: string, rule: A
   const { data } = await db.auth.admin.getUserById(userId);
   const email = data.user?.email;
   if (!email) return;
-  const lines = matches.slice(0, 20).map((m) => `• ${Object.values(m.params).join(" — ")}${m.link ? `\n  ${env.appUrl}${m.link}` : ""}`);
-  await sendEmail(email, `TrendHunter · ${rule.name}`, `${rule.name}\n\n${lines.join("\n")}\n\nManage alerts: ${env.appUrl}/app/alerts`);
+  // Written in the recipient's interface language, with the same messages as in-app notifications.
+  const { data: profile } = await db.from("profiles").select("locale").eq("user_id", userId).maybeSingle();
+  const locale = isLocale(profile?.locale) ? profile.locale : DEFAULT_LOCALE;
+  const t = serverT(locale);
+  const f = makeFormatters(INTL_LOCALE[locale]);
+  const lines = matches
+    .slice(0, 20)
+    .map((m) => `• ${t(m.key, notificationParams(m.params, f, (c) => t(`categories.${c}`)))}${m.link ? `\n  ${env.appUrl}${m.link}` : ""}`);
+  const body = [t("email.intro", { rule: rule.name }), "", ...lines, "", t("email.manage", { url: `${env.appUrl}/app/alerts` }), "", t("email.footer")].join("\n");
+  await sendEmail(email, t("email.subject", { rule: rule.name }), body);
   await db.from("notifications").update({ emailed_at: new Date().toISOString() }).eq("alert_id", rule.id).is("emailed_at", null);
 }

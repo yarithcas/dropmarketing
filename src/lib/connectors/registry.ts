@@ -248,8 +248,29 @@ const licensedDataset: Connector = {
     if (!this.configured()) return skipped("not_configured");
     const res = await fetch(env.licensedProviderUrl!, { headers: { authorization: `Bearer ${env.licensedProviderKey}` } });
     if (!res.ok) return { status: "failed", records: 0, message: `http_${res.status}` };
-    const body = (await res.json()) as { ads?: Record<string, unknown>[] };
-    const records = await upsertAds((body.ads ?? []).map((a) => ({ ...a, connector: "licensed_dataset", source_kind: "estimate" })));
+    const body = (await res.json()) as { products?: Record<string, unknown>[]; ads?: Record<string, unknown>[] };
+    const now = new Date().toISOString();
+    const pick = (row: Record<string, unknown>, cols: string[]) => Object.fromEntries(cols.filter((c) => row[c] !== undefined).map((c) => [c, row[c]]));
+    // Whitelisted columns only: provider payloads never write arbitrary fields.
+    const products = (body.products ?? [])
+      .filter((p) => typeof p.id === "string" && typeof p.name === "string" && typeof p.category === "string")
+      .map((p) => ({
+        ...pick(p, ["id", "name", "category", "description", "product_type", "tags", "price_estimate", "supplier_cost_estimate", "currency", "channels", "countries", "shipping", "differentiation", "first_detected", "last_detected", "source_url"]),
+        image_url: typeof p.image_url === "string" && p.image_url.startsWith("https://") ? p.image_url : null,
+        source_connector: "licensed_dataset",
+        source_kind: "estimate",
+        observed_at: (p.observed_at as string) ?? now,
+        is_demo: false,
+      }));
+    const db = supabaseAdmin();
+    if (db && products.length) {
+      const { error } = await db.from("products").upsert(products);
+      if (error) return { status: "failed", records: 0, message: error.message };
+    }
+    const AD_COLS = ["id", "external_id", "product_id", "advertiser", "platform", "country", "language", "format", "headline", "copy", "cta", "landing_domain", "landing_url", "snapshot_url", "category", "first_seen", "last_seen", "observed_at"];
+    const records =
+      products.length +
+      (await upsertAds((body.ads ?? []).map((a) => ({ ...pick(a, AD_COLS), connector: "licensed_dataset", source_kind: "estimate", observed_at: (a.observed_at as string) ?? now }))));
     return { status: "success", records };
   },
 };

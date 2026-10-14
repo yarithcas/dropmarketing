@@ -19,6 +19,26 @@ import { RANGE_DAYS, addDays, daysBetween } from "../dates";
 import { features } from "./env";
 import { supabaseAdmin } from "./supabase";
 import { loadLiveDataset } from "./supabase-repository";
+import frLocale from "@/locales/fr.json";
+import enLocale from "@/locales/en.json";
+import esLocale from "@/locales/es.json";
+import deLocale from "@/locales/de.json";
+import itLocale from "@/locales/it.json";
+
+/** Accent- and case-insensitive text folding for search. */
+export function fold(s: string): string {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+/** Category key plus its name in every supported language, folded — so "cuisine" or "beauté" find kitchen/beauty. */
+const CATEGORY_TERMS: Record<Category, string[]> = Object.fromEntries(
+  CATEGORIES.map((c) => [c, [c, ...[frLocale, enLocale, esLocale, deLocale, itLocale].map((l) => fold((l.categories as Record<string, string>)[c]))]]),
+) as Record<Category, string[]>;
+
+function categoryMatches(c: Category, needle: string) {
+  const n = fold(needle);
+  return CATEGORY_TERMS[c].some((term) => term.includes(n));
+}
 
 /**
  * Research data access. In demo mode everything is served from the
@@ -124,8 +144,8 @@ export function allProducts(): ProductWithMetrics[] {
 
 function matchesText(hay: (string | null | undefined)[], q?: string) {
   if (!q) return true;
-  const needle = q.toLowerCase();
-  return hay.some((h) => h?.toLowerCase().includes(needle));
+  const needle = fold(q);
+  return hay.some((h) => h != null && fold(h).includes(needle));
 }
 
 function paginate<T>(items: T[], page: number, pageSize: number): Page<T> {
@@ -138,7 +158,7 @@ const nullsLast = (v: number | null | undefined, dir: 1 | -1) => (v == null ? Nu
 export function listProducts(q: ProductQuery): Page<ProductWithMetrics> {
   let items = allProducts().filter((p) => {
     const m = p.metrics;
-    if (!matchesText([p.name, p.description, ...p.tags, p.category], q.q)) return false;
+    if (q.q && !matchesText([p.name, p.description, ...p.tags], q.q) && !categoryMatches(p.category, q.q)) return false;
     if (q.category.length && !q.category.includes(p.category)) return false;
     if (q.country.length && !p.countries.some((c) => q.country.includes(c))) return false;
     if (q.platform.length && !p.channels.some((c) => q.platform.includes(c))) return false;
@@ -151,6 +171,9 @@ export function listProducts(q: ProductQuery): Page<ProductWithMetrics> {
     if (q.firstFrom && p.firstDetected < q.firstFrom) return false;
     if (q.firstTo && p.firstDetected > q.firstTo) return false;
     if (q.shippingVerified != null && p.shipping.verified !== q.shippingVerified) return false;
+    // Sourcing characteristics only count when verified.
+    if (q.warehouse.length && !(p.shipping.verified && p.shipping.warehouse && q.warehouse.includes(p.shipping.warehouse))) return false;
+    if (q.maxDeliveryDays != null && !(p.shipping.verified && p.shipping.deliveryDays && p.shipping.deliveryDays[1] <= q.maxDeliveryDays)) return false;
     return true;
   });
   const sorters: Record<ProductQuery["sort"], (a: ProductWithMetrics, b: ProductWithMetrics) => number> = {
@@ -389,7 +412,7 @@ export function globalSearch(q: string) {
   const needle = q.trim().toLowerCase();
   if (needle.length < 2) return { products: [], advertisers: [], ads: [], stores: [], niches: [] };
   const products = allProducts()
-    .filter((p) => matchesText([p.name, ...p.tags, p.category], needle))
+    .filter((p) => matchesText([p.name, ...p.tags], needle) || categoryMatches(p.category, needle))
     .slice(0, 6)
     .map((p) => ({ id: p.id, name: p.name, category: p.category, score: p.score.overall }));
   const advertisers = Array.from(new Set(d.ads.filter((a) => a.advertiser.toLowerCase().includes(needle)).map((a) => a.advertiser)))
@@ -404,10 +427,13 @@ export function globalSearch(q: string) {
     .slice(0, 5)
     .map((s) => ({ id: s.id, name: s.name, domain: s.domain }));
   const tagHits = new Map<string, number>();
-  for (const p of d.products) for (const t of p.tags) if (t.includes(needle)) tagHits.set(t, (tagHits.get(t) ?? 0) + 1);
+  for (const p of d.products) for (const t of p.tags) if (fold(t).includes(fold(needle))) tagHits.set(t, (tagHits.get(t) ?? 0) + 1);
+  const matchedCats = CATEGORIES.filter((c) => categoryMatches(c, needle));
+  // Market-trend context: 30-day active-ad growth per matched category (null when history is insufficient).
+  const growth = matchedCats.length ? new Map(trendReport("30d", matchedCats).categories.map((c) => [c.category, c.growth])) : new Map<Category, number | null>();
   const niches = [
-    ...CATEGORIES.filter((c) => c.includes(needle)).map((c) => ({ kind: "category" as const, value: c, products: d.products.filter((p) => p.category === c).length })),
-    ...[...tagHits.entries()].map(([value, n]) => ({ kind: "tag" as const, value, products: n })),
+    ...matchedCats.map((c) => ({ kind: "category" as const, value: c, products: d.products.filter((p) => p.category === c).length, growth: growth.get(c) ?? null })),
+    ...[...tagHits.entries()].map(([value, n]) => ({ kind: "tag" as const, value, products: n, growth: undefined })),
   ].slice(0, 6);
   return { products, advertisers, ads, stores, niches };
 }

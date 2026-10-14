@@ -20,7 +20,8 @@
     "save": "Enregistrer",
     "saved": "Enregistré",
     "tableView": "Vue tableau",
-    "viewAll": "Tout voir"
+    "viewAll": "Tout voir",
+    "info": "Informations"
   },
   "nav": {
     "main": "Navigation principale",
@@ -50,7 +51,29 @@
     "generic": "La requête n'a pas pu aboutir. Veuillez réessayer.",
     "notFound": "Cet élément n'existe pas ou n'est plus disponible.",
     "notFoundTitle": "Page introuvable",
-    "backHome": "Retour à l'accueil"
+    "backHome": "Retour à l'accueil",
+    "codes": {
+      "plan_required": "Cette fonctionnalité n'est pas incluse dans votre offre.",
+      "rate_limited": "Trop de requêtes. Réessayez dans un instant.",
+      "unauthenticated": "Votre session a expiré. Reconnectez-vous.",
+      "not_configured": "Ce service n'est pas encore configuré sur le serveur.",
+      "billing_not_configured": "La facturation n'est pas configurée sur ce déploiement.",
+      "demo_mode": "Action indisponible en mode démo.",
+      "demo_only": "Action réservée au mode démo.",
+      "database_unavailable": "La base de données est momentanément indisponible.",
+      "not_connected": "Aucune boutique n'est connectée.",
+      "sync_failed": "La synchronisation a échoué. Réessayez plus tard.",
+      "connect_failed": "La connexion à Shopify a échoué. Réessayez.",
+      "invalid_shop": "Domaine de boutique invalide. Utilisez le format ma-boutique.myshopify.com.",
+      "invalid_state": "La demande de connexion a expiré ou n'est pas valide. Recommencez.",
+      "invalid_hmac": "La réponse de Shopify n'a pas pu être vérifiée.",
+      "missing_code": "Shopify n'a pas renvoyé de code d'autorisation.",
+      "not_found": "Élément introuvable.",
+      "invalid_body": "Les informations envoyées sont invalides.",
+      "network": "Connexion réseau impossible. Vérifiez votre connexion.",
+      "no_customer": "Aucun abonnement payant n'est associé à ce compte.",
+      "delete_failed": "La suppression du compte a échoué. Contactez le support."
+    }
   },
   "search": {
     "placeholder": "Rechercher produits, marques, publicités, boutiques, tendances…",
@@ -94,7 +117,15 @@
     "checkEmail": "Consultez votre boîte de réception pour confirmer votre adresse e-mail.",
     "invalidEmail": "Veuillez saisir une adresse e-mail valide.",
     "demoNotice": "Mode démo : l'authentification n'est pas configurée. Votre nom et votre e-mail servent uniquement à personnaliser la démo ; aucun mot de passe ni compte n'est créé.",
-    "legal": "En continuant, vous acceptez les"
+    "legal": "En continuant, vous acceptez les",
+    "errors": {
+      "invalid_credentials": "E-mail ou mot de passe incorrect.",
+      "user_already_exists": "Un compte existe déjà avec cet e-mail. Connectez-vous.",
+      "weak_password": "Mot de passe trop faible : utilisez au moins 10 caractères variés.",
+      "email_not_confirmed": "Confirmez d'abord votre adresse e-mail (vérifiez votre boîte de réception).",
+      "over_email_send_rate_limit": "Trop d'e-mails envoyés. Réessayez dans quelques minutes.",
+      "signup_disabled": "Les inscriptions sont désactivées sur ce déploiement."
+    }
   },
   "overview": {
     "title": "Vue d'ensemble",
@@ -178,7 +209,11 @@
     "shipping": "Livraison / approvisionnement",
     "shippingVerified": "Vérifié uniquement",
     "shippingUnverified": "Non vérifié",
-    "activeOnly": "Publicités actives uniquement"
+    "activeOnly": "Publicités actives uniquement",
+    "warehouse": "Entrepôt {{region}}",
+    "maxDelivery": "Délai de livraison max.",
+    "deliveryWithin": "≤ {{n}} jours",
+    "shippingVerifiedOnly": "Entrepôt et délai : seules les données logistiques vérifiées sont prises en compte."
   },
   "sort": {
     "label": "Trier par",
@@ -275,7 +310,9 @@
     "aiTip": "Conclusions produites par le moteur d'analyse à partir des fiches affichées. Ni un fait, ni une garantie.",
     "demo": "Données démo",
     "demoTip": "Données d'exemple synthétiques pour découvrir le produit. Elles ne décrivent pas le marché réel.",
-    "sourceLine": "Source : {{source}} · mis à jour le {{date}}"
+    "sourceLine": "Source : {{source}} · mis à jour le {{date}}",
+    "measuredShort": "Mesuré",
+    "estimateShort": "Est."
   },
   "ranges": {
     "24h": "24 heures",
@@ -687,7 +724,8 @@
     "decliningBadge": "En baisse",
     "compareNote": "Les signaux de marché proviennent de l'activité publicitaire observée, pas des ventes d'autres marchands.",
     "noDataTitle": "Aucune donnée synchronisée",
-    "noDataText": "Lancez une synchronisation pour importer vos produits et commandes récentes."
+    "noDataText": "Lancez une synchronisation pour importer vos produits et commandes récentes.",
+    "connectedOk": "Boutique connectée. La première synchronisation est en cours."
   },
   "collections": {
     "title": "Collections de produits",
@@ -730,7 +768,8 @@
     "compareHint": "Cochez 2 à 4 produits à comparer",
     "compareTitle": "Comparer les produits enregistrés",
     "selectCompare": "Sélectionner pour comparer",
-    "exportNote": "Les exports contiennent vos notes, tags, liens et indicateurs TrendHunter. Les créatives publicitaires tierces sont référencées par lien, pas copiées."
+    "exportNote": "Les exports contiennent vos notes, tags, liens et indicateurs TrendHunter. Les créatives publicitaires tierces sont référencées par lien, pas copiées.",
+    "tagsPlaceholder": "test, T4, fitness"
   },
   "watchlist": {
     "watch": "Suivre",
@@ -1019,7 +1058,7 @@
       "manual": "Manuelle"
     },
     "match": {
-      "trend_increase": "{{name}} : publicités actives {{pct}} % sur 7 jours",
+      "trend_increase": "{{name}} : publicités actives {{pct}} sur 7 jours",
       "new_advertiser": "{{advertiser}} a commencé à promouvoir {{name}}",
       "new_product": "Nouveau produit en {{category}} : {{name}}",
       "competitor_products": "{{store}} a ajouté {{n}} nouveau(x) produit(s)",
@@ -1499,5 +1538,15 @@
     "ruleFitness": "Tendance fitness +30 %",
     "ruleSummary": "Résumé quotidien des opportunités",
     "ruleStore": "Nouveaux produits chez {{name}}"
+  },
+  "meta": {
+    "title": "TrendHunter — Intelligence e-commerce",
+    "description": "Recherche de produits, veille publicitaire, tendances et analyse concurrentielle pour les équipes e-commerce."
+  },
+  "email": {
+    "subject": "TrendHunter · {{rule}}",
+    "intro": "Nouveaux résultats pour votre alerte « {{rule}} » :",
+    "manage": "Gérer vos alertes : {{url}}",
+    "footer": "Les valeurs estimées ou générées par l'IA ne sont pas des faits mesurés. Vous recevez cet e-mail car les notifications e-mail sont activées pour cette alerte."
   }
 }

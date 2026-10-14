@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Hash, Loader2, Megaphone, Package, Search, Store as StoreIcon, UserRound } from "lucide-react";
+import { Hash, Loader2, Megaphone, Package, Search, Store as StoreIcon, TrendingUp, UserRound, type LucideIcon } from "lucide-react";
+import { TrendPill } from "./bits";
 import { useTranslation } from "react-i18next";
 import { apiFetch } from "@/lib/client/use-api";
 import { cn } from "@/lib/cn";
@@ -13,18 +14,30 @@ export interface SearchResults {
   advertisers: { name: string; ads: number }[];
   ads: { id: string; advertiser: string; headline: string; platform: string }[];
   stores: { id: string; name: string; domain: string }[];
-  niches: { kind: "category" | "tag"; value: string; products: number }[];
+  niches: { kind: "category" | "tag"; value: string; products: number; growth?: number | null }[];
 }
 
-export function searchLinks(r: SearchResults) {
+export interface SearchLink {
+  group: string;
+  href: string;
+  label: string;
+  meta: string;
+  icon: LucideIcon;
+  /** Only set for category niches: 30-day growth (null when history is insufficient). */
+  growth?: number | null;
+}
+
+export function searchLinks(r: SearchResults): SearchLink[] {
   return [
     ...r.products.map((p) => ({ group: "products", href: `/app/products/${p.id}`, label: p.name, meta: p.category, icon: Package })),
     ...r.niches.map((n) => ({
       group: "niches",
-      href: n.kind === "category" ? `/app/products?category=${n.value}` : `/app/products?q=${encodeURIComponent(n.value)}`,
+      // Categories open the trend view (growth, emerging/declining products); tags open matching products.
+      href: n.kind === "category" ? `/app/trends?category=${n.value}` : `/app/products?q=${encodeURIComponent(n.value)}`,
       label: n.value,
       meta: String(n.products),
-      icon: Hash,
+      icon: n.kind === "category" ? TrendingUp : Hash,
+      growth: n.kind === "category" ? (n.growth ?? null) : undefined,
     })),
     ...r.advertisers.map((a) => ({ group: "advertisers", href: `/app/ads?advertiser=${encodeURIComponent(a.name)}`, label: a.name, meta: String(a.ads), icon: UserRound })),
     ...r.ads.map((a) => ({ group: "ads", href: `/app/creatives?ad=${a.id}`, label: a.headline, meta: a.advertiser, icon: Megaphone })),
@@ -145,7 +158,11 @@ export function GlobalSearch() {
                     >
                       <Icon className="size-4 shrink-0 text-subtle" />
                       <span className="truncate">{l.group === "niches" && l.label in CATEGORY_HINT ? t(`categories.${l.label}`) : l.label}</span>
-                      <span className="ml-auto shrink-0 truncate text-xs text-subtle">{l.group === "products" ? t(`categories.${l.meta}`) : l.meta}</span>
+                      {l.growth !== undefined ? (
+                        <TrendPill pct={l.growth} className="ml-auto shrink-0" />
+                      ) : (
+                        <span className="ml-auto shrink-0 truncate text-xs text-subtle">{l.group === "products" ? t(`categories.${l.meta}`) : l.meta}</span>
+                      )}
                     </Link>
                   </li>
                 );

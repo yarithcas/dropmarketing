@@ -23,6 +23,8 @@ export function I18nProvider({ initialLocale, children }: { initialLocale: Local
       setLocaleState(l);
       document.documentElement.lang = l;
       document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
+      // Persisted on the profile for signed-in users (used for alert emails); a failure only affects emails.
+      fetch("/api/account/locale", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ locale: l }) }).catch(() => {});
     },
     [i18n],
   );

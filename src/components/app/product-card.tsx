@@ -13,7 +13,7 @@ export function ProductCard({ p }: { p: ProductWithMetrics }) {
   return (
     <Link href={`/app/products/${p.id}`} className="card focus-ring group flex flex-col overflow-hidden transition-colors hover:border-accent/40" data-testid="product-card">
       <div className="relative">
-        <Thumb category={p.category} hue={p.hue} className="h-32 rounded-none" label={p.name} />
+        <Thumb category={p.category} hue={p.hue} src={p.imageUrl} className="h-32 w-full rounded-none" label={p.name} />
         <div className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1">
           <ScoreBadge score={p.score.overall} className="bg-bg/80 backdrop-blur" />
           {p.score.overall != null && p.score.confidence === "low" ? <ConfidenceBadge level="low" /> : null}

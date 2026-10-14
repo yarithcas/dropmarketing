@@ -37,6 +37,9 @@ export const productQuerySchema = z.object({
   firstFrom: day,
   firstTo: day,
   shippingVerified: bool,
+  /** Verified sourcing characteristics: warehouse region and maximum delivery days. */
+  warehouse: csv(["EU", "US", "CN"] as const),
+  maxDeliveryDays: z.coerce.number().int().min(1).max(60).optional(),
   sort: z.enum(PRODUCT_SORTS).optional().default("score"),
   page: z.coerce.number().int().min(1).max(1000).optional().default(1),
   pageSize: z.coerce.number().int().min(1).max(100).optional().default(24),

@@ -30,6 +30,6 @@ Store revenue is explicitly “not estimated” when evidence is insufficient (a
 
 ## Licensed provider feed format
 
-`LICENSED_DATA_PROVIDER_URL` must return `{ "ads": [ … ] }` where each ad matches the `advertisements`
+`LICENSED_DATA_PROVIDER_URL` must return `{ "products": [ … ], "ads": [ … ] }`. Products match the `products` columns (`id`, `name`, `category`, `first_detected`, `last_detected`, optional prices, `shipping`, `image_url` — HTTPS images you are licensed to display). Only whitelisted columns are written. Each ad matches the `advertisements`
 table columns (`id`, `external_id`, `advertiser`, `platform`, `country`, `language`, `format`, `headline`,
 `copy`, `cta`, `category`, `first_seen`, `last_seen`, `observed_at`, optional `product_id`, `landing_domain`).

@@ -138,3 +138,19 @@ test("global search finds products and stores", async ({ page }) => {
   await page.getByTestId("global-search").press("Enter");
   await expect(page).toHaveURL(/\/app\/search\?q=cat/);
 });
+
+test("shopify OAuth failures return to the store page with a translated message", async ({ page }) => {
+  // Demo deployment: Shopify credentials are absent, so the install route must redirect back, not return JSON.
+  await page.goto("/api/integrations/shopify/install?shop=my-store.myshopify.com");
+  await expect(page).toHaveURL(/\/app\/stores\?tab=mine&error=not_configured/);
+  await expect(page.getByTestId("shopify-oauth-error")).toHaveText("This service is not configured on the server yet.");
+  await setLanguage(page, "fr");
+  await page.goto("/app/stores?tab=mine&error=invalid_shop");
+  await expect(page.getByTestId("shopify-oauth-error")).toContainText("Domaine de boutique invalide");
+});
+
+test("page metadata follows the interface language", async ({ page }) => {
+  await setLanguage(page, "es");
+  await page.goto("/");
+  await expect(page).toHaveTitle("TrendHunter — Inteligencia e-commerce");
+});

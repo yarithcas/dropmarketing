@@ -38,7 +38,7 @@ export function TimeSeriesChart({ data, series, height = 240, area = false, valu
     <>
       <CartesianGrid vertical={false} strokeDasharray="0" />
       <XAxis dataKey="date" tickFormatter={(d: string) => f.date(d, "short")} tickLine={false} axisLine={{ stroke: "var(--chart-grid)" }} minTickGap={28} />
-      <YAxis tickLine={false} axisLine={false} width={44} allowDecimals={false} />
+      <YAxis tickLine={false} axisLine={false} width={44} allowDecimals={false} tickFormatter={(n: number) => f.number(n, Number.isInteger(n) ? 0 : 1)} />
       <Tooltip content={<ChartTooltip valueFormat={valueFormat} />} cursor={{ stroke: "rgb(var(--subtle))", strokeDasharray: "3 3" }} />
       {series.length > 1 && <Legend iconType="plainline" wrapperStyle={{ fontSize: 12, paddingTop: 4 }} />}
     </>
@@ -82,7 +82,7 @@ export function SimpleBarChart({ data, xKey, yKey, label, height = 220, valueFor
         <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey={xKey} tickLine={false} axisLine={{ stroke: "var(--chart-grid)" }} tickFormatter={xFormat} interval={0} fontSize={11} />
-          <YAxis tickLine={false} axisLine={false} width={44} />
+          <YAxis tickLine={false} axisLine={false} width={44} tickFormatter={(n: number) => f.number(n, Number.isInteger(n) ? 0 : 1)} />
           <Tooltip
             cursor={{ fill: "rgb(var(--surface-3) / .5)" }}
             content={({ active, payload, label: l }) =>

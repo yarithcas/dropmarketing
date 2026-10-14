@@ -17,6 +17,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/client/session";
 import { apiFetch, useApi } from "@/lib/client/use-api";
+import { errorKey } from "@/lib/client/errors";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { useWorkspace } from "@/lib/client/workspace";
 import { useFormat } from "@/lib/format";
@@ -63,8 +64,8 @@ function Viewer({ adId }: { adId: string }) {
     setBusy(true);
     try {
       setAnalysis(await apiFetch<CreativeAnalysis>("/api/ai/creative", { method: "POST", body: JSON.stringify({ adId: ad.id, locale }) }));
-    } catch {
-      toast(t("errors.generic"), "error");
+    } catch (e) {
+      toast(t(errorKey(e)), "error");
     } finally {
       setBusy(false);
     }

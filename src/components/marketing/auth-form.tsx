@@ -11,12 +11,18 @@ import { LanguageSelect } from "@/components/app/language-select";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { apiFetch } from "@/lib/client/use-api";
+import { errorKey } from "@/lib/client/errors";
+import { useLocale } from "@/lib/i18n/provider";
+
+/** Supabase Auth error codes with a translated message under `auth.errors.*`. */
+const AUTH_ERRORS = new Set(["invalid_credentials", "user_already_exists", "weak_password", "email_not_confirmed", "over_email_send_rate_limit", "signup_disabled"]);
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const { t } = useTranslation();
+  const { locale } = useLocale();
   const router = useRouter();
   const sp = useSearchParams();
   const next = sp.get("next")?.startsWith("/app") ? sp.get("next")! : "/app";
@@ -41,7 +47,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       }
       const sb = createBrowserClient(SUPABASE_URL!, SUPABASE_ANON!);
       if (mode === "signup") {
-        const { error: err, data } = await sb.auth.signUp({ email, password, options: { data: { name }, emailRedirectTo: `${location.origin}/auth/callback` } });
+        const { error: err, data } = await sb.auth.signUp({ email, password, options: { data: { name, locale }, emailRedirectTo: `${location.origin}/auth/callback` } });
         if (err) throw err;
         if (!data.session) {
           setInfo(t("auth.checkEmail"));
@@ -54,7 +60,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       router.push(next);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error && err.message ? (live ? err.message : t("auth.invalidEmail")) : t("errors.generic"));
+      const code = (err as { code?: string } | null)?.code ?? "";
+      if (!live) setError(code === "invalid_body" ? t("auth.invalidEmail") : t(errorKey(err)));
+      else setError(AUTH_ERRORS.has(code) ? t(`auth.errors.${code}`) : t(errorKey(err)));
     } finally {
       setBusy(false);
     }

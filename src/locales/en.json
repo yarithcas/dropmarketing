@@ -20,7 +20,8 @@
     "save": "Save",
     "saved": "Saved",
     "tableView": "Table view",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "info": "Information"
   },
   "nav": {
     "main": "Main navigation",
@@ -50,7 +51,29 @@
     "generic": "The request could not be completed. Please try again.",
     "notFound": "This record does not exist or is no longer available.",
     "notFoundTitle": "Page not found",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "codes": {
+      "plan_required": "This feature is not included in your plan.",
+      "rate_limited": "Too many requests. Try again in a moment.",
+      "unauthenticated": "Your session has expired. Please sign in again.",
+      "not_configured": "This service is not configured on the server yet.",
+      "billing_not_configured": "Billing is not configured on this deployment.",
+      "demo_mode": "This action is not available in demo mode.",
+      "demo_only": "This action is only available in demo mode.",
+      "database_unavailable": "The database is temporarily unavailable.",
+      "not_connected": "No store is connected.",
+      "sync_failed": "Synchronization failed. Try again later.",
+      "connect_failed": "Connecting to Shopify failed. Please try again.",
+      "invalid_shop": "Invalid store domain. Use the format my-store.myshopify.com.",
+      "invalid_state": "The connection request expired or is invalid. Please start again.",
+      "invalid_hmac": "Shopify's response could not be verified.",
+      "missing_code": "Shopify did not return an authorization code.",
+      "not_found": "Item not found.",
+      "invalid_body": "The submitted information is invalid.",
+      "network": "Network unavailable. Check your connection.",
+      "no_customer": "No paid subscription is linked to this account.",
+      "delete_failed": "Account deletion failed. Please contact support."
+    }
   },
   "search": {
     "placeholder": "Search products, brands, ads, stores, trends…",
@@ -94,7 +117,15 @@
     "checkEmail": "Check your inbox to confirm your email address.",
     "invalidEmail": "Please enter a valid email address.",
     "demoNotice": "Demo mode: authentication is not configured. Your name and email only personalise the demo; no password or account is created.",
-    "legal": "By continuing you agree to the"
+    "legal": "By continuing you agree to the",
+    "errors": {
+      "invalid_credentials": "Incorrect email or password.",
+      "user_already_exists": "An account already exists with this email. Please log in.",
+      "weak_password": "Password too weak: use at least 10 varied characters.",
+      "email_not_confirmed": "Please confirm your email address first (check your inbox).",
+      "over_email_send_rate_limit": "Too many emails sent. Try again in a few minutes.",
+      "signup_disabled": "Sign-ups are disabled on this deployment."
+    }
   },
   "overview": {
     "title": "Overview",
@@ -178,7 +209,11 @@
     "shipping": "Shipping / sourcing",
     "shippingVerified": "Verified only",
     "shippingUnverified": "Not verified",
-    "activeOnly": "Active ads only"
+    "activeOnly": "Active ads only",
+    "warehouse": "{{region}} warehouse",
+    "maxDelivery": "Max. delivery time",
+    "deliveryWithin": "≤ {{n}} days",
+    "shippingVerifiedOnly": "Warehouse and delivery time only match verified shipping data."
   },
   "sort": {
     "label": "Sort by",
@@ -275,7 +310,9 @@
     "aiTip": "Conclusions produced by the analyst engine from the records shown. Not a fact or a guarantee.",
     "demo": "Demo data",
     "demoTip": "Synthetic sample data for exploring the product. It does not describe the real market.",
-    "sourceLine": "Source: {{source}} · updated {{date}}"
+    "sourceLine": "Source: {{source}} · updated {{date}}",
+    "measuredShort": "Measured",
+    "estimateShort": "Est."
   },
   "ranges": {
     "24h": "24 hours",
@@ -687,7 +724,8 @@
     "decliningBadge": "Declining",
     "compareNote": "Market signals come from observed advertising activity, not from other merchants' sales.",
     "noDataTitle": "No synchronized data yet",
-    "noDataText": "Run a sync to import your products and recent orders."
+    "noDataText": "Run a sync to import your products and recent orders.",
+    "connectedOk": "Store connected. The first synchronization is running."
   },
   "collections": {
     "title": "Product Collections",
@@ -730,7 +768,8 @@
     "compareHint": "Tick 2–4 products to compare",
     "compareTitle": "Compare saved products",
     "selectCompare": "Select for comparison",
-    "exportNote": "Exports include your notes, tags, links and TrendHunter metrics. Third-party ad creatives are referenced by link, not copied."
+    "exportNote": "Exports include your notes, tags, links and TrendHunter metrics. Third-party ad creatives are referenced by link, not copied.",
+    "tagsPlaceholder": "test, Q4, fitness"
   },
   "watchlist": {
     "watch": "Watch",
@@ -1019,7 +1058,7 @@
       "manual": "Manual"
     },
     "match": {
-      "trend_increase": "{{name}}: active ads {{pct}}% over 7 days",
+      "trend_increase": "{{name}}: active ads {{pct}} over 7 days",
       "new_advertiser": "{{advertiser}} started advertising {{name}}",
       "new_product": "New product in {{category}}: {{name}}",
       "competitor_products": "{{store}} added {{n}} new product(s)",
@@ -1499,5 +1538,15 @@
     "ruleFitness": "Fitness trend +30%",
     "ruleSummary": "Daily opportunities summary",
     "ruleStore": "New products at {{name}}"
+  },
+  "meta": {
+    "title": "TrendHunter — E-commerce intelligence",
+    "description": "Product research, ad intelligence, trends and competitor analysis for e-commerce teams."
+  },
+  "email": {
+    "subject": "TrendHunter · {{rule}}",
+    "intro": "New results for your alert “{{rule}}”:",
+    "manage": "Manage your alerts: {{url}}",
+    "footer": "Estimated or AI-generated values are not measured facts. You receive this email because email notifications are enabled for this alert."
   }
 }

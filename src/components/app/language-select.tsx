@@ -6,7 +6,7 @@ import { useLocale } from "@/lib/i18n/provider";
 import { LOCALE_LABEL, LOCALES, type Locale } from "@/lib/i18n/config";
 import { cn } from "@/lib/cn";
 
-export function LanguageSelect({ className, compact = false }: { className?: string; compact?: boolean }) {
+export function LanguageSelect({ className, compact = false, testId = "language-select" }: { className?: string; compact?: boolean; testId?: string }) {
   const { locale, setLocale } = useLocale();
   const { t } = useTranslation();
   return (
@@ -18,7 +18,7 @@ export function LanguageSelect({ className, compact = false }: { className?: str
         onChange={(e) => setLocale(e.target.value as Locale)}
         className="focus-ring h-9 cursor-pointer appearance-none rounded-lg border border-border bg-surface-2 pl-8 pr-3 text-[13px] text-fg hover:bg-surface-3"
         aria-label={t("settings.language")}
-        data-testid="language-select"
+        data-testid={testId}
       >
         {LOCALES.map((l) => (
           <option key={l} value={l}>

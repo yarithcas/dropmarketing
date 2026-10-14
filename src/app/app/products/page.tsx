@@ -2,13 +2,13 @@
 
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, PackageSearch, Search, SlidersHorizontal } from "lucide-react";
+import { Calculator, LayoutGrid, List, PackageSearch, Search, SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CompetitionBadge, PageHeader, Pagination, ProvenanceBadge, ScoreBadge, Thumb, TrendPill } from "@/components/app/bits";
 import { ChipSet, FilterGroup, ResetFilters } from "@/components/app/filters";
 import { ProductCard } from "@/components/app/product-card";
 import { SaveButton } from "@/components/app/save";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Select } from "@/components/ui/input";
 import { CardGridSkeleton } from "@/components/ui/skeleton";
@@ -30,7 +30,7 @@ interface ProductsResponse {
   meta: { mode: "demo" | "live"; asOf: string };
 }
 
-const FILTER_KEYS = ["q", "category", "country", "platform", "competition", "productType", "priceMin", "priceMax", "marginMin", "growthMin", "firstFrom", "firstTo", "shippingVerified"];
+const FILTER_KEYS = ["q", "category", "country", "platform", "competition", "productType", "priceMin", "priceMax", "marginMin", "growthMin", "firstFrom", "firstTo", "shippingVerified", "warehouse", "maxDeliveryDays"];
 
 function ProductsInner() {
   const { t } = useTranslation();
@@ -123,6 +123,18 @@ function ProductsInner() {
           <option value="true">{t("filters.shippingVerified")}</option>
           <option value="false">{t("filters.shippingUnverified")}</option>
         </Select>
+        <div className="mt-2 space-y-2">
+          <ChipSet values={["EU", "US", "CN"]} active={url.getList("warehouse")} onToggle={(v) => url.toggle("warehouse", v)} render={(v) => t("filters.warehouse", { region: v })} />
+          <Select value={url.get("maxDeliveryDays")} onChange={(e) => url.set({ maxDeliveryDays: e.target.value })} aria-label={t("filters.maxDelivery")}>
+            <option value="">{t("filters.maxDelivery")}</option>
+            {[7, 10, 14].map((d) => (
+              <option key={d} value={d}>
+                {t("filters.deliveryWithin", { n: d })}
+              </option>
+            ))}
+          </Select>
+          <p className="text-[11px] text-subtle">{t("filters.shippingVerifiedOnly")}</p>
+        </div>
       </FilterGroup>
     </div>
   );
@@ -133,6 +145,11 @@ function ProductsInner() {
         title={t("products.title")}
         description={t("products.subtitle")}
         eyebrow={data ? <ProvenanceBadge kind={data.meta.mode === "demo" ? "demo" : "measured"} /> : null}
+        actions={
+          <Link href="/app/calculator" className={buttonVariants({ variant: "secondary" })} data-testid="open-calculator">
+            <Calculator /> {t("nav.calculator")}
+          </Link>
+        }
       />
       <div className="flex gap-6">
         <aside className="hidden w-64 shrink-0 lg:block">
@@ -220,7 +237,7 @@ function ProductsInner() {
                         <tr key={p.id} className="border-b border-border/50 last:border-0 hover:bg-surface-2">
                           <td className="table-td">
                             <Link href={`/app/products/${p.id}`} className="flex items-center gap-2.5 hover:text-accent">
-                              <Thumb category={p.category} hue={p.hue} className="size-8 shrink-0" />
+                              <Thumb category={p.category} hue={p.hue} src={p.imageUrl} className="size-8 shrink-0" />
                               <span>
                                 <span className="block max-w-[240px] truncate">{p.name}</span>
                                 <span className="text-xs text-subtle">{t(`categories.${p.category}`)}</span>

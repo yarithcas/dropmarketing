@@ -107,4 +107,4 @@ export function isPlan(v: unknown): v is PlanId {
 }
 
 /** Advanced product filters (Free plan only gets keyword, category, price and sort). */
-export const ADVANCED_PRODUCT_FILTERS = ["country", "platform", "competition", "productType", "marginMin", "growthMin", "firstFrom", "firstTo", "shippingVerified"] as const;
+export const ADVANCED_PRODUCT_FILTERS = ["country", "platform", "competition", "productType", "marginMin", "growthMin", "firstFrom", "firstTo", "shippingVerified", "warehouse", "maxDeliveryDays"] as const;

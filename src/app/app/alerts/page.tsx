@@ -19,6 +19,7 @@ import { useApi } from "@/lib/client/use-api";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { useWorkspace } from "@/lib/client/workspace";
 import { useFormat } from "@/lib/format";
+import { notificationParams } from "@/lib/notification-text";
 import { CATEGORIES, type ProductWithMetrics, type Store } from "@/lib/types";
 import { ALERT_TYPES, type AlertRule, type AlertType } from "@/lib/workspace";
 import { cn } from "@/lib/cn";
@@ -350,7 +351,7 @@ function AlertsInner() {
                 {workspace.notifications.map((n) => (
                   <li key={n.id} className="px-4 py-3">
                     <Link href={n.link ?? "#"} className="text-sm hover:text-accent">
-                      {t(n.key, { ...n.params, category: typeof n.params.category === "string" ? t(`categories.${n.params.category}`) : n.params.category })}
+                      {t(n.key, notificationParams(n.params, f, (c) => t(`categories.${c}`)))}
                     </Link>
                     <div className="mt-0.5 flex items-center gap-2 text-[11px] text-subtle">
                       {f.dateTime(n.createdAt)} <Badge tone={n.origin === "demo" ? "demo" : "neutral"}>{t(`alerts.origins.${n.origin}`)}</Badge>

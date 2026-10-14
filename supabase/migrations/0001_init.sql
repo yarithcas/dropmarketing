@@ -55,7 +55,11 @@ create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare org uuid;
 begin
-  insert into public.profiles (user_id, name) values (new.id, coalesce(new.raw_user_meta_data ->> 'name', split_part(new.email, '@', 1)));
+  insert into public.profiles (user_id, name, locale) values (
+    new.id,
+    coalesce(new.raw_user_meta_data ->> 'name', split_part(new.email, '@', 1)),
+    case when new.raw_user_meta_data ->> 'locale' in ('fr', 'en', 'es', 'de', 'it') then new.raw_user_meta_data ->> 'locale' else 'fr' end
+  );
   insert into public.organizations (name) values (coalesce(new.raw_user_meta_data ->> 'name', split_part(new.email, '@', 1)) || ' workspace') returning id into org;
   insert into public.organization_members (organization_id, user_id, role) values (org, new.id, 'owner');
   insert into public.subscriptions (organization_id, plan, status) values (org, 'free', 'active');
@@ -72,6 +76,7 @@ create table public.products (
   name text not null,
   category text not null,
   description text not null default '',
+  image_url text, -- only from authorized sources (licensed feed, supplier); null => generated thumbnail
   product_type text not null default 'physical',
   tags text[] not null default '{}',
   price_estimate numeric(12, 2),
@@ -80,6 +85,10 @@ create table public.products (
   channels text[] not null default '{}',
   countries text[] not null default '{}',
   shipping jsonb not null default '{"verified": false}',
+  -- Typed projections of verified sourcing data for server-side filtering
+  shipping_verified boolean generated always as (coalesce((shipping ->> 'verified')::boolean, false)) stored,
+  shipping_warehouse text generated always as (case when (shipping ->> 'verified')::boolean then shipping ->> 'warehouse' end) stored,
+  delivery_days_max smallint generated always as (case when (shipping ->> 'verified')::boolean then (shipping -> 'deliveryDays' ->> 1)::smallint end) stored,
   differentiation smallint check (differentiation between 0 and 100),
   first_detected date not null,
   last_detected date not null,
@@ -93,6 +102,7 @@ create table public.products (
   updated_at timestamptz not null default now()
 );
 create index products_category_idx on public.products (category);
+create index products_sourcing_idx on public.products (shipping_verified, shipping_warehouse, delivery_days_max);
 create index products_first_detected_idx on public.products (first_detected desc);
 create index products_tags_idx on public.products using gin (tags);
 create index products_countries_idx on public.products using gin (countries);

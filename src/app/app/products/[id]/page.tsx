@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Calculator, CheckCircle2, ChevronDown, CircleAlert, ExternalLink, ListChecks, Sparkles, XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
+  BasisTag,
   CompetitionBadge,
   ConfidenceBadge,
   KeyValue,
@@ -27,6 +28,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { apiFetch, useApi } from "@/lib/client/use-api";
+import { errorKey } from "@/lib/client/errors";
 import { useFormat } from "@/lib/format";
 import { useLocale } from "@/lib/i18n/provider";
 import { NORMALIZATION, SCORE_WEIGHTS, type TrendValue } from "@/lib/scoring";
@@ -100,7 +102,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     try {
       setAnalysis(await apiFetch<AnalystResponse>("/api/ai/analyst", { method: "POST", body: JSON.stringify({ question: t("product.aiQuestion", { name: p.name }), productIds: [p.id], locale }) }));
     } catch (e) {
-      setAnalysisError((e as { code?: string }).code === "limit_reached" ? t("billing.limitReached") : t("errors.generic"));
+      setAnalysisError(t(errorKey(e)));
     } finally {
       setAnalyzing(false);
     }
@@ -125,7 +127,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         }
         title={
           <span className="flex items-center gap-3">
-            <Thumb category={p.category} hue={p.hue} className="size-12 shrink-0" />
+            <Thumb category={p.category} hue={p.hue} src={p.imageUrl} label={p.name} className="size-12 shrink-0" />
             {p.name}
           </span>
         }
@@ -171,7 +173,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <li key={c.key}>
                   <div className="mb-1 flex items-center justify-between text-xs">
                     <span className="text-muted">
-                      {t(`score.components.${c.key}`)} <span className="text-subtle">· {f.pct(c.weight * 100)}</span>
+                      {t(`score.components.${c.key}`)} <span className="text-subtle">· {f.pct(c.weight * 100)}</span> <BasisTag basis={c.basis} />
                     </span>
                     <span className="num text-fg">{c.value == null ? t("score.missing") : c.value}</span>
                   </div>
@@ -207,17 +209,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <CardHeader title={t("product.facts")} action={<SourceLine connector={p.source.connector} observedAt={p.source.observedAt} />} />
           <CardBody className="grid gap-x-8 sm:grid-cols-2">
             <dl className="divide-y divide-border/60">
-              <KeyValue label={t("product.priceEstimate")} tip={t("provenance.estimateTip")}>
+              <KeyValue basis="estimate" label={t("product.priceEstimate")} tip={t("provenance.estimateTip")}>
                 <span className="num">{f.currency(p.priceEstimate, p.currency)}</span>
               </KeyValue>
-              <KeyValue label={t("product.costEstimate")} tip={t("product.costTip")}>
+              <KeyValue basis="estimate" label={t("product.costEstimate")} tip={t("product.costTip")}>
                 <span className="num">{f.currency(p.supplierCostEstimate, p.currency)}</span>
               </KeyValue>
-              <KeyValue label={t("product.marginEstimate")} tip={t("product.marginTip")}>
+              <KeyValue basis="estimate" label={t("product.marginEstimate")} tip={t("product.marginTip")}>
                 <span className="num">{m.grossMargin == null ? t("score.insufficient") : f.pct(m.grossMargin * 100, 1)}</span>
               </KeyValue>
-              <KeyValue label={t("product.firstDetected")}>{f.date(p.firstDetected)}</KeyValue>
-              <KeyValue label={t("product.lastDetected")}>{f.date(p.lastDetected)}</KeyValue>
+              <KeyValue basis="measured" label={t("product.firstDetected")}>{f.date(p.firstDetected)}</KeyValue>
+              <KeyValue basis="measured" label={t("product.lastDetected")}>{f.date(p.lastDetected)}</KeyValue>
               <KeyValue label={t("product.productType")}>{t(`productTypes.${p.productType}`)}</KeyValue>
               <KeyValue label={t("product.shipping")}>
                 {p.shipping.verified ? (
@@ -230,19 +232,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </KeyValue>
             </dl>
             <dl className="divide-y divide-border/60">
-              <KeyValue label={t("product.adsObserved")} tip={t("product.adsObservedTip")}>
+              <KeyValue basis="measured" label={t("product.adsObserved")} tip={t("product.adsObservedTip")}>
                 <span className="num">{m.adsObserved}</span>
               </KeyValue>
-              <KeyValue label={t("product.adsActive")}>
+              <KeyValue basis="measured" label={t("product.adsActive")}>
                 <span className="num">{m.adsActive}</span>
               </KeyValue>
-              <KeyValue label={t("product.advertisers")}>
+              <KeyValue basis="measured" label={t("product.advertisers")}>
                 <span className="num">{m.advertisersObserved}</span>
               </KeyValue>
-              <KeyValue label={t("product.storesObserved")}>
+              <KeyValue basis="measured" label={t("product.storesObserved")}>
                 <span className="num">{m.storesObserved}</span>
               </KeyValue>
-              <KeyValue label={t("product.competition")} tip={t("product.saturationTip", { n: m.saturation })}>
+              <KeyValue basis="estimate" label={t("product.competition")} tip={t("product.saturationTip", { n: m.saturation })}>
                 <CompetitionBadge level={m.competition} />
               </KeyValue>
               <KeyValue label={t("product.channels")}>

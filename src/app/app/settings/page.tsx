@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/client/session";
 import { CURRENCIES, useCurrency, type CurrencyCode } from "@/lib/client/prefs";
 import { apiFetch, useApi } from "@/lib/client/use-api";
+import { errorKey } from "@/lib/client/errors";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { useWorkspace } from "@/lib/client/workspace";
 import { useFormat } from "@/lib/format";
@@ -156,8 +157,8 @@ function BillingTab() {
         const { url: checkout } = await apiFetch<{ url: string }>("/api/billing/checkout", { method: "POST", body: JSON.stringify({ plan }) });
         window.location.href = checkout;
       }
-    } catch {
-      toast(t("errors.generic"), "error");
+    } catch (e) {
+      toast(t(errorKey(e)), "error");
     } finally {
       setBusy(null);
     }
@@ -188,8 +189,8 @@ function BillingTab() {
                   try {
                     const { url: portal } = await apiFetch<{ url: string }>("/api/billing/portal", { method: "POST" });
                     window.location.href = portal;
-                  } catch {
-                    toast(t("errors.generic"), "error");
+                  } catch (e) {
+                    toast(t(errorKey(e)), "error");
                     setBusy(null);
                   }
                 }}
@@ -385,8 +386,8 @@ function PrivacyTab() {
       await refresh();
       toast(t("privacy.deleted"));
       router.push("/");
-    } catch {
-      toast(t("errors.generic"), "error");
+    } catch (e) {
+      toast(t(errorKey(e)), "error");
     }
   };
   return (

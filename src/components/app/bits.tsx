@@ -59,9 +59,17 @@ export function PageHeader({ title, description, actions, eyebrow }: { title: Re
   );
 }
 
-/** Generated, copyright-free thumbnail: category glyph on a deterministic gradient. */
-export function Thumb({ category, hue, className, label }: { category: Category; hue: number; className?: string; label?: string }) {
+/**
+ * Product/store visual. Shows an image only when an authorized source supplied one;
+ * otherwise a generated, copyright-free thumbnail (category glyph on a deterministic gradient).
+ */
+export function Thumb({ category, hue, className, label, src }: { category: Category; hue: number; className?: string; label?: string; src?: string | null }) {
   const Icon = CATEGORY_ICON[category] ?? Sparkle;
+  if (src && /^https:\/\//.test(src))
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- remote hosts vary per licensed provider
+      <img src={src} alt={label ?? ""} loading="lazy" referrerPolicy="no-referrer" className={cn("rounded-lg bg-surface-3 object-cover", className)} />
+    );
   return (
     <div
       role="img"
@@ -196,9 +204,10 @@ export function PlatformBadge({ platform }: { platform: Platform }) {
 }
 
 export function InfoTip({ content }: { content: ReactNode }) {
+  const { t } = useTranslation();
   return (
     <Tooltip content={content}>
-      <button type="button" className="focus-ring inline-flex rounded text-subtle hover:text-fg" aria-label={typeof content === "string" ? content : "info"}>
+      <button type="button" className="focus-ring inline-flex rounded text-subtle hover:text-fg" aria-label={typeof content === "string" ? content : t("common.info")}>
         <Info className="size-3.5" />
       </button>
     </Tooltip>
@@ -218,11 +227,23 @@ export function Stat({ label, value, hint, tip, className }: { label: ReactNode;
   );
 }
 
-export function KeyValue({ label, children, tip }: { label: ReactNode; children: ReactNode; tip?: ReactNode }) {
+export function BasisTag({ basis }: { basis: "measured" | "estimate" }) {
+  const { t } = useTranslation();
+  return (
+    <Tooltip content={t(`provenance.${basis}Tip`)}>
+      <span className={cn("rounded px-1 py-px text-[9px] font-semibold uppercase tracking-wide", basis === "measured" ? "bg-good/10 text-[#5fd35f]" : "bg-warn/10 text-warn")}>
+        {t(`provenance.${basis}Short`)}
+      </span>
+    </Tooltip>
+  );
+}
+
+export function KeyValue({ label, children, tip, basis }: { label: ReactNode; children: ReactNode; tip?: ReactNode; basis?: "measured" | "estimate" }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2 text-sm">
       <dt className="flex items-center gap-1.5 text-subtle">
         {label}
+        {basis ? <BasisTag basis={basis} /> : null}
         {tip ? <InfoTip content={tip} /> : null}
       </dt>
       <dd className="text-right text-fg">{children}</dd>

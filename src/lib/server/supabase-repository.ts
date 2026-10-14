@@ -36,6 +36,7 @@ export function rowToProduct(r: Row): Product {
     lastDetected: r.last_detected as string,
     source: { connector: r.source_connector as string, kind: r.is_demo ? "demo" : (r.source_kind as Product["source"]["kind"]), observedAt: r.observed_at as string, url: (r.source_url as string) ?? undefined },
     hue: Number(r.hue ?? 0),
+    imageUrl: (r.image_url as string) ?? null,
   };
 }
 
@@ -109,7 +110,10 @@ export async function listProductsDb(db: SupabaseClient, q: ProductQuery): Promi
   if (q.priceMax != null) query = query.lte("price_estimate", q.priceMax);
   if (q.firstFrom) query = query.gte("first_detected", q.firstFrom);
   if (q.firstTo) query = query.lte("first_detected", q.firstTo);
-  if (q.shippingVerified != null) query = query.eq("shipping->>verified", String(q.shippingVerified));
+  // Typed generated columns (see migration) so comparisons are numeric, not textual.
+  if (q.shippingVerified != null) query = query.eq("shipping_verified", q.shippingVerified);
+  if (q.warehouse.length) query = query.in("shipping_warehouse", q.warehouse);
+  if (q.maxDeliveryDays != null) query = query.lte("delivery_days_max", q.maxDeliveryDays);
   if (q.competition.length) query = query.in("product_metrics.competition", q.competition);
   if (q.marginMin != null) query = query.gte("product_metrics.gross_margin", q.marginMin / 100);
   if (q.growthMin != null) query = query.gte("product_metrics.trend_growth_30d", q.growthMin);

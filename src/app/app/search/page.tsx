@@ -5,7 +5,7 @@ import Link from "next/link";
 import { SearchX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { searchLinks, type SearchResults } from "@/components/app/global-search";
-import { PageHeader } from "@/components/app/bits";
+import { PageHeader, TrendPill } from "@/components/app/bits";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
@@ -47,7 +47,11 @@ function SearchInner() {
                         <Link href={l.href} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-2">
                           <Icon className="size-4 text-subtle" />
                           <span className="truncate">{g === "niches" && l.label.length < 12 ? t(`categories.${l.label}`, { defaultValue: l.label }) : l.label}</span>
-                          <span className="ml-auto truncate text-xs text-subtle">{g === "products" ? t(`categories.${l.meta}`) : l.meta}</span>
+                          {l.growth !== undefined ? (
+                            <TrendPill pct={l.growth} className="ml-auto" />
+                          ) : (
+                            <span className="ml-auto truncate text-xs text-subtle">{g === "products" ? t(`categories.${l.meta}`) : l.meta}</span>
+                          )}
                         </Link>
                       </li>
                     );

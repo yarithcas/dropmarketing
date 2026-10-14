@@ -12,10 +12,11 @@ import { SessionProvider, useSession } from "@/lib/client/session";
 import { WorkspaceProvider, useWorkspace } from "@/lib/client/workspace";
 import { apiFetch } from "@/lib/client/use-api";
 import { useFormat } from "@/lib/format";
+import { notificationParams } from "@/lib/notification-text";
 import { cn } from "@/lib/cn";
 import { GlobalSearch } from "./global-search";
 import { LanguageSelect } from "./language-select";
-import { NAV, TOOLS, type NavItem } from "./nav";
+import { NAV, type NavItem } from "./nav";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -30,7 +31,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 function NavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
   const pathname = usePathname();
   const { t } = useTranslation();
-  const active = item.href === "/app" ? pathname === "/app" : pathname.startsWith(item.href);
+  const active = item.href === "/app" ? pathname === "/app" : [item.href, ...(item.also ?? [])].some((h) => pathname.startsWith(h));
   const Icon = item.icon;
   return (
     <Link
@@ -62,12 +63,9 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         {NAV.map((item) => (
           <NavLink key={item.href} item={item} onNavigate={onNavigate} />
         ))}
-        <div className="label px-2.5 pb-1 pt-4">{t("nav.tools")}</div>
-        {TOOLS.map((item) => (
-          <NavLink key={item.href} item={item} onNavigate={onNavigate} />
-        ))}
       </nav>
-      <div className="border-t border-border p-3">
+      <div className="space-y-2 border-t border-border p-3">
+        <LanguageSelect className="w-full sm:hidden [&_select]:w-full" testId="sidebar-language-select" />
         <Link href="/app/settings?tab=billing" onClick={onNavigate} className="focus-ring block rounded-lg border border-border bg-surface-2 p-3 hover:bg-surface-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-subtle">{t("billing.currentPlan")}</span>
@@ -122,7 +120,7 @@ function NotificationsBell() {
                     }}
                     className="block text-sm hover:text-accent"
                   >
-                    {t(n.key, { ...n.params, category: typeof n.params.category === "string" ? t(`categories.${n.params.category}`) : n.params.category })}
+                    {t(n.key, notificationParams(n.params, f, (c) => t(`categories.${c}`)))}
                   </Link>
                   <div className="mt-1 flex items-center gap-2 text-[11px] text-subtle">
                     {f.dateTime(n.createdAt)}

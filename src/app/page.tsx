@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { SCORE_WEIGHTS } from "@/lib/scoring";
 import { cn } from "@/lib/cn";
+import { useFormat } from "@/lib/format";
 
 const FEATURES = [
   { key: "products", icon: Trophy },
@@ -38,11 +39,12 @@ const FEATURES = [
 
 function HeroPreview() {
   const { t } = useTranslation();
+  const f = useFormat();
   const rows = [
-    { name: "Smart Jump Rope with Counter", score: 81, trend: "+125%", w: 81 },
-    { name: "Interactive Cat Feather Toy", score: 80, trend: "+120%", w: 80 },
-    { name: "Mini Thermal Label Printer", score: 80, trend: "+150%", w: 80 },
-    { name: "Electric Spice Grinder (USB-C)", score: 72, trend: "+79%", w: 72 },
+    { name: "Smart Jump Rope with Counter", score: 81, trend: 125 },
+    { name: "Interactive Cat Feather Toy", score: 80, trend: 120 },
+    { name: "Mini Thermal Label Printer", score: 80, trend: 150 },
+    { name: "Electric Spice Grinder (USB-C)", score: 72, trend: 79 },
   ];
   const bars = [18, 22, 20, 27, 31, 29, 36, 41, 39, 47, 52, 58, 55, 63];
   return (
@@ -62,9 +64,9 @@ function HeroPreview() {
           <div className="space-y-3 md:col-span-3">
             <div className="grid grid-cols-3 gap-3">
               {[
-                [t("landing.preview.tracked"), "54"],
-                [t("landing.preview.activeAds"), "212"],
-                [t("landing.preview.newWeek"), "38"],
+                [t("landing.preview.tracked"), f.number(54)],
+                [t("landing.preview.activeAds"), f.number(212)],
+                [t("landing.preview.newWeek"), f.number(38)],
               ].map(([l, v]) => (
                 <div key={l} className="rounded-lg border border-border bg-surface-2 p-3">
                   <div className="text-[11px] text-subtle">{l}</div>
@@ -88,13 +90,13 @@ function HeroPreview() {
                 <li key={r.name}>
                   <div className="flex items-center justify-between text-xs">
                     <span className="truncate">{r.name}</span>
-                    <span className="num text-[#3fcf3f]">{r.trend}</span>
+                    <span className="num text-good">{f.pct(r.trend, 0, true)}</span>
                   </div>
                   <div className="mt-1 flex items-center gap-2">
                     <div className="h-1.5 flex-1 rounded-full bg-surface-3">
-                      <div className="h-1.5 rounded-full bg-accent" style={{ width: `${r.w}%` }} />
+                      <div className="h-1.5 rounded-full bg-accent" style={{ width: `${r.score}%` }} />
                     </div>
-                    <span className="num text-[11px] text-muted">{r.score}</span>
+                    <span className="num text-[11px] text-muted">{f.number(r.score)}</span>
                   </div>
                 </li>
               ))}

@@ -124,7 +124,16 @@ export function scoreProduct(product: Product, metrics: ProductMetrics, obs: Pro
   const trendPct = t30.pct ?? t7.pct;
   const daysSince = daysBetween(product.lastDetected, asOf);
 
+  const BASIS: Record<ScoreComponent["key"], ScoreComponent["basis"]> = {
+    trend: "measured",
+    ads: "measured",
+    freshness: "measured",
+    margin: "estimate",
+    competition: "estimate",
+    differentiation: "estimate",
+  };
   const comp = (key: ScoreComponent["key"], value: number | null, provenance: ScoreComponent["provenance"]): ScoreComponent => ({
+    basis: BASIS[key],
     key,
     weight: SCORE_WEIGHTS[key],
     value: value == null ? null : Math.round(value),
@@ -163,10 +172,13 @@ export function scoreProduct(product: Product, metrics: ProductMetrics, obs: Pro
   const wsum = available.reduce((s, c) => s + c.weight, 0);
   const overall = insufficientReasons.length || wsum === 0 ? null : Math.round(available.reduce((s, c) => s + c.weight * (c.value as number), 0) / wsum);
 
+  // Differentiation is an analyst estimate that live connectors cannot measure; its absence
+  // lowers the score's coverage but not the confidence in the measured evidence.
+  const missingCore = missing.filter((c) => c.key !== "differentiation");
   const confidence: Confidence =
-    missing.length === 0 && metrics.observationCount >= 60 && metrics.adsObserved >= 10 && daysSince <= 7
+    missingCore.length === 0 && metrics.observationCount >= 60 && metrics.adsObserved >= 10 && daysSince <= 7
       ? "high"
-      : metrics.observationCount >= 21 && metrics.adsObserved >= 5 && missing.length <= 1
+      : metrics.observationCount >= 21 && metrics.adsObserved >= 5 && missingCore.length <= 1
         ? "medium"
         : "low";
 

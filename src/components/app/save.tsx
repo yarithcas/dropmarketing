@@ -1,0 +1,131 @@
+"use client";
+
+import { useState } from "react";
+import { Bookmark, BookmarkCheck, Eye, EyeOff, Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Field, Input, Textarea } from "@/components/ui/input";
+import { useWorkspace } from "@/lib/client/workspace";
+import type { ItemType } from "@/lib/workspace";
+import { cn } from "@/lib/cn";
+
+export function SaveButton({ type, refId, label, size = "sm", variant = "secondary", iconOnly = false, preferSwipe = false }: { type: ItemType; refId: string; label: string; size?: "sm" | "md" | "icon-sm"; variant?: "secondary" | "ghost" | "primary"; iconOnly?: boolean; preferSwipe?: boolean }) {
+  const { t } = useTranslation();
+  const { isSaved } = useWorkspace();
+  const [open, setOpen] = useState(false);
+  const saved = isSaved(type, refId);
+  return (
+    <>
+      <Button
+        size={iconOnly ? "icon-sm" : size}
+        variant={variant}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(true);
+        }}
+        aria-label={saved ? t("collections.saved") : t("collections.save")}
+        data-testid="save-button"
+      >
+        {saved ? <BookmarkCheck className="text-accent" /> : <Bookmark />}
+        {!iconOnly && (saved ? t("collections.saved") : t("collections.save"))}
+      </Button>
+      {open && <SaveDialog type={type} refId={refId} label={label} preferSwipe={preferSwipe} onClose={() => setOpen(false)} />}
+    </>
+  );
+}
+
+function SaveDialog({ type, refId, label, onClose, preferSwipe }: { type: ItemType; refId: string; label: string; onClose: () => void; preferSwipe: boolean }) {
+  const { t } = useTranslation();
+  const { workspace, dispatch } = useWorkspace();
+  const swipe = workspace.collections.find((c) => c.kind === "swipe");
+  const [selected, setSelected] = useState<string>((preferSwipe && swipe?.id) || workspace.collections[0]?.id || "");
+  const [note, setNote] = useState("");
+  const [tags, setTags] = useState("");
+  const [newName, setNewName] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const create = async () => {
+    if (!newName.trim()) return;
+    const ok = await dispatch({ op: "collection.create", name: newName.trim(), description: "", kind: "standard" });
+    if (ok) setNewName("");
+  };
+
+  const save = async () => {
+    if (!selected) return;
+    setBusy(true);
+    const ok = await dispatch(
+      { op: "item.add", collectionId: selected, type, refId, label, note, tags: tags.split(",").map((s) => s.trim()).filter(Boolean) },
+      t("collections.savedTo", { name: workspace.collections.find((c) => c.id === selected)?.name ?? "" }),
+    );
+    setBusy(false);
+    if (ok) onClose();
+  };
+
+  return (
+    <Dialog
+      open
+      onClose={onClose}
+      title={t("collections.saveTitle")}
+      description={label}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={save} disabled={!selected || busy} data-testid="confirm-save">
+            {t("collections.save")}
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-4">
+        <div className="space-y-1.5">
+          <div className="text-xs font-medium text-muted">{t("collections.chooseCollection")}</div>
+          <div className="max-h-56 space-y-1 overflow-y-auto">
+            {workspace.collections.map((c) => {
+              const already = c.items.some((i) => i.type === type && i.refId === refId);
+              return (
+                <label key={c.id} className={cn("flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm", selected === c.id ? "border-accent/50 bg-accent/10" : "border-border hover:bg-surface-2", already && "opacity-60")}>
+                  <input type="radio" name="collection" className="accent-[rgb(var(--accent))]" checked={selected === c.id} onChange={() => setSelected(c.id)} disabled={already} />
+                  <span className="flex-1 truncate">{c.kind === "swipe" ? t("collections.swipeFile") : c.name}</span>
+                  <span className="text-xs text-subtle">{already ? t("collections.alreadyIn") : c.items.length}</span>
+                </label>
+              );
+            })}
+          </div>
+          <div className="flex gap-2 pt-1">
+            <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t("collections.newPlaceholder")} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), create())} />
+            <Button variant="secondary" onClick={create} disabled={!newName.trim()}>
+              <Plus /> {t("common.create")}
+            </Button>
+          </div>
+        </div>
+        <Field label={t("collections.note")}>
+          <Textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} placeholder={t("collections.notePlaceholder")} />
+        </Field>
+        <Field label={t("collections.tags")} hint={t("collections.tagsHint")}>
+          <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="test, q4, fitness" />
+        </Field>
+      </div>
+    </Dialog>
+  );
+}
+
+export function WatchButton({ type, refId, label, size = "sm" }: { type: "product" | "store" | "category"; refId: string; label: string; size?: "sm" | "md" }) {
+  const { t } = useTranslation();
+  const { watchId, dispatch } = useWorkspace();
+  const id = watchId(type, refId);
+  return (
+    <Button
+      size={size}
+      variant="secondary"
+      onClick={() => (id ? dispatch({ op: "watch.remove", id }, t("watchlist.removed")) : dispatch({ op: "watch.add", type, refId, label }, t("watchlist.added")))}
+      data-testid="watch-button"
+    >
+      {id ? <EyeOff /> : <Eye />}
+      {id ? t("watchlist.unwatch") : t("watchlist.watch")}
+    </Button>
+  );
+}

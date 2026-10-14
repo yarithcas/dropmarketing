@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (RGB triplets so Tailwind can apply alpha). Dark is the primary theme. */
+:root {
+  --bg: 8 8 11;
+  --surface: 16 16 20;
+  --surface-2: 22 22 28;
+  --surface-3: 31 31 39;
+  --border: 39 39 48;
+  --fg: 244 244 246;
+  --muted: 161 161 173;
+  --subtle: 113 113 125;
+  --accent: 99 112 255;
+  --accent-2: 168 85 247;
+  --good: 12 163 12;
+  --warn: 250 178 25;
+  --serious: 236 131 90;
+  --critical: 208 59 59;
+
+  /* Chart tokens (validated categorical palette, dark steps) */
+  --chart-1: #3987e5;
+  --chart-2: #d95926;
+  --chart-3: #199e70;
+  --chart-4: #c98500;
+  --chart-5: #d55181;
+  --chart-grid: #2c2c2a;
+  --chart-axis: #898781;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: 248 248 250;
+  --surface: 255 255 255;
+  --surface-2: 244 244 247;
+  --surface-3: 233 233 238;
+  --border: 222 222 230;
+  --fg: 17 17 24;
+  --muted: 82 82 96;
+  --subtle: 120 120 135;
+  --accent: 79 90 235;
+  --accent-2: 147 51 234;
+  --chart-1: #2a78d6;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --chart-grid: #e1e0d9;
+  --chart-axis: #898781;
+  color-scheme: light;
+}
+
+html,
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+}
+
+body {
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-border bg-surface;
+  }
+  .label {
+    @apply text-[11px] font-medium uppercase tracking-wider text-subtle;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent via-[#8b7bff] to-accent-2 bg-clip-text text-transparent;
+  }
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+  }
+  .table-th {
+    @apply whitespace-nowrap px-3 py-2 text-left text-[11px] font-medium uppercase tracking-wider text-subtle;
+  }
+  .table-td {
+    @apply whitespace-nowrap px-3 py-2.5 text-sm;
+  }
+}
+
+.bg-grid {
+  background-image: linear-gradient(rgb(var(--border) / 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--border) / 0.5) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgb(var(--surface-3));
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.05), transparent);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Recharts polish */
+.recharts-cartesian-grid line {
+  stroke: var(--chart-grid);
+}
+.recharts-text {
+  fill: var(--chart-axis);
+  font-size: 11px;
+}
+
+/* Print / PDF export */
+@media print {
+  :root {
+    --bg: 255 255 255;
+    --surface: 255 255 255;
+    --surface-2: 247 247 247;
+    --surface-3: 238 238 238;
+    --border: 210 210 210;
+    --fg: 10 10 10;
+    --muted: 60 60 60;
+    --subtle: 90 90 90;
+    color-scheme: light;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-full {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  .card {
+    break-inside: avoid;
+  }
+}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import type { ProductWithMetrics } from "@/lib/types";
 import { useFormat } from "@/lib/format";
-import { CompetitionBadge, ScoreBadge, Thumb, TrendPill } from "./bits";
+import { CompetitionBadge, ConfidenceBadge, ScoreBadge, Thumb, TrendPill } from "./bits";
 import { SaveButton } from "./save";
 
 export function ProductCard({ p }: { p: ProductWithMetrics }) {
@@ -14,8 +14,9 @@ export function ProductCard({ p }: { p: ProductWithMetrics }) {
     <Link href={`/app/products/${p.id}`} className="card focus-ring group flex flex-col overflow-hidden transition-colors hover:border-accent/40" data-testid="product-card">
       <div className="relative">
         <Thumb category={p.category} hue={p.hue} className="h-32 rounded-none" label={p.name} />
-        <div className="absolute left-2.5 top-2.5">
+        <div className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1">
           <ScoreBadge score={p.score.overall} className="bg-bg/80 backdrop-blur" />
+          {p.score.overall != null && p.score.confidence === "low" ? <ConfidenceBadge level="low" /> : null}
         </div>
         <div className="absolute right-2 top-2 opacity-90">
           <SaveButton type="product" refId={p.id} label={p.name} iconOnly variant="secondary" />

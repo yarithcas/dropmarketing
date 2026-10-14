@@ -64,8 +64,10 @@ export interface ProfitResult {
 
 /** Round half away from zero to `dp` decimals, avoiding binary float artefacts. */
 export function round(n: number, dp = 2): number {
+  if (!Number.isFinite(n)) return n;
   const f = 10 ** dp;
-  return Math.sign(n) * Math.round(Math.abs(n) * f + Number.EPSILON) / f;
+  // toPrecision(15) removes binary artefacts before rounding (1.005 * 100 = 100.49999…).
+  return (Math.sign(n) * Math.round(Number((Math.abs(n) * f).toPrecision(15)))) / f || 0;
 }
 
 const pct = (num: number, den: number) => (den > 0 ? round((num / den) * 100, 1) : null);

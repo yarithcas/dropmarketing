@@ -219,7 +219,7 @@ function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="no-print sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border bg-surface/60 lg:block">
+      <aside className="no-print sticky top-0 hidden h-screen w-64 shrink-0 border-r border-border bg-surface/60 lg:block">
         <Sidebar />
       </aside>
       {mobileOpen && (

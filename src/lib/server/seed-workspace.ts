@@ -2,9 +2,23 @@ import "server-only";
 import { allProducts, datasetForEngines } from "./repository";
 import { daysBetween } from "../dates";
 import type { Workspace } from "../workspace";
+import { DEFAULT_LOCALE, type Locale } from "../i18n/config";
+import fr from "@/locales/fr.json";
+import en from "@/locales/en.json";
+import es from "@/locales/es.json";
+import de from "@/locales/de.json";
+import it from "@/locales/it.json";
+
+const SEED = { fr: fr.seed, en: en.seed, es: es.seed, de: de.seed, it: it.seed };
+
+function seedText(locale: Locale) {
+  const s = SEED[locale] ?? SEED[DEFAULT_LOCALE];
+  return { ...s, ruleStore: (name: string) => s.ruleStore.replace("{{name}}", name) };
+}
 
 /** Example workspace for demo visitors, built from real demo-dataset ids. */
-export function demoWorkspace(now = new Date().toISOString()): Workspace {
+export function demoWorkspace(locale: Locale = DEFAULT_LOCALE, now = new Date().toISOString()): Workspace {
+  const tx = seedText(locale);
   const d = datasetForEngines();
   const products = allProducts();
   const scored = products.filter((p) => p.score.overall != null).sort((a, b) => (b.score.overall as number) - (a.score.overall as number));
@@ -22,16 +36,16 @@ export function demoWorkspace(now = new Date().toISOString()): Workspace {
     collections: [
       {
         id: "seed_col_test",
-        name: "Products to Test",
-        description: "Shortlist for small-budget validation tests.",
+        name: tx.collections.test.name,
+        description: tx.collections.test.description,
         kind: "standard",
         createdAt: now,
-        items: scored.slice(0, 4).map((p) => item("product", p.id, p.name, "Verify supplier quote before testing.", ["test"])),
+        items: scored.slice(0, 4).map((p) => item("product", p.id, p.name, tx.note, ["test"])),
       },
       {
         id: "seed_col_fitness",
-        name: "Trending Fitness Products",
-        description: "Fitness products with rising observed ad activity.",
+        name: tx.collections.fitness.name,
+        description: tx.collections.fitness.description,
         kind: "standard",
         createdAt: now,
         items: products
@@ -40,16 +54,16 @@ export function demoWorkspace(now = new Date().toISOString()): Workspace {
       },
       {
         id: "seed_col_ads",
-        name: "Competitor Ad Inspiration",
-        description: "Long-running creatives to study (observation length is not proof of profitability).",
+        name: tx.collections.ads.name,
+        description: tx.collections.ads.description,
         kind: "standard",
         createdAt: now,
         items: longAds.slice(0, 4).map((a) => item("ad", a.id, `${a.advertiser} — ${a.headline}`, "", ["inspiration"])),
       },
       {
         id: "seed_col_margin",
-        name: "High-Margin Opportunities",
-        description: "Estimated gross margin ≥ 75% (estimates, not supplier quotes).",
+        name: tx.collections.margin.name,
+        description: tx.collections.margin.description,
         kind: "standard",
         createdAt: now,
         items: products
@@ -73,7 +87,7 @@ export function demoWorkspace(now = new Date().toISOString()): Workspace {
     alertRules: [
       {
         id: "seed_rule_fitness",
-        name: "Fitness trend +30%",
+        name: tx.ruleFitness,
         type: "trend_increase",
         target: { category: "fitness" },
         thresholdPct: 30,
@@ -84,7 +98,7 @@ export function demoWorkspace(now = new Date().toISOString()): Workspace {
       },
       {
         id: "seed_rule_summary",
-        name: "Daily opportunities summary",
+        name: tx.ruleSummary,
         type: "daily_summary",
         target: {},
         frequency: "daily",
@@ -94,7 +108,7 @@ export function demoWorkspace(now = new Date().toISOString()): Workspace {
       },
       ...d.stores.slice(0, 1).map((s) => ({
         id: "seed_rule_store",
-        name: `New products at ${s.name}`,
+        name: tx.ruleStore(s.name),
         type: "competitor_new_products" as const,
         target: { storeId: s.id },
         frequency: "weekly" as const,

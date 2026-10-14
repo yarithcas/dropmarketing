@@ -20,6 +20,11 @@ export function useText() {
       if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) params[k] = f.date(v);
     }
     if (typeof params.category === "string" && params.category) params.category = t(`categories.${params.category}`, { defaultValue: params.category });
+    if (typeof params.categories === "string" && params.categories)
+      params.categories = params.categories
+        .split(", ")
+        .map((c) => t(`categories.${c}`, { defaultValue: c }))
+        .join(", ");
     return t(x.key, params);
   };
 }

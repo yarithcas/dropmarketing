@@ -28,14 +28,16 @@ const FIELDS: { key: keyof ProfitInputs; unit: "money" | "pct" | "count"; step: 
   { key: "fixedMonthlyCosts", unit: "money", step: "1" },
 ];
 
-function Output({ label, value, tip, tone, big }: { label: string; value: string; tip?: string; tone?: "good" | "bad"; big?: boolean }) {
+function Output({ label, value, tip, tone, big, id }: { label: string; value: string; tip?: string; tone?: "good" | "bad"; big?: boolean; id?: string }) {
   return (
     <div className="rounded-lg border border-border bg-surface-2/60 p-3">
       <div className="flex items-center gap-1.5 text-xs text-subtle">
         {label}
         {tip ? <InfoTip content={tip} /> : null}
       </div>
-      <div className={cn("num mt-1 font-semibold", big ? "text-2xl" : "text-lg", tone === "good" && "text-[#3fcf3f]", tone === "bad" && "text-[#f07a7a]")}>{value}</div>
+      <div className={cn("num mt-1 font-semibold", big ? "text-2xl" : "text-lg", tone === "good" && "text-[#3fcf3f]", tone === "bad" && "text-[#f07a7a]")} data-testid={id ? `calc-out-${id}` : undefined}>
+        {value}
+      </div>
     </div>
   );
 }
@@ -119,9 +121,9 @@ function CalculatorInner() {
               <CardBody className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <Output label={t("calculator.out.grossMargin")} value={`${money(r.grossMarginBeforeAds)} · ${f.pct(r.grossMarginBeforeAdsPct, 1)}`} tip={t("calculator.def.grossMargin")} />
                 <Output label={t("calculator.out.contribution")} value={`${money(r.contributionMargin)} · ${f.pct(r.contributionMarginPct, 1)}`} tip={t("calculator.def.contribution")} />
-                <Output label={t("calculator.out.breakEvenCpa")} value={money(r.breakEvenCpa)} tip={t("calculator.def.breakEvenCpa")} />
+                <Output id="breakEvenCpa" label={t("calculator.out.breakEvenCpa")} value={money(r.breakEvenCpa)} tip={t("calculator.def.breakEvenCpa")} />
                 <Output label={t("calculator.out.breakEvenRoas")} value={r.breakEvenRoas == null ? t("calculator.notReachable") : `${f.number(r.breakEvenRoas, 2)}×`} tip={t("calculator.def.breakEvenRoas")} />
-                <Output label={t("calculator.out.netContribution")} value={money(r.netContributionPerOrder)} tone={r.netContributionPerOrder >= 0 ? "good" : "bad"} tip={t("calculator.def.netContribution")} big />
+                <Output id="netContribution" label={t("calculator.out.netContribution")} value={money(r.netContributionPerOrder)} tone={r.netContributionPerOrder >= 0 ? "good" : "bad"} tip={t("calculator.def.netContribution")} big />
                 <Output label={t("calculator.out.impliedRoas")} value={r.impliedRoas == null ? "—" : `${f.number(r.impliedRoas, 2)}×`} tip={t("calculator.def.impliedRoas")} />
               </CardBody>
             </Card>

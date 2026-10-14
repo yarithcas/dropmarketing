@@ -120,7 +120,10 @@
     },
     "activityTitle": "Advertising activity",
     "activityDesc": "Daily active and newly observed ads, last 60 days up to {{date}}",
-    "series": { "activeAds": "Active ads", "newAds": "New ads" },
+    "series": {
+      "activeAds": "Active ads",
+      "newAds": "New ads"
+    },
     "trendingTitle": "Gaining traction (7 days)",
     "trendingDesc": "Active-ad growth vs the previous 7 days",
     "topTitle": "Highest opportunity scores",
@@ -218,11 +221,37 @@
     "BE": "Belgium",
     "NL": "Netherlands"
   },
-  "languages": { "fr": "French", "en": "English", "es": "Spanish", "de": "German", "it": "Italian" },
-  "platforms": { "meta": "Meta", "tiktok": "TikTok", "pinterest": "Pinterest", "google": "Google", "snapchat": "Snapchat" },
-  "formats": { "video": "Video", "image": "Image", "carousel": "Carousel" },
-  "cta": { "shop_now": "Shop now", "learn_more": "Learn more", "sign_up": "Sign up", "get_offer": "Get offer", "order_now": "Order now" },
-  "productTypes": { "physical": "Physical", "digital": "Digital", "subscription": "Subscription" },
+  "languages": {
+    "fr": "French",
+    "en": "English",
+    "es": "Spanish",
+    "de": "German",
+    "it": "Italian"
+  },
+  "platforms": {
+    "meta": "Meta",
+    "tiktok": "TikTok",
+    "pinterest": "Pinterest",
+    "google": "Google",
+    "snapchat": "Snapchat"
+  },
+  "formats": {
+    "video": "Video",
+    "image": "Image",
+    "carousel": "Carousel"
+  },
+  "cta": {
+    "shop_now": "Shop now",
+    "learn_more": "Learn more",
+    "sign_up": "Sign up",
+    "get_offer": "Get offer",
+    "order_now": "Order now"
+  },
+  "productTypes": {
+    "physical": "Physical",
+    "digital": "Digital",
+    "subscription": "Subscription"
+  },
   "competition": {
     "low": "Low",
     "medium": "Medium",
@@ -248,7 +277,12 @@
     "demoTip": "Synthetic sample data for exploring the product. It does not describe the real market.",
     "sourceLine": "Source: {{source}} · updated {{date}}"
   },
-  "ranges": { "24h": "24 hours", "7d": "7 days", "30d": "30 days", "90d": "90 days" },
+  "ranges": {
+    "24h": "24 hours",
+    "7d": "7 days",
+    "30d": "30 days",
+    "90d": "90 days"
+  },
   "trend": {
     "status": {
       "ok": "OK",
@@ -352,7 +386,11 @@
     "historyDesc": "Daily observations of advertising activity, stores and search interest",
     "growthVsPrev": "{{range}} vs previous",
     "historySources": "{{n}} daily observations. Search interest is an index (0–100) shown only when a source exists.",
-    "series": { "adsActive": "Active ads", "stores": "Stores", "searchInterest": "Search interest (index)" },
+    "series": {
+      "adsActive": "Active ads",
+      "stores": "Stores",
+      "searchInterest": "Search interest (index)"
+    },
     "aiTitle": "AI analysis",
     "aiDesc": "Generated from this product's records only. Treat as a hypothesis to validate.",
     "aiGenerate": "Generate analysis",
@@ -395,7 +433,10 @@
   "creative": {
     "title": "Ad Creative Analyzer",
     "subtitle": "Open a creative, break down its hook and persuasion, and generate original concepts. Save the best to your swipe file.",
-    "tabs": { "recent": "Recent", "long": "Long-running" },
+    "tabs": {
+      "recent": "Recent",
+      "long": "Long-running"
+    },
     "swipeEmpty": "Your swipe file is empty",
     "swipeEmptyText": "Save creatives from Ad Spy to build your swipe file.",
     "selectTitle": "Select a creative",
@@ -518,7 +559,10 @@
   "stores": {
     "title": "Shopify Store Intelligence",
     "subtitle": "Analyze publicly accessible storefronts: listings, displayed prices, technology and associated ads. Connect your own store to compare.",
-    "tabs": { "public": "Public stores", "mine": "My store" },
+    "tabs": {
+      "public": "Public stores",
+      "mine": "My store"
+    },
     "searchPlaceholder": "Store name, URL, domain, category or product keyword…",
     "resultCount_one": "{{count}} store",
     "resultCount_other": "{{count}} stores",
@@ -536,7 +580,10 @@
     "techVerifiedTip": "Storefront technology verified from public page signals.",
     "techUnverifiedTip": "Likely technology, not verified.",
     "unverified": "unverified",
-    "platforms": { "shopify": "Shopify", "woocommerce": "WooCommerce" },
+    "platforms": {
+      "shopify": "Shopify",
+      "woocommerce": "WooCommerce"
+    },
     "publicOnly": "Only publicly accessible storefront information is collected, in line with robots policies and site terms. Private analytics, sales and conversion data are never accessed.",
     "back": "Back to stores",
     "compare": "Compare",
@@ -548,7 +595,13 @@
     "unknown": "Not reliably available",
     "firstObserved": "First observed in TrendHunter",
     "socials": "Public social links",
-    "networks": { "instagram": "Instagram", "tiktok": "TikTok", "facebook": "Facebook", "pinterest": "Pinterest", "youtube": "YouTube" },
+    "networks": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "facebook": "Facebook",
+      "pinterest": "Pinterest",
+      "youtube": "YouTube"
+    },
     "snapshots": "Historical snapshots",
     "snapshotsDesc": "Number of public listings at each collection date",
     "publicListings": "Public listings",
@@ -600,7 +653,12 @@
     "syncOk": "OK",
     "syncFailed": "Last sync failed",
     "scopes": "Requested permissions",
-    "status": { "label": "Status", "connected": "Connected", "error": "Integration error", "revoked": "Access revoked" },
+    "status": {
+      "label": "Status",
+      "connected": "Connected",
+      "error": "Integration error",
+      "revoked": "Access revoked"
+    },
     "mockTitle": "Shopify credentials are not configured",
     "mockText": "Showing a mock store generated from demo data so you can explore the feature. Configure these server variables to connect a real store:",
     "shopDomain": "Your store domain",
@@ -663,7 +721,11 @@
     "emptyText": "Create a collection to start saving research.",
     "noItems": "This collection is empty",
     "noItemsText": "Use the bookmark button on products, ads and stores.",
-    "types": { "product": "Product", "ad": "Ad", "store": "Store" },
+    "types": {
+      "product": "Product",
+      "ad": "Ad",
+      "store": "Store"
+    },
     "compare": "Compare ({{n}})",
     "compareHint": "Tick 2–4 products to compare",
     "compareTitle": "Compare saved products",
@@ -677,7 +739,11 @@
     "removed": "Removed from watchlist",
     "emptyTitle": "Your watchlist is empty",
     "emptyText": "Watch products, stores or categories to create alerts on them.",
-    "types": { "product": "Product", "store": "Store", "category": "Category" }
+    "types": {
+      "product": "Product",
+      "store": "Store",
+      "category": "Category"
+    }
   },
   "workspace": {
     "errors": {
@@ -695,7 +761,10 @@
   "analyst": {
     "title": "AI Product Analyst",
     "subtitle": "Ask questions about the research data. Answers are grounded in platform records, with evidence, risks, missing information and confidence.",
-    "engine": { "claude": "Claude (AI provider)", "rules": "Rule-based analyst" },
+    "engine": {
+      "claude": "Claude (AI provider)",
+      "rules": "Rule-based analyst"
+    },
     "usage": "{{used}}/{{limit}} questions today",
     "emptyTitle": "What do you want to find out?",
     "emptyText": "Pick an example or ask your own question. Add products as context for analyses and comparisons.",
@@ -708,7 +777,14 @@
       "risks": "What risks should I consider before launching this product?",
       "checklist": "Build a launch checklist for my Shopify store."
     },
-    "intents": { "find": "Discovery", "analyze": "Product analysis", "compare": "Comparison", "angles": "Ad angles", "risks": "Risk review", "checklist": "Launch checklist" },
+    "intents": {
+      "find": "Discovery",
+      "analyze": "Product analysis",
+      "compare": "Comparison",
+      "angles": "Ad angles",
+      "risks": "Risk review",
+      "checklist": "Launch checklist"
+    },
     "placeholder": "Ask about products, niches, risks, angles…",
     "send": "Send",
     "thinking": "Analysing records…",
@@ -720,7 +796,14 @@
     "rulesNotice": "Rule-based analysis: no AI provider is configured. Statements are derived directly from record fields.",
     "aiFailedNotice": "The AI provider did not respond; showing the rule-based analysis instead.",
     "disclaimer": "AI-generated conclusions based on the records listed. Not financial advice and not a guarantee of results. Validate with small tests.",
-    "labels": { "why": "Why it was identified", "evidence": "Supporting evidence", "risks": "Potential risks", "missing": "Missing information", "validation": "Recommended validation tests", "sources": "Records" },
+    "labels": {
+      "why": "Why it was identified",
+      "evidence": "Supporting evidence",
+      "risks": "Potential risks",
+      "missing": "Missing information",
+      "validation": "Recommended validation tests",
+      "sources": "Records"
+    },
     "summary": {
       "find": "{{n}} products match your question, ranked by opportunity score and recent trend.",
       "findCategory": "{{n}} products in {{categories}} match your question, ranked by opportunity score and recent trend.",
@@ -732,7 +815,9 @@
       "risks": "Key risks to review before launching.",
       "checklist": "A practical launch checklist for a Shopify store."
     },
-    "rules": { "noStrongSignal": "No strong positive signal — consider this an exploratory candidate." },
+    "rules": {
+      "noStrongSignal": "No strong positive signal — consider this an exploratory candidate."
+    },
     "evidence": {
       "ads": "{{ads}} ads observed from {{advertisers}} advertisers ({{active}} active on the latest day)",
       "stores": "{{n}} stores observed selling it",
@@ -850,7 +935,11 @@
   "alerts": {
     "title": "Alerts & Watchlists",
     "subtitle": "Rules that notify you when watched products, categories or competitors change.",
-    "tabs": { "rules": "Rules", "watchlist": "Watchlist", "history": "History" },
+    "tabs": {
+      "rules": "Rules",
+      "watchlist": "Watchlist",
+      "history": "History"
+    },
     "monitoring": "Scheduled monitoring",
     "notScheduled": "Not connected — no background job or live data source is configured, so nothing is monitored automatically.",
     "noScanYet": "Configured — no successful scan yet.",
@@ -887,7 +976,11 @@
     "threshold": "Growth threshold (%)",
     "thresholdHint": "7-day growth of active ads vs the previous 7 days.",
     "frequency": "Frequency",
-    "frequencies": { "hourly": "Hourly", "daily": "Daily", "weekly": "Weekly" },
+    "frequencies": {
+      "hourly": "Hourly",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
     "channels": "Channels",
     "inApp": "In-app",
     "email": "Email",
@@ -914,8 +1007,17 @@
     "runHistory": "Check history",
     "noRuns": "No check has run yet.",
     "runSummary": "{{rules}} rules · {{matches}} matches",
-    "runStatus": { "success": "Success", "failed": "Failed", "skipped": "Skipped", "running": "Running" },
-    "origins": { "demo": "Demo check", "scheduled": "Scheduled", "manual": "Manual" },
+    "runStatus": {
+      "success": "Success",
+      "failed": "Failed",
+      "skipped": "Skipped",
+      "running": "Running"
+    },
+    "origins": {
+      "demo": "Demo check",
+      "scheduled": "Scheduled",
+      "manual": "Manual"
+    },
     "match": {
       "trend_increase": "{{name}}: active ads {{pct}}% over 7 days",
       "new_advertiser": "{{advertiser}} started advertising {{name}}",
@@ -928,7 +1030,11 @@
     "title": "Market Reports",
     "subtitle": "Automatically generated research reports with sources and collection dates. Export as PDF or CSV.",
     "marketTitle": "Market report — {{category}}",
-    "kinds": { "weekly": "Weekly opportunities", "competitive": "Competitive landscape", "market": "Market report" },
+    "kinds": {
+      "weekly": "Weekly opportunities",
+      "competitive": "Competitive landscape",
+      "market": "Market report"
+    },
     "kindDesc": {
       "weekly": "Opportunities observed in the last 7 days, all categories.",
       "competitive": "Stores, listings and advertising presence across the market.",
@@ -1008,9 +1114,18 @@
     "exportLocked": "Exports are available on Pro and Business plans."
   },
   "plans": {
-    "free": { "name": "Free", "tagline": "Explore the platform with limited searches and a basic trend dashboard." },
-    "pro": { "name": "Pro", "tagline": "For solo founders testing products every week." },
-    "business": { "name": "Business", "tagline": "For teams and agencies running research at scale." }
+    "free": {
+      "name": "Free",
+      "tagline": "Explore the platform with limited searches and a basic trend dashboard."
+    },
+    "pro": {
+      "name": "Pro",
+      "tagline": "For solo founders testing products every week."
+    },
+    "business": {
+      "name": "Business",
+      "tagline": "For teams and agencies running research at scale."
+    }
   },
   "pricing": {
     "title": "Simple, transparent pricing",
@@ -1058,7 +1173,13 @@
   "settings": {
     "title": "Settings & Subscription",
     "subtitle": "Preferences, plan and usage, integrations, team and privacy.",
-    "tabs": { "profile": "Profile", "billing": "Plan & billing", "integrations": "Integrations", "team": "Team", "privacy": "Privacy & data" },
+    "tabs": {
+      "profile": "Profile",
+      "billing": "Plan & billing",
+      "integrations": "Integrations",
+      "team": "Team",
+      "privacy": "Privacy & data"
+    },
     "preferences": "Preferences",
     "language": "Language",
     "currency": "Display currency",
@@ -1072,20 +1193,56 @@
   "integrations": {
     "services": "Platform services",
     "servicesDesc": "Server-side services. Secret values are never displayed.",
-    "serviceNames": { "supabase": "Database & authentication", "anthropic": "AI provider", "stripe": "Payments", "email": "Email delivery", "cron": "Scheduled jobs" },
-    "serviceDesc": { "supabase": "Supabase · PostgreSQL", "anthropic": "Anthropic Claude", "stripe": "Stripe Billing", "email": "Resend", "cron": "Background scans" },
+    "serviceNames": {
+      "supabase": "Database & authentication",
+      "anthropic": "AI provider",
+      "stripe": "Payments",
+      "email": "Email delivery",
+      "cron": "Scheduled jobs"
+    },
+    "serviceDesc": {
+      "supabase": "Supabase · PostgreSQL",
+      "anthropic": "Anthropic Claude",
+      "stripe": "Stripe Billing",
+      "email": "Resend",
+      "cron": "Background scans"
+    },
     "configured": "Configured",
     "notConfigured": "Not configured",
     "connectors": "Data connectors",
     "connectorsDesc": "Each connector documents its authentication, permitted access, rate limits, fields, frequency and retention.",
-    "categories": { "ads": "Advertising", "trends": "Search trends", "stores": "Storefronts", "commerce": "Commerce", "licensed": "Licensed data", "demo": "Demo" },
+    "categories": {
+      "ads": "Advertising",
+      "trends": "Search trends",
+      "stores": "Storefronts",
+      "commerce": "Commerce",
+      "licensed": "Licensed data",
+      "demo": "Demo"
+    },
     "auth": "Authentication",
-    "authKinds": { "none": "None", "api_key": "API key", "oauth_client": "OAuth client credentials", "access_token": "Access token", "oauth_user": "OAuth (merchant)" },
+    "authKinds": {
+      "none": "None",
+      "api_key": "API key",
+      "oauth_client": "OAuth client credentials",
+      "access_token": "Access token",
+      "oauth_user": "OAuth (merchant)"
+    },
     "rateLimit": "Rate limit",
     "rate": "{{n}} requests / {{per}}",
-    "per": { "second": "second", "minute": "minute", "hour": "hour", "day": "day" },
+    "per": {
+      "second": "second",
+      "minute": "minute",
+      "hour": "hour",
+      "day": "day"
+    },
     "frequency": "Sync frequency",
-    "frequencies": { "hourly": "Hourly", "every6h": "Every 6 hours", "daily": "Daily", "weekly": "Weekly", "on_demand": "On demand" },
+    "frequencies": {
+      "hourly": "Hourly",
+      "every6h": "Every 6 hours",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "on_demand": "On demand"
+    },
     "retention": "Raw data retention",
     "days": "{{n}} days",
     "fields": "Fields",
@@ -1141,7 +1298,12 @@
     "info3": "Integration tokens are encrypted server-side. We never access other merchants' private data or bypass technical restrictions."
   },
   "landing": {
-    "nav": { "features": "Features", "scoring": "Scoring", "pricing": "Pricing", "faq": "FAQ" },
+    "nav": {
+      "features": "Features",
+      "scoring": "Scoring",
+      "pricing": "Pricing",
+      "faq": "FAQ"
+    },
     "badge": "Transparent data · no fabricated metrics",
     "heroTitle1": "Find your next winning product",
     "heroTitle2": "before the market does.",
@@ -1161,15 +1323,42 @@
     "featuresTitle": "Everything you need to research, decide and launch",
     "featuresText": "A serious analytics workspace for dropshippers, Shopify merchants, media buyers and marketers.",
     "features": {
-      "products": { "title": "Winning product discovery", "text": "Search records with advanced filters for price, margin, country, platform, trend growth and competition." },
-      "adspy": { "title": "Ad Spy", "text": "Explore publicly accessible creatives by keyword, advertiser, format, language, country and dates." },
-      "creatives": { "title": "Creative analyzer", "text": "Break down hooks, triggers and structure, then generate original concepts for your own ads." },
-      "trends": { "title": "Trend discovery", "text": "Spot rising products, emerging niches and declining trends across 24h, 7, 30 and 90 days." },
-      "stores": { "title": "Store intelligence", "text": "Analyze public storefronts, compare up to five competitors and connect your own Shopify store." },
-      "analyst": { "title": "AI product analyst", "text": "Ask questions in plain language and get evidence, risks, missing data and validation tests." },
-      "calculator": { "title": "Profit calculator", "text": "Break-even CPA and ROAS, contribution margin and sensitivity analysis, updated instantly." },
-      "alerts": { "title": "Alerts & watchlists", "text": "Get notified when trends jump, new advertisers appear or competitors add products." },
-      "reports": { "title": "Market reports", "text": "Generated reports with charts, examples, risks and sources — export to PDF or CSV." }
+      "products": {
+        "title": "Winning product discovery",
+        "text": "Search records with advanced filters for price, margin, country, platform, trend growth and competition."
+      },
+      "adspy": {
+        "title": "Ad Spy",
+        "text": "Explore publicly accessible creatives by keyword, advertiser, format, language, country and dates."
+      },
+      "creatives": {
+        "title": "Creative analyzer",
+        "text": "Break down hooks, triggers and structure, then generate original concepts for your own ads."
+      },
+      "trends": {
+        "title": "Trend discovery",
+        "text": "Spot rising products, emerging niches and declining trends across 24h, 7, 30 and 90 days."
+      },
+      "stores": {
+        "title": "Store intelligence",
+        "text": "Analyze public storefronts, compare up to five competitors and connect your own Shopify store."
+      },
+      "analyst": {
+        "title": "AI product analyst",
+        "text": "Ask questions in plain language and get evidence, risks, missing data and validation tests."
+      },
+      "calculator": {
+        "title": "Profit calculator",
+        "text": "Break-even CPA and ROAS, contribution margin and sensitivity analysis, updated instantly."
+      },
+      "alerts": {
+        "title": "Alerts & watchlists",
+        "text": "Get notified when trends jump, new advertisers appear or competitors add products."
+      },
+      "reports": {
+        "title": "Market reports",
+        "text": "Generated reports with charts, examples, risks and sources — export to PDF or CSV."
+      }
     },
     "scoringTitle": "A score you can explain to your team",
     "scoringText": "The 0–100 opportunity score combines six normalized components with published weights. When evidence is thin, we show “Insufficient data” instead of a number.",
@@ -1178,9 +1367,18 @@
     "integrityTitle": "Built on data integrity",
     "integrityText": "Every metric is labelled as measured, estimated, AI-generated or demo — so you always know what you are looking at.",
     "integrity": {
-      "sources": { "title": "Traceable sources", "text": "Each record stores its source connector and observation timestamp. Reports list sources and collection dates." },
-      "noFake": { "title": "No fabricated metrics", "text": "Spend, impressions, conversions or competitor revenue are never invented. If it isn't public, we say so." },
-      "compliance": { "title": "Lawful collection", "text": "Official APIs, licensed providers and public pages that respect robots policies. No bypassing of access controls." }
+      "sources": {
+        "title": "Traceable sources",
+        "text": "Each record stores its source connector and observation timestamp. Reports list sources and collection dates."
+      },
+      "noFake": {
+        "title": "No fabricated metrics",
+        "text": "Spend, impressions, conversions or competitor revenue are never invented. If it isn't public, we say so."
+      },
+      "compliance": {
+        "title": "Lawful collection",
+        "text": "Official APIs, licensed providers and public pages that respect robots policies. No bypassing of access controls."
+      }
     },
     "faqTitle": "Frequently asked questions",
     "faq": {
@@ -1211,26 +1409,95 @@
     "template": "Template provided for the TrendHunter software. Have it reviewed by legal counsel and completed with your company details before production use.",
     "privacy": {
       "sections": [
-        { "title": "1. Who we are", "body": "TrendHunter (“we”) operates the TrendHunter service. The data controller is the company identified in the legal notice of the deployment." },
-        { "title": "2. Data we collect", "body": "Account data (name, email), workspace data you create (collections, notes, alerts), usage counters required to enforce plan limits, billing records handled by Stripe, and technical logs for security." },
-        { "title": "3. Purposes and legal bases", "body": "Providing the service (contract), securing the platform and preventing abuse (legitimate interest), billing (legal obligation and contract), and optional emails you enable (consent)." },
-        { "title": "4. Research data", "body": "Market research data comes from official APIs, licensed providers and publicly accessible web pages collected in line with robots policies and site terms. We do not collect private data from other merchants." },
-        { "title": "5. Processors", "body": "Hosting, database (Supabase), payments (Stripe), email (Resend) and AI analysis (Anthropic) act as processors under data processing agreements." },
-        { "title": "6. Retention", "body": "Account data is kept while your account is active. Usage events are kept up to 13 months. Raw connector payloads are kept for the retention period documented per connector." },
-        { "title": "7. Your rights", "body": "You can access, export and delete your data at any time from Settings → Privacy & data, and contact us to exercise rectification, restriction, objection or portability rights. You may also lodge a complaint with your data protection authority." },
-        { "title": "8. Cookies", "body": "We use strictly necessary cookies for authentication, language and security. Analytics or advertising cookies are only set with your consent." }
+        {
+          "title": "1. Who we are",
+          "body": "TrendHunter (“we”) operates the TrendHunter service. The data controller is the company identified in the legal notice of the deployment."
+        },
+        {
+          "title": "2. Data we collect",
+          "body": "Account data (name, email), workspace data you create (collections, notes, alerts), usage counters required to enforce plan limits, billing records handled by Stripe, and technical logs for security."
+        },
+        {
+          "title": "3. Purposes and legal bases",
+          "body": "Providing the service (contract), securing the platform and preventing abuse (legitimate interest), billing (legal obligation and contract), and optional emails you enable (consent)."
+        },
+        {
+          "title": "4. Research data",
+          "body": "Market research data comes from official APIs, licensed providers and publicly accessible web pages collected in line with robots policies and site terms. We do not collect private data from other merchants."
+        },
+        {
+          "title": "5. Processors",
+          "body": "Hosting, database (Supabase), payments (Stripe), email (Resend) and AI analysis (Anthropic) act as processors under data processing agreements."
+        },
+        {
+          "title": "6. Retention",
+          "body": "Account data is kept while your account is active. Usage events are kept up to 13 months. Raw connector payloads are kept for the retention period documented per connector."
+        },
+        {
+          "title": "7. Your rights",
+          "body": "You can access, export and delete your data at any time from Settings → Privacy & data, and contact us to exercise rectification, restriction, objection or portability rights. You may also lodge a complaint with your data protection authority."
+        },
+        {
+          "title": "8. Cookies",
+          "body": "We use strictly necessary cookies for authentication, language and security. Analytics or advertising cookies are only set with your consent."
+        }
       ]
     },
     "terms": {
       "sections": [
-        { "title": "1. Service", "body": "TrendHunter provides research tools for e-commerce. Information is provided for research purposes and does not constitute financial, legal or business advice." },
-        { "title": "2. No guarantee of results", "body": "Opportunity scores, estimates and AI-generated analyses are heuristics. They do not guarantee sales, profitability or any outcome." },
-        { "title": "3. Acceptable use", "body": "You must not use the service to infringe intellectual property, copy third-party advertising content verbatim, bypass technical restrictions, or collect personal data unlawfully." },
-        { "title": "4. Third-party content", "body": "Advertisements and storefront content belong to their owners. They are displayed for analysis; you are responsible for creating original materials." },
-        { "title": "5. Subscriptions", "body": "Paid plans renew automatically until cancelled. Limits for each plan are stated on the pricing page. Fees are non-refundable except where required by law." },
-        { "title": "6. Liability", "body": "To the extent permitted by law, our liability is limited to the fees paid in the 12 months preceding the claim." },
-        { "title": "7. Termination", "body": "You may delete your account at any time. We may suspend accounts that breach these terms." }
+        {
+          "title": "1. Service",
+          "body": "TrendHunter provides research tools for e-commerce. Information is provided for research purposes and does not constitute financial, legal or business advice."
+        },
+        {
+          "title": "2. No guarantee of results",
+          "body": "Opportunity scores, estimates and AI-generated analyses are heuristics. They do not guarantee sales, profitability or any outcome."
+        },
+        {
+          "title": "3. Acceptable use",
+          "body": "You must not use the service to infringe intellectual property, copy third-party advertising content verbatim, bypass technical restrictions, or collect personal data unlawfully."
+        },
+        {
+          "title": "4. Third-party content",
+          "body": "Advertisements and storefront content belong to their owners. They are displayed for analysis; you are responsible for creating original materials."
+        },
+        {
+          "title": "5. Subscriptions",
+          "body": "Paid plans renew automatically until cancelled. Limits for each plan are stated on the pricing page. Fees are non-refundable except where required by law."
+        },
+        {
+          "title": "6. Liability",
+          "body": "To the extent permitted by law, our liability is limited to the fees paid in the 12 months preceding the claim."
+        },
+        {
+          "title": "7. Termination",
+          "body": "You may delete your account at any time. We may suspend accounts that breach these terms."
+        }
       ]
     }
+  },
+  "seed": {
+    "collections": {
+      "test": {
+        "name": "Products to Test",
+        "description": "Shortlist for small-budget validation tests."
+      },
+      "fitness": {
+        "name": "Trending Fitness Products",
+        "description": "Fitness products with rising observed ad activity."
+      },
+      "ads": {
+        "name": "Competitor Ad Inspiration",
+        "description": "Long-running creatives to study (observation length is not proof of profitability)."
+      },
+      "margin": {
+        "name": "High-Margin Opportunities",
+        "description": "Estimated gross margin ≥ 75% (estimates, not supplier quotes)."
+      }
+    },
+    "note": "Verify the supplier quote before testing.",
+    "ruleFitness": "Fitness trend +30%",
+    "ruleSummary": "Daily opportunities summary",
+    "ruleStore": "New products at {{name}}"
   }
 }

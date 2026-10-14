@@ -1,8 +1,15 @@
+// Smoke test: visits every route against a running server (default http://localhost:3100),
+// reports console/page errors and raw i18n keys, and saves screenshots.
+//   npx next start -p 3100 & npm run smoke [-- <screenshot-dir>]
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { chromium } from "@playwright/test";
-const base = "http://localhost:3100";
-const shots = process.argv[2];
-const routes = ["/", "/pricing", "/login", "/signup", "/privacy", "/terms", "/app", "/app/products", "/app/products/smart-jump-rope-with-counter", "/app/products/focus-timer-cube", "/app/ads", "/app/creatives?ad=ad-smart-jump-rope-with-counter-3", "/app/trends", "/app/competitors?ids=lumen-market,habitat-house", "/app/stores", "/app/stores?tab=mine", "/app/collections", "/app/analyst", "/app/reports", "/app/reports/market-fitness", "/app/reports/competitive-landscape", "/app/alerts", "/app/alerts?tab=watchlist", "/app/settings", "/app/settings?tab=billing", "/app/settings?tab=integrations", "/app/settings?tab=privacy", "/app/calculator", "/app/search?q=pet", "/nope"];
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }).catch(() => chromium.launch());
+const base = process.env.SMOKE_URL ?? "http://localhost:3100";
+const shots = process.argv[2] ?? path.join(os.tmpdir(), "trendhunter-shots");
+fs.mkdirSync(shots, { recursive: true });
+const routes = ["/", "/pricing", "/login", "/signup", "/privacy", "/terms", "/app", "/app/products", "/app/products/smart-jump-rope-with-counter", "/app/products/focus-timer-cube", "/app/ads", "/app/creatives?ad=ad-smart-jump-rope-with-counter-3", "/app/trends", "/app/competitors", "/app/stores", "/app/stores?tab=mine", "/app/collections", "/app/analyst", "/app/reports", "/app/reports/market-fitness", "/app/reports/competitive-landscape", "/app/alerts", "/app/alerts?tab=watchlist", "/app/settings", "/app/settings?tab=billing", "/app/settings?tab=integrations", "/app/settings?tab=privacy", "/app/calculator", "/app/search?q=pet", "/nope"];
+const browser = await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } : {});
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await ctx.newPage();
 const problems = [];

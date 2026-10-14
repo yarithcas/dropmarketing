@@ -22,6 +22,10 @@ export interface Entitlements {
   advancedReports: boolean;
   exports: boolean;
   shopifyIntegration: boolean;
+  /** Number of own Shopify stores that can be connected at once. */
+  shopifyStores: number;
+  /** Watchlists (monitored products, ads, stores and competitors). */
+  watchlists: boolean;
   prioritySupport: boolean;
 }
 
@@ -45,6 +49,8 @@ export const PLANS: Record<PlanId, { priceMonthly: number; priceYearly: number; 
       advancedReports: false,
       exports: false,
       shopifyIntegration: false,
+      shopifyStores: 0,
+      watchlists: false,
       prioritySupport: false,
     },
   },
@@ -67,6 +73,8 @@ export const PLANS: Record<PlanId, { priceMonthly: number; priceYearly: number; 
       advancedReports: false,
       exports: true,
       shopifyIntegration: true,
+      shopifyStores: 1,
+      watchlists: true,
       prioritySupport: false,
     },
   },
@@ -89,6 +97,8 @@ export const PLANS: Record<PlanId, { priceMonthly: number; priceYearly: number; 
       advancedReports: true,
       exports: true,
       shopifyIntegration: true,
+      shopifyStores: 5,
+      watchlists: true,
       prioritySupport: true,
     },
   },
@@ -108,3 +118,6 @@ export function isPlan(v: unknown): v is PlanId {
 
 /** Advanced product filters (Free plan only gets keyword, category, price and sort). */
 export const ADVANCED_PRODUCT_FILTERS = ["country", "platform", "competition", "productType", "marginMin", "growthMin", "firstFrom", "firstTo", "shippingVerified", "warehouse", "maxDeliveryDays"] as const;
+
+/** Advanced ad filters (Free plan only gets keyword, category, platform and sort). */
+export const ADVANCED_AD_FILTERS = ["advertiser", "domain", "country", "language", "format", "cta", "firstFrom", "firstTo", "lastFrom", "lastTo", "activeOnly"] as const;

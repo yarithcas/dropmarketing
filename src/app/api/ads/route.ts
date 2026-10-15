@@ -9,6 +9,9 @@ import { searchKey } from "@/lib/server/usage";
 import { stripFilters } from "@/lib/server/plan-filters";
 import { ADVANCED_AD_FILTERS, PLANS } from "@/lib/plans";
 
+/** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const q = parseQuery(req, adQuerySchema);
   if (!q.ok) return q.res;

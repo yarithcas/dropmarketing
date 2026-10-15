@@ -4,6 +4,9 @@ import { guard } from "@/lib/server/guard";
 import { buildReport, isReportId, reportCatalog } from "@/lib/server/reports";
 import { PLANS } from "@/lib/plans";
 
+/** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const g = await guard(req, { bucket: "report" });
   if (g.res) return g.res;

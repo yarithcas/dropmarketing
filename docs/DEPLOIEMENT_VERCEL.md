@@ -79,3 +79,38 @@ Avec Supabase, applique les migrations de `supabase/migrations/` **dans l'ordre*
 
 Le plan gratuit Vercel (Hobby) n'accepte que des tâches planifiées quotidiennes.
 `vercel.json` est déjà réglé pour ça : une tâche par jour et une par semaine.
+
+---
+
+## Actualisation quotidienne
+
+**En mode démo (aucune variable configurée)**, rien à faire : le jeu de données
+de démonstration se régénère automatiquement chaque jour. Son instantané est la
+dernière journée UTC complète (la veille) ; il change à 00:00 UTC, sans
+redéploiement. Chaque jour ajoute une journée d'historique (nouvelles
+observations, nouvelles publicités vues « hier », tendances qui évoluent), sans
+modifier les jours précédents : les graphiques s'allongent simplement d'un jour.
+Ces données restent synthétiques et sont signalées partout comme
+« Données de démonstration, régénérées chaque jour », avec leur date. Ce ne sont
+jamais des observations réelles du marché. Pour figer la démo sur un jour
+précis (tests), définir `DEMO_SNAPSHOT=AAAA-MM-JJ`.
+
+**Pour des données réelles**, il faut :
+
+1. Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `SUPABASE_SERVICE_ROLE_KEY`) avec les migrations appliquées ;
+2. `CRON_SECRET` (une longue valeur aléatoire), pour autoriser la tâche planifiée ;
+3. au moins un connecteur de données configuré (par exemple Meta Ad Library, ou
+   des boutiques publiques à suivre — voir `docs/DATA_SOURCES.md`).
+
+Puis **Redeploy**. Chaque jour à **05:15 UTC**, Vercel appelle `/api/cron/scan`
+(déclaré dans `vercel.json`) : la tâche ingère les nouvelles données des
+connecteurs, recalcule les agrégats et les scores, évalue les règles d'alerte
+(notifications et e-mails) puis purge les données expirées. La page
+**Alertes** → « Actualisation des données » indique le mécanisme actif, la date
+des données affichées et la prochaine exécution prévue. Sans `CRON_SECRET`, la
+page signale qu'aucune actualisation automatique n'a lieu.
+
+Remarque : des données démo importées dans Supabase avec `npm run seed:demo`
+gardent la date du jour de l'import ; elles ne se régénèrent pas.
+

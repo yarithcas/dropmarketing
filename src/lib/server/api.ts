@@ -4,8 +4,15 @@ import type { ZodType } from "zod";
 import { paramsToObject } from "../queries";
 import { rateLimit } from "./rate-limit";
 
+/**
+ * JSON response. API data is per-request and per-day (the demo dataset rolls
+ * with the UTC day, live data with each ingestion), so it is never cached by
+ * browsers or the CDN unless a route sets its own Cache-Control.
+ */
 export function json<T>(data: T, init?: ResponseInit) {
-  return NextResponse.json(data, init);
+  const headers = new Headers(init?.headers);
+  if (!headers.has("Cache-Control")) headers.set("Cache-Control", "no-store");
+  return NextResponse.json(data, { ...init, headers });
 }
 
 export function apiError(status: number, code: string, message?: string, extra?: Record<string, unknown>) {

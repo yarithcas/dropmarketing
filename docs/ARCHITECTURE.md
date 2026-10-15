@@ -26,7 +26,7 @@ Supabase Postgres (supabase/migrations/*.sql, applied in order) — RLS on every
 
 | | Demo mode (no env) | Live mode (Supabase configured) |
 |---|---|---|
-| Research data | deterministic in-memory demo dataset | Postgres, written by connectors / seed |
+| Research data | deterministic in-memory demo dataset, rolling daily (snapshot = last complete UTC day; `DEMO_SNAPSHOT` pins it) | Postgres, written by connectors / seed |
 | Auth | optional demo profile cookie | Supabase Auth (email + password), `/app` protected by middleware |
 | Workspace | `localStorage`, seeded per language | `collections`, `collection_items`, `watchlists`, `alerts`, `notifications` with RLS |
 | Plan | demo plan cookie (Pro by default) | `subscriptions` updated only by Stripe webhook |
@@ -36,6 +36,18 @@ Supabase Postgres (supabase/migrations/*.sql, applied in order) — RLS on every
 If Supabase is configured but contains no research rows, the UI shows empty states — demo data is never
 presented as live. Alert rules are never evaluated on demo data in live mode: without real research rows a
 run is recorded as skipped. Scheduling and retention: see [DATA_SOURCES.md](DATA_SOURCES.md#scheduling).
+
+### Daily refresh
+
+- **Demo:** `lib/demo/generate.ts` builds the dataset for a snapshot day (`demoSnapshot()`: yesterday in UTC,
+  or `DEMO_SNAPSHOT`). History starts at a fixed epoch (2026-04-16); the original 180-day window up to
+  2026-10-12 is generated as before, and each later day by functions seeded with the product/store id and the
+  date. Same day → identical dataset on every instance; day D+1 = day D's history plus one day. The module
+  cache and the repository's metrics cache are keyed by the snapshot, and data routes are `force-dynamic` with
+  `Cache-Control: no-store`, so a request on a new UTC day gets the new day without a redeploy.
+- **Live:** the daily cron (`vercel.json`, 05:15 UTC → `/api/cron/scan`) ingests, rescores, evaluates alerts
+  and purges; the repository reloads the database snapshot every minute. `/api/alerts/status` exposes the
+  active mechanism (`refresh`: `demo_daily`, `cron_daily` or `none`) and the next expected change.
 
 ## Opportunity score (0–100)
 

@@ -3,6 +3,9 @@ import { json } from "@/lib/server/api";
 import { demoWorkspace } from "@/lib/server/seed-workspace";
 import { DEFAULT_LOCALE, isLocale, LOCALE_COOKIE } from "@/lib/i18n/config";
 
+/** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
+export const dynamic = "force-dynamic";
+
 /** Example workspace for demo visitors (stored in their browser afterwards), in the visitor's language. */
 export async function GET() {
   const lang = (await cookies()).get(LOCALE_COOKIE)?.value;

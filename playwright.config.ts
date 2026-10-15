@@ -20,6 +20,8 @@ export default defineConfig({
   webServer: {
     command: `npx next start -p ${PORT}`,
     url: `http://localhost:${PORT}/api/session`,
+    // The demo dataset rolls with the UTC day; e2e pins it so journeys see a stable dataset.
+    env: { DEMO_SNAPSHOT: process.env.DEMO_SNAPSHOT ?? "2026-10-12" },
     reuseExistingServer: true,
     timeout: 120_000,
   },

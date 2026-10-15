@@ -44,7 +44,7 @@
   },
   "demo": {
     "bannerTitle": "Modalità demo",
-    "bannerText": "Dati di esempio generati per l'esplorazione — non sono osservazioni reali del mercato. Istantanea: {{date}}.",
+    "bannerText": "Dati dimostrativi, rigenerati ogni giorno — non sono osservazioni reali del mercato. Istantanea del {{date}}.",
     "connectSources": "Collega fonti di dati reali →"
   },
   "errors": {
@@ -331,7 +331,7 @@
     "ai": "Generato dall'IA",
     "aiTip": "Conclusioni prodotte dal motore di analisi a partire dalle schede mostrate. Né un fatto né una garanzia.",
     "demo": "Dati demo",
-    "demoTip": "Dati sintetici di esempio per esplorare il prodotto. Non descrivono il mercato reale.",
+    "demoTip": "Dati sintetici di esempio, rigenerati ogni giorno, per esplorare il prodotto. Non descrivono il mercato reale.",
     "sourceLine": "Fonte: {{source}} · aggiornato il {{date}}",
     "measuredShort": "Misurato",
     "estimateShort": "Stim."
@@ -1209,7 +1209,7 @@
     "checkDone": "Verifica completata: {{n}} corrispondenza/e.",
     "checkNotRun": "Verifica non eseguita: {{reason}}",
     "failures": "Fonti la cui ultima sincronizzazione non è riuscita",
-    "demoNote": "Demo: le verifiche vengono eseguite su richiesta sull'istantanea demo fissa (ultimi 7 giorni). Non è un monitoraggio in tempo reale.",
+    "demoNote": "Demo: le verifiche vengono eseguite su richiesta sull'istantanea demo del giorno (ultimi 7 giorni), rigenerata ogni giorno. Non è un monitoraggio in tempo reale.",
     "rules": "Regole di avviso",
     "rulesUsage": "{{n}} di {{max}} regole utilizzate",
     "newRule": "Nuova regola",
@@ -1292,6 +1292,12 @@
       "new_product": "Nuovo prodotto in {{category}}: {{name}}",
       "competitor_products": "{{store}} ha aggiunto {{n}} nuovo/i prodotto/i",
       "daily_summary": "{{n}} opportunità aggiornate: {{top}}"
+    },
+    "refresh": {
+      "title": "Aggiornamento dei dati",
+      "demo_daily": "Dati dimostrativi, rigenerati ogni giorno (istantanea del {{date}}). Prossima rigenerazione: {{next}}. Non sono osservazioni reali del mercato.",
+      "cron_daily": "Attività in background giornaliera alle 05:15 UTC: acquisizione dai connettori, ricalcolo dei punteggi, valutazione degli avvisi ed eliminazione. Dati del {{date}} · prossima esecuzione: {{next}}.",
+      "none": "Nessun aggiornamento automatico: l'attività giornaliera in background (05:15 UTC) non è configurata (CRON_SECRET). Dati del {{date}}."
     }
   },
   "reports": {
@@ -1573,7 +1579,7 @@
       "storefronts": "Solo schede accessibili pubblicamente (Shopify products.json/meta.json, WooCommerce Store API), nel rispetto di robots.txt, dei termini dei siti e di un limite di 1 richiesta al secondo.",
       "licensed": "Dataset di terzi con licenza contrattuale; campi concordati con il fornitore.",
       "shopify": "Solo il tuo negozio, tramite OAuth con autorizzazioni in sola lettura che approvi tu.",
-      "demo": "Dati sintetici di esempio per la dimostrazione. Mai presentati come osservazioni reali."
+      "demo": "Dati sintetici di esempio per la dimostrazione, rigenerati ogni giorno. Mai presentati come osservazioni reali."
     }
   },
   "team": {

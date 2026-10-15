@@ -20,7 +20,9 @@ npm run dev            # http://localhost:3000  (French by default; FR / EN / ES
 ```
 
 Without environment variables the app runs fully in **demo mode**: a deterministic synthetic dataset
-(54 products, ~1,500 ads, 28 stores, 180 days of observations; all domains end in `.example`),
+(54 products, ~1,500 ads, 28 stores, 180+ days of observations; all domains end in `.example`) that
+regenerates every day — its snapshot is the last complete UTC day and each day appends one day of history
+(`DEMO_SNAPSHOT=YYYY-MM-DD` pins it),
 a browser-stored workspace seeded with example collections, demo billing and a mock Shopify store.
 A banner and badges make the demo status explicit everywhere.
 

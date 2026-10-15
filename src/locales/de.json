@@ -44,7 +44,7 @@
   },
   "demo": {
     "bannerTitle": "Demo-Modus",
-    "bannerText": "Generierte Beispieldaten zum Erkunden — keine echten Marktbeobachtungen. Stand: {{date}}.",
+    "bannerText": "Demodaten, täglich neu generiert — keine echten Marktbeobachtungen. Stand: {{date}}.",
     "connectSources": "Echte Datenquellen verbinden →"
   },
   "errors": {
@@ -331,7 +331,7 @@
     "ai": "KI-generiert",
     "aiTip": "Schlussfolgerungen der Analyse-Engine aus den angezeigten Datensätzen. Weder Fakt noch Garantie.",
     "demo": "Demo-Daten",
-    "demoTip": "Synthetische Beispieldaten zum Erkunden des Produkts. Sie beschreiben nicht den realen Markt.",
+    "demoTip": "Synthetische Beispieldaten, täglich neu generiert, zum Erkunden des Produkts. Sie beschreiben nicht den realen Markt.",
     "sourceLine": "Quelle: {{source}} · aktualisiert am {{date}}",
     "measuredShort": "Gemessen",
     "estimateShort": "Gesch."
@@ -1209,7 +1209,7 @@
     "checkDone": "Prüfung abgeschlossen: {{n}} Treffer.",
     "checkNotRun": "Prüfung nicht ausgeführt: {{reason}}",
     "failures": "Quellen, deren letzte Synchronisierung fehlgeschlagen ist",
-    "demoNote": "Demo: Prüfungen laufen auf Abruf gegen den festen Demo-Snapshot (letzte 7 Tage). Das ist kein Live-Monitoring.",
+    "demoNote": "Demo: Prüfungen laufen auf Abruf gegen den heutigen Demo-Snapshot (letzte 7 Tage), der täglich neu generiert wird. Das ist kein Live-Monitoring.",
     "rules": "Alert-Regeln",
     "rulesUsage": "{{n}} von {{max}} Regeln genutzt",
     "newRule": "Neue Regel",
@@ -1292,6 +1292,12 @@
       "new_product": "Neues Produkt in {{category}}: {{name}}",
       "competitor_products": "{{store}} hat {{n}} neue(s) Produkt(e) hinzugefügt",
       "daily_summary": "{{n}} Chancen aktualisiert: {{top}}"
+    },
+    "refresh": {
+      "title": "Datenaktualisierung",
+      "demo_daily": "Demodaten, täglich neu generiert (Stand: {{date}}). Nächste Generierung: {{next}}. Das sind keine echten Marktbeobachtungen.",
+      "cron_daily": "Täglicher Hintergrundjob um 05:15 UTC: Konnektor-Import, Neubewertung, Alarmprüfung und Bereinigung. Datenstand {{date}} · nächster Lauf: {{next}}.",
+      "none": "Keine automatische Aktualisierung: Der tägliche Hintergrundjob (05:15 UTC) ist nicht konfiguriert (CRON_SECRET). Datenstand {{date}}."
     }
   },
   "reports": {
@@ -1573,7 +1579,7 @@
       "storefronts": "Nur öffentlich zugängliche Angebote (Shopify products.json/meta.json, WooCommerce Store API), unter Beachtung von robots.txt, Nutzungsbedingungen und einem Limit von 1 Anfrage pro Sekunde.",
       "licensed": "Vertraglich lizenzierter Drittanbieter-Datensatz; Felder wie mit dem Anbieter vereinbart.",
       "shopify": "Nur dein eigener Shop, per OAuth mit Leseberechtigungen, die du freigibst.",
-      "demo": "Synthetische Beispieldaten zur Demonstration. Werden nie als echte Beobachtungen dargestellt."
+      "demo": "Synthetische Beispieldaten zur Demonstration, täglich neu generiert. Werden nie als echte Beobachtungen dargestellt."
     }
   },
   "team": {

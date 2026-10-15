@@ -296,6 +296,40 @@ export interface MonitoringStatus {
   lastEvaluation: { at: string; status: "running" | "success" | "failed" | "skipped"; reason: string | null; dataAsOf: string | null; rules: number; matches: number } | null;
   lastSuccessfulEvaluation: { at: string; dataAsOf: string | null } | null;
   failures: { connector: string; at: string; category: ErrorCategory }[];
+  /** How the research data shown in the app is refreshed. */
+  refresh: RefreshStatus;
+}
+
+/**
+ * Refresh mechanism of the data shown in the app:
+ * - `demo_daily`: no database; the synthetic demo dataset regenerates for each UTC day.
+ * - `cron_daily`: the daily background scan (vercel.json, 05:15 UTC) ingests, rescores, evaluates alerts and purges.
+ * - `none`: live database without the background job: data only changes when something writes to it.
+ */
+export interface RefreshStatus {
+  kind: "demo_daily" | "cron_daily" | "none";
+  /** Next time the data is expected to change (ISO timestamp), when scheduled. */
+  nextAt: string | null;
+  /** Snapshot day of the data currently served. */
+  dataAsOf: string | null;
+}
+
+/** Daily scan schedule, in UTC. Must match the first cron entry of vercel.json ("15 5 * * *"). */
+export const DAILY_SCAN_UTC = { hour: 5, minute: 15 } as const;
+
+/** Next occurrence of a daily UTC time strictly after `now`. */
+export function nextDailyUtc(now: Date, at: { hour: number; minute: number } = DAILY_SCAN_UTC): string {
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), at.hour, at.minute));
+  if (d.getTime() <= now.getTime()) d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString();
+}
+
+export function refreshStatus(input: { mode: "demo" | "live"; scheduler: boolean; dataAsOf: string | null; now: Date }): RefreshStatus {
+  const { mode, scheduler, dataAsOf, now } = input;
+  // The demo snapshot rolls at 00:00 UTC (it is the last complete UTC day).
+  if (mode === "demo") return { kind: "demo_daily", nextAt: nextDailyUtc(now, { hour: 0, minute: 0 }), dataAsOf };
+  if (scheduler) return { kind: "cron_daily", nextAt: nextDailyUtc(now), dataAsOf };
+  return { kind: "none", nextAt: null, dataAsOf };
 }
 
 export interface AlertRunRow {

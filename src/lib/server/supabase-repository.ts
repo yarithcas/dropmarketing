@@ -4,7 +4,7 @@ import type { DemoDataset } from "../demo/generate";
 import type { AdQuery, ProductQuery } from "../queries";
 import { normalizeDomain } from "../queries";
 import { addDays } from "../dates";
-import type { Advertisement, OpportunityScore, ProductMetrics, Product, ProductObservation, ProductWithMetrics, SourceRef, Store, StoreProduct, StoreSnapshot } from "../types";
+import type { AdMedia, Advertisement, OpportunityScore, ProductMetrics, Product, ProductObservation, ProductWithMetrics, SourceRef, Store, StoreProduct, StoreSnapshot } from "../types";
 import type { Page } from "./repository";
 
 /**
@@ -59,6 +59,19 @@ function rowToMetrics(m: Row): { metrics: ProductMetrics; score: OpportunityScor
 
 const https = (v: unknown) => (typeof v === "string" && v.startsWith("https://") ? v : null);
 
+/** Authorized media from the jsonb column (0007); malformed or non-HTTPS entries are dropped. */
+export function rowToMedia(v: unknown): AdMedia[] {
+  if (!Array.isArray(v)) return [];
+  return v.flatMap((m): AdMedia[] => {
+    if (!m || typeof m !== "object") return [];
+    const e = m as Record<string, unknown>;
+    const url = https(e.url);
+    if (!url || (e.type !== "video" && e.type !== "image") || e.authorized !== true || /[?&]access_token=/i.test(url)) return [];
+    const posterUrl = https(e.posterUrl);
+    return [{ type: e.type, url, ...(posterUrl ? { posterUrl } : {}), source: typeof e.source === "string" ? e.source : "", authorized: true }];
+  });
+}
+
 export function rowToAd(r: Row): Advertisement {
   const productId = (r.product_id as string) ?? null;
   const category = (r.category as Advertisement["category"]) ?? null;
@@ -81,6 +94,7 @@ export function rowToAd(r: Row): Advertisement {
     categoryBasis: category ? ((r.category_basis as Advertisement["categoryBasis"]) ?? null) : null,
     snapshotUrl: https(r.snapshot_url),
     placements: (r.placements as string[]) ?? [],
+    media: rowToMedia(r.media),
     firstSeen: r.first_seen as string,
     lastSeen: r.last_seen as string,
     source: { connector: r.connector as string, kind: r.is_demo ? "demo" : (r.source_kind as Advertisement["source"]["kind"]), observedAt: r.observed_at as string },

@@ -6,6 +6,7 @@ import { Clapperboard, Copy, Lightbulb, Sparkles, ThumbsDown, ThumbsUp } from "l
 import { useTranslation } from "react-i18next";
 import { AdLibraryLink, CreativePreview, MatchEstimateTag } from "@/components/app/ad-card";
 import { useText } from "@/components/app/analyst-result";
+import { AdMediaViewer, isWatchable } from "@/components/app/ad-player";
 import { PageHeader, PlanGate, PlatformBadge, ProvenanceBadge, ScoreBadge, SourceLine } from "@/components/app/bits";
 import { SaveButton } from "@/components/app/save";
 import { Badge } from "@/components/ui/badge";
@@ -77,7 +78,13 @@ function Viewer({ adId }: { adId: string }) {
     <div className="space-y-4" data-testid="creative-viewer">
       <Card>
         <div className="grid gap-0 md:grid-cols-[minmax(0,280px)_1fr]">
-          <CreativePreview ad={ad} className="h-64 rounded-none md:h-full md:min-h-[300px] md:rounded-l-xl" />
+          {isWatchable(ad) ? (
+            <div className="border-b border-border p-3 md:border-b-0 md:border-r" data-testid="creative-player">
+              <AdMediaViewer ad={ad} productName={product?.name} />
+            </div>
+          ) : (
+            <CreativePreview ad={ad} className="h-64 rounded-none md:h-full md:min-h-[300px] md:rounded-l-xl" />
+          )}
           <div className="space-y-3 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>

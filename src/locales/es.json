@@ -1920,5 +1920,33 @@
     "whatsapp": "WhatsApp",
     "threads": "Threads",
     "oculus": "Oculus"
+  },
+  "player": {
+    "watch": "Ver el vídeo",
+    "watchAria": "Ver el vídeo de {{advertiser}}",
+    "dialogTitle": "Vídeo de {{advertiser}}",
+    "loading": "Cargando el vídeo…",
+    "error": "No se pudo cargar el vídeo (puede que el enlace proporcionado por la fuente haya caducado).",
+    "noMedia": "La fuente no proporciona ningún vídeo reproducible para este anuncio.",
+    "officialLink": "Ver el vídeo en la biblioteca oficial",
+    "noOfficialLink": "No hay ningún enlace a una biblioteca de anuncios oficial.",
+    "mediaSource": "Medio proporcionado para su visualización por {{source}}",
+    "videoLabel": "Vídeo publicitario de {{advertiser}}",
+    "imageAlt": "Imagen publicitaria de {{advertiser}}",
+    "videos": "Vídeos del anuncio",
+    "videoN": "Vídeo {{n}}",
+    "demo": {
+      "badge": "Vista previa de vídeo generada — demostración",
+      "roleDescription": "vista previa de vídeo generada",
+      "label": "Vista previa de vídeo animada generada para el anuncio de demostración de {{advertiser}}",
+      "disclaimer": "Animación creada por TrendHunter a partir del texto de este anuncio de demostración. No es el vídeo real de un anunciante.",
+      "play": "Reproducir la vista previa",
+      "pause": "Pausar la vista previa",
+      "restart": "Reiniciar la vista previa",
+      "scene": "Escena {{n}} de {{total}}",
+      "progress": "Progreso de la vista previa",
+      "keyboard": "Teclado: Espacio para reproducir/pausar, ← → para cambiar de escena.",
+      "reducedMotion": "Movimiento reducido (preferencia del sistema): inicie la reproducción manualmente."
+    }
   }
 }

@@ -1920,5 +1920,33 @@
     "whatsapp": "WhatsApp",
     "threads": "Threads",
     "oculus": "Oculus"
+  },
+  "player": {
+    "watch": "Lire la vidéo",
+    "watchAria": "Lire la vidéo de {{advertiser}}",
+    "dialogTitle": "Vidéo de {{advertiser}}",
+    "loading": "Chargement de la vidéo…",
+    "error": "La vidéo n'a pas pu être chargée (le lien fourni par la source a peut-être expiré).",
+    "noMedia": "La source ne fournit aucune vidéo lisible pour cette publicité.",
+    "officialLink": "Voir la vidéo sur la bibliothèque officielle",
+    "noOfficialLink": "Aucun lien vers une bibliothèque publicitaire officielle n'est disponible.",
+    "mediaSource": "Média fourni pour affichage par {{source}}",
+    "videoLabel": "Vidéo publicitaire de {{advertiser}}",
+    "imageAlt": "Visuel publicitaire de {{advertiser}}",
+    "videos": "Vidéos de la publicité",
+    "videoN": "Vidéo {{n}}",
+    "demo": {
+      "badge": "Aperçu vidéo généré — démonstration",
+      "roleDescription": "aperçu vidéo généré",
+      "label": "Aperçu vidéo animé généré pour la publicité de démonstration de {{advertiser}}",
+      "disclaimer": "Animation créée par TrendHunter à partir du texte de cette publicité de démonstration. Ce n'est pas la vidéo réelle d'un annonceur.",
+      "play": "Lire l'aperçu",
+      "pause": "Mettre l'aperçu en pause",
+      "restart": "Recommencer l'aperçu",
+      "scene": "Scène {{n}} sur {{total}}",
+      "progress": "Progression de l'aperçu",
+      "keyboard": "Clavier : Espace pour lecture/pause, ← → pour changer de scène.",
+      "reducedMotion": "Animations réduites (préférence système) : lancez la lecture manuellement."
+    }
   }
 }

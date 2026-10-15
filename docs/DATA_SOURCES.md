@@ -108,13 +108,45 @@ or `failed`. A record counts as stored only when its upsert returned no error.
 | active (ad_observations) | no `ad_delivery_stop_time`, or stop ≥ today | `last_shown_date` ≥ yesterday | `last_seen` ≥ yesterday |
 | snapshot_url | tokenless `https://www.facebook.com/ads/library/?id=…` | `https://library.tiktok.com/ads/detail/?ad_id=…` | HTTPS only |
 | placements | `publisher_platforms` | — | as supplied |
+| media (0007) | `[]` (the API returns no media URL) | `ad.videos[].url` + `cover_image_url`, `ad.image_urls[]` (HTTPS only) | `media[]` entries (HTTPS only) |
 
 `ad_snapshot_url` is deliberately not requested from Meta: it embeds the API access token. Migration 0005
 replaces previously stored snapshot URLs with the tokenless public page and resets the placeholder values
 the old mapping stored (format `image`/`video`, CTA `learn_more`, category `home`, TikTok language `en`),
 and marks observations after an ad's last delivery day inactive. One country is queried at a time; an ad
 reaching several queried countries is stored once with the first country it was found in. The UI links the
-library page (`target=_blank`, `rel="noopener noreferrer nofollow"`); creatives are never embedded or hotlinked.
+library page (`target=_blank`, `rel="noopener noreferrer nofollow"`); library pages are never embedded, and
+creatives are played only from media URLs the provider returns for display (see *Ad media* below).
+
+### Ad media (videos and images) — migration 0007
+
+`advertisements.media` (jsonb, default `[]`) holds only media URLs a provider **officially returns for
+display**: `{type: video|image, url, posterUrl?, source, authorized: true}`. The `ad_media_valid()` check
+(0007) rejects non-HTTPS URLs, URLs carrying an `access_token`, unknown types and more than 10 entries;
+`safeHttpsUrl()` (mapping) and `rowToMedia()` (read path) apply the same rules.
+
+- **TikTok Commercial Content API**: `ad.videos[].url` / `cover_image_url` and `ad.image_urls[]` are stored as
+  returned. These are provider-signed CDN URLs that may expire; they are refreshed at each sync and never
+  downloaded, proxied or re-hosted. When a URL no longer plays, the player shows an error and links to the
+  official TikTok Ad Library page instead.
+- **Meta Ad Library API**: no media URL is exposed (`ad_snapshot_url` embeds the access token and is never
+  requested), so Meta ads have no playable media. The UI links out to the public Ad Library page
+  ("Watch the video in the official ad library", `target=_blank`, `rel="noopener noreferrer nofollow"`); the
+  Ad Library cannot be framed and is never embedded.
+- **Licensed feed**: an optional `media` array of `{type: "video"|"image", url, poster_url?}`. Only include media
+  your contract licenses you to **display** to your users.
+- **Terms caveat**: displaying provider media is subject to each provider's terms and to your approved use case
+  (TikTok's Commercial Content API terms, your licensed-data contract). Check that your approval covers in-app
+  display before enabling the connector in production; if it does not, leave the connector unconfigured or
+  strip `media` from the feed — the UI then falls back to the official library link. Media are never shown as
+  TrendHunter's own content and always carry a "Media supplied for display by …" source line.
+- **Demo mode**: synthetic demo ads have no media. Their "video" is an original animated storyboard generated
+  in the browser from the demo ad's own text and colour (`components/app/ad-player.tsx`, no external assets),
+  always labelled "Generated video preview — demo" and never presented as an advertiser's creative. It starts
+  paused and switches cards without movement under `prefers-reduced-motion`.
+- **CSP**: the app currently sends no `Content-Security-Policy` header (see `next.config.ts`), so no
+  `media-src` change is required. If one is added, `media-src`/`img-src` must allow `https:` hosts of the
+  configured providers only (e.g. TikTok's CDN hosts), never `http:` or `data:` for media.
 
 ### Estimated product links and categories
 
@@ -165,7 +197,7 @@ Store revenue is explicitly “not estimated” when evidence is insufficient (a
 `LICENSED_DATA_PROVIDER_URL` must return `{ "products": [ … ], "ads": [ … ] }`. Products match the `products` columns (`id`, `name`, `category`, `first_detected`, `last_detected`, optional prices, `shipping`, `image_url` — HTTPS images you are licensed to display). Only whitelisted columns are written. Each ad matches the `advertisements`
 table columns (`id`, `external_id`, `advertiser`, `platform`, `country`, `language`, `format`, `headline`,
 `copy`, `cta`, `category`, `first_seen`, `last_seen`, `observed_at`, optional `product_id`, `landing_domain`,
-`landing_url`, `snapshot_url` (HTTPS only), `placements`). Rows failing validation are counted as failed, not stored;
+`landing_url`, `snapshot_url` (HTTPS only), `placements`, `media` (see *Ad media*)). Rows failing validation are counted as failed, not stored;
 unknown enum values are stored as `unknown`/null, and `product_id` is kept only when it references a known product.
 `LICENSED_DATA_PROVIDER_URL` must use HTTPS (the key is sent as a bearer token).
 

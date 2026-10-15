@@ -1920,5 +1920,33 @@
     "whatsapp": "WhatsApp",
     "threads": "Threads",
     "oculus": "Oculus"
+  },
+  "player": {
+    "watch": "Watch video",
+    "watchAria": "Watch {{advertiser}}'s video",
+    "dialogTitle": "{{advertiser}} video",
+    "loading": "Loading video…",
+    "error": "The video could not be loaded (the link supplied by the source may have expired).",
+    "noMedia": "The source provides no playable video for this ad.",
+    "officialLink": "Watch the video in the official ad library",
+    "noOfficialLink": "No link to an official ad library is available.",
+    "mediaSource": "Media supplied for display by {{source}}",
+    "videoLabel": "{{advertiser}} ad video",
+    "imageAlt": "{{advertiser}} ad visual",
+    "videos": "Ad videos",
+    "videoN": "Video {{n}}",
+    "demo": {
+      "badge": "Generated video preview — demo",
+      "roleDescription": "generated video preview",
+      "label": "Generated animated video preview for {{advertiser}}'s demo ad",
+      "disclaimer": "Animation created by TrendHunter from this demo ad's text. It is not an advertiser's real video.",
+      "play": "Play preview",
+      "pause": "Pause preview",
+      "restart": "Restart preview",
+      "scene": "Scene {{n}} of {{total}}",
+      "progress": "Preview progress",
+      "keyboard": "Keyboard: Space to play/pause, ← → to change scene.",
+      "reducedMotion": "Reduced motion (system preference): start playback manually."
+    }
   }
 }

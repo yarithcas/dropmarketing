@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, LANGUAGES, PLATFORMS } from "../types";
-import type { CallToAction, Category, CategoryBasis, Country, CreativeFormat, Platform, ProductMatchBasis } from "../types";
+import type { AdMedia, CallToAction, Category, CategoryBasis, Country, CreativeFormat, Platform, ProductMatchBasis } from "../types";
 import { addDays } from "../dates";
 import { hashString } from "../demo/generate";
 import { classifyCategory, matchProduct, type MatchableProduct } from "./matching";
@@ -32,6 +32,8 @@ export interface AdRow {
   landing_url: string | null;
   snapshot_url: string | null;
   placements: string[];
+  /** Media URLs the provider returns for display (migration 0007); [] when none. */
+  media: AdMedia[];
   category: Category | null;
   category_basis: CategoryBasis | null;
   first_seen: string;
@@ -60,6 +62,26 @@ export function safeHttpsUrl(v: unknown): string | null {
   } catch {
     return null;
   }
+}
+
+/** At most this many media entries are kept per ad. */
+export const MAX_AD_MEDIA = 10;
+
+/**
+ * Authorized media entry from a provider value: HTTPS, tokenless URLs only
+ * (safeHttpsUrl), deduplicated, capped at MAX_AD_MEDIA. Anything else is dropped.
+ */
+export function adMedia(items: { type: AdMedia["type"]; url: unknown; posterUrl?: unknown }[], source: string): AdMedia[] {
+  const out: AdMedia[] = [];
+  const seen = new Set<string>();
+  for (const it of items) {
+    const url = safeHttpsUrl(it.url);
+    if (!url || seen.has(url) || out.length >= MAX_AD_MEDIA) continue;
+    seen.add(url);
+    const posterUrl = safeHttpsUrl(it.posterUrl);
+    out.push({ type: it.type, url, ...(posterUrl ? { posterUrl } : {}), source, authorized: true });
+  }
+  return out;
 }
 
 /** Public, tokenless Ad Library page of a Meta ad. */
@@ -186,6 +208,8 @@ export function metaAdRecord(raw: unknown, country: Country, today: string, obse
       landing_url: null,
       snapshot_url: metaLibraryUrl(a.id),
       placements: placements(a.publisher_platforms),
+      // The Ad Library API returns no media URL (only ad_snapshot_url, which embeds the token): link out instead.
+      media: [],
       first_seen: a.ad_delivery_start_time.slice(0, 10),
       // Still delivering → observed running today; otherwise the reported stop date.
       last_seen: ended ? stop : today,
@@ -239,6 +263,19 @@ const tiktokAdSchema = z.object({
   advertiser: z.object({ business_name: z.string().min(1) }),
 });
 
+/**
+ * Media the Commercial Content API returns for display: `ad.videos[]` ({ url, cover_image_url },
+ * or a bare URL string) and `ad.image_urls[]`. The URLs are provider-signed and may expire; they are
+ * stored as returned (HTTPS only) and refreshed at each sync, never downloaded or re-hosted.
+ */
+export function tiktokMedia(videos: unknown[] | null | undefined, images: unknown[] | null | undefined): AdMedia[] {
+  const vids = (videos ?? []).map((v) =>
+    typeof v === "string" ? { type: "video" as const, url: v } : v && typeof v === "object" ? { type: "video" as const, url: (v as Record<string, unknown>).url, posterUrl: (v as Record<string, unknown>).cover_image_url } : { type: "video" as const, url: null },
+  );
+  const imgs = (images ?? []).map((u) => ({ type: "image" as const, url: u }));
+  return adMedia([...vids, ...imgs], "tiktok_commercial_content");
+}
+
 /** TikTok ids are int64: quote long integers before JSON.parse so they are not rounded. */
 export function parseJsonKeepingIds(text: string): unknown {
   return JSON.parse(text.replace(/("(?:id|business_id)"\s*:\s*)(\d{16,})/g, '$1"$2"'));
@@ -278,6 +315,7 @@ export function tiktokAdRecord(raw: unknown, country: Country, today: string, ob
       landing_url: null,
       snapshot_url: tiktokLibraryUrl(ad.id),
       placements: [],
+      media: tiktokMedia(ad.videos, ad.image_urls),
       first_seen: firstSeen,
       last_seen: lastSeen,
       source_kind: "measured",
@@ -308,6 +346,11 @@ const licensedAdSchema = z.object({
   landing_url: z.string().nullish(),
   snapshot_url: z.string().nullish(),
   placements: z.array(z.string()).nullish(),
+  /** Media the provider licenses for display (HTTPS only). */
+  media: z
+    .array(z.object({ type: z.enum(["video", "image"]), url: z.string(), poster_url: z.string().nullish() }))
+    .max(50)
+    .nullish(),
   category: z.string().nullish(),
   first_seen: z.string().regex(DAY),
   last_seen: z.string().regex(DAY),
@@ -351,6 +394,7 @@ export function licensedAdRecord(raw: unknown, today: string, observedAt: string
       landing_url: safeHttpsUrl(a.landing_url),
       snapshot_url: safeHttpsUrl(a.snapshot_url),
       placements: placements(a.placements),
+      media: adMedia((a.media ?? []).map((m) => ({ type: m.type, url: m.url, posterUrl: m.poster_url })), "licensed_dataset"),
       category: sourceCategory ?? sourceProduct?.category ?? inferred.category,
       category_basis: sourceCategory ? "source" : sourceProduct ? "product" : inferred.category_basis,
       first_seen: a.first_seen.slice(0, 10),

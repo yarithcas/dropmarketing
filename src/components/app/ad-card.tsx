@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip } from "@/components/ui/tooltip";
 import { PlatformBadge, ProvenanceBadge, SourceLine } from "./bits";
 import { SaveButton } from "./save";
+import { isWatchable, WatchAdButton } from "./ad-player";
 import { cn } from "@/lib/cn";
 
 const FORMAT_ICON = { video: PlayCircle, image: ImageIcon, carousel: Images, unknown: FileQuestion };
@@ -40,7 +41,7 @@ export function AdLibraryLink({ ad, className }: { ad: Advertisement; className?
 }
 
 /** Creative preview placeholder: authorized thumbnails are shown only when a connector supplies them. */
-export function CreativePreview({ ad, className }: { ad: Advertisement; className?: string }) {
+export function CreativePreview({ ad, className, hideIcon = false }: { ad: Advertisement; className?: string; hideIcon?: boolean }) {
   const { t } = useTranslation();
   const Icon = FORMAT_ICON[ad.format];
   return (
@@ -51,7 +52,7 @@ export function CreativePreview({ ad, className }: { ad: Advertisement; classNam
       aria-label={t("ads.previewLabel", { advertiser: ad.advertiser })}
     >
       <div className="bg-grid absolute inset-0 opacity-25" />
-      <Icon className="absolute left-1/2 top-1/2 size-10 -translate-x-1/2 -translate-y-[70%] text-white/70" strokeWidth={1.3} />
+      {hideIcon ? null : <Icon className="absolute left-1/2 top-1/2 size-10 -translate-x-1/2 -translate-y-[70%] text-white/70" strokeWidth={1.3} />}
       <div className="relative line-clamp-2 text-sm font-semibold leading-snug text-white drop-shadow">{ad.headline}</div>
       <div className="relative mt-1 text-[10px] uppercase tracking-wider text-white/60">{t("ads.generatedPreview")}</div>
     </div>
@@ -62,10 +63,12 @@ export function AdCard({ ad, productName }: { ad: Advertisement; productName?: s
   const { t } = useTranslation();
   const f = useFormat();
   const days = daysBetween(ad.firstSeen, ad.lastSeen) + 1;
+  const watchable = isWatchable(ad);
   return (
     <article className="card flex flex-col overflow-hidden" data-testid="ad-card">
       <div className="relative">
-        <CreativePreview ad={ad} className="h-40 rounded-none" />
+        <CreativePreview ad={ad} className="h-40 rounded-none" hideIcon={watchable} />
+        {watchable ? <WatchAdButton ad={ad} productName={productName} /> : null}
         <div className="absolute right-2 top-2 flex gap-1.5">
           <SaveButton type="ad" refId={ad.id} label={`${ad.advertiser} — ${ad.headline}`} iconOnly />
         </div>

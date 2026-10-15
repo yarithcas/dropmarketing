@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { captionDomain, licensedAdRecord, metaAdRecord, parseJsonKeepingIds, rotateDaily, safeHttpsUrl, searchTermsFor, tiktokAdRecord } from "@/lib/connectors/mappers";
+import { captionDomain, licensedAdRecord, MAX_AD_MEDIA, metaAdRecord, parseJsonKeepingIds, rotateDaily, safeHttpsUrl, searchTermsFor, tiktokAdRecord } from "@/lib/connectors/mappers";
 import { classifyCategory, matchProduct, type MatchableProduct } from "@/lib/connectors/matching";
 import { parseShopifyProducts, parseShopMeta, parseWooProducts, shopifyCurrency } from "@/lib/connectors/storefronts";
 import { summarize, tally } from "@/lib/connectors/ingest";
+import { rowToMedia } from "@/lib/server/supabase-repository";
 
 const products: MatchableProduct[] = [
   { id: "posture", name: "Posture Corrector Brace", tags: ["back", "posture"], category: "wellness" },
@@ -45,6 +46,8 @@ describe("Meta Ad Library mapping", () => {
     });
     expect(r.row.snapshot_url).toBe("https://www.facebook.com/ads/library/?id=123");
     expect(JSON.stringify(r.row)).not.toContain("SECRET");
+    // The Ad Library API returns no media URL; ad_snapshot_url is never used as one.
+    expect(r.row.media).toEqual([]);
   });
 
   it("marks still-delivering ads active and links others by token overlap or not at all", () => {
@@ -88,6 +91,68 @@ describe("licensed feed mapping", () => {
     const src = licensedAdRecord({ id: "l2", advertiser: "A", platform: "meta", country: "FR", product_id: "posture", category: "beauty", first_seen: "2026-10-01", last_seen: "2026-10-01" }, TODAY, NOW, products)!;
     expect(src.row).toMatchObject({ product_match_basis: "source", category: "beauty", category_basis: "source" });
     expect(src.active).toBe(false);
+  });
+});
+
+describe("authorized ad media", () => {
+  it("keeps the HTTPS video/cover URLs TikTok returns, drops anything else", () => {
+    const r = tiktokAdRecord(
+      {
+        ad: {
+          id: "77",
+          first_shown_date: 20261001,
+          last_shown_date: 20261014,
+          videos: [{ url: "https://v16.tiktokcdn.example/v.mp4?x-expires=1&x-signature=s", cover_image_url: "https://p16.tiktokcdn.example/c.jpg" }, { url: "http://insecure.example/v.mp4" }, "https://v16.tiktokcdn.example/v.mp4?x-expires=1&x-signature=s", { url: "javascript:alert(1)" }, 42],
+          image_urls: ["https://p16.tiktokcdn.example/i.jpg", "ftp://x/i.jpg"],
+        },
+        advertiser: { business_name: "Shop" },
+      },
+      "FR",
+      TODAY,
+      NOW,
+      products,
+    )!;
+    expect(r.row.format).toBe("video");
+    expect(r.row.media).toEqual([
+      { type: "video", url: "https://v16.tiktokcdn.example/v.mp4?x-expires=1&x-signature=s", posterUrl: "https://p16.tiktokcdn.example/c.jpg", source: "tiktok_commercial_content", authorized: true },
+      { type: "image", url: "https://p16.tiktokcdn.example/i.jpg", source: "tiktok_commercial_content", authorized: true },
+    ]);
+  });
+
+  it("maps licensed feed media (HTTPS only, tokens stripped, capped)", () => {
+    const many = Array.from({ length: 15 }, (_, i) => ({ type: "image", url: `https://cdn.example/${i}.jpg` }));
+    const r = licensedAdRecord(
+      {
+        id: "lm",
+        advertiser: "A",
+        platform: "meta",
+        country: "FR",
+        first_seen: "2026-10-01",
+        last_seen: "2026-10-15",
+        media: [{ type: "video", url: "https://cdn.example/v.mp4?access_token=SECRET", poster_url: "http://cdn.example/p.jpg" }, ...many],
+      },
+      TODAY,
+      NOW,
+      products,
+    )!;
+    expect(r.row.media).toHaveLength(MAX_AD_MEDIA);
+    expect(r.row.media[0]).toEqual({ type: "video", url: "https://cdn.example/v.mp4", source: "licensed_dataset", authorized: true });
+    expect(JSON.stringify(r.row)).not.toContain("SECRET");
+    expect(licensedAdRecord({ id: "ln", advertiser: "A", platform: "meta", country: "FR", first_seen: "2026-10-01", last_seen: "2026-10-15" }, TODAY, NOW, products)!.row.media).toEqual([]);
+  });
+
+  it("reads only valid authorized media back from the database", () => {
+    expect(
+      rowToMedia([
+        { type: "video", url: "https://cdn.example/v.mp4", posterUrl: "https://cdn.example/p.jpg", source: "tiktok_commercial_content", authorized: true },
+        { type: "video", url: "http://cdn.example/v.mp4", source: "x", authorized: true },
+        { type: "video", url: "https://cdn.example/v.mp4?access_token=X", source: "x", authorized: true },
+        { type: "audio", url: "https://cdn.example/a.mp3", source: "x", authorized: true },
+        { type: "image", url: "https://cdn.example/i.jpg", posterUrl: "javascript:x", source: "x" },
+        "https://cdn.example/raw.mp4",
+      ]),
+    ).toEqual([{ type: "video", url: "https://cdn.example/v.mp4", posterUrl: "https://cdn.example/p.jpg", source: "tiktok_commercial_content", authorized: true }]);
+    expect(rowToMedia(null)).toEqual([]);
   });
 });
 

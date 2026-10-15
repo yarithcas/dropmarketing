@@ -105,6 +105,22 @@ export interface ProductObservation {
   source: SourceRef;
 }
 
+/**
+ * Creative media a provider officially returns for display (e.g. TikTok Commercial Content API
+ * `ad.videos[].url`, a licensed feed's media fields). HTTPS only, tokenless, never re-hosted or
+ * scraped; absent when the source returns none (Meta's Ad Library API exposes no media URL).
+ */
+export interface AdMedia {
+  type: "video" | "image";
+  url: string;
+  /** HTTPS poster / cover image supplied with a video. */
+  posterUrl?: string | null;
+  /** Connector that supplied the URL. */
+  source: string;
+  /** Only media from an authorized source is ever stored. */
+  authorized: true;
+}
+
 export interface Advertisement {
   id: string;
   productId: string | null;
@@ -130,6 +146,8 @@ export interface Advertisement {
   snapshotUrl?: string | null;
   /** Placements reported by the source (e.g. Meta publisher_platforms: facebook, instagram). */
   placements?: string[];
+  /** Playable/displayable media from an authorized source (migration 0007). Empty or absent → none. */
+  media?: AdMedia[];
   firstSeen: string;
   lastSeen: string;
   source: SourceRef;

@@ -1920,5 +1920,33 @@
     "whatsapp": "WhatsApp",
     "threads": "Threads",
     "oculus": "Oculus"
+  },
+  "player": {
+    "watch": "Video ansehen",
+    "watchAria": "Video von {{advertiser}} ansehen",
+    "dialogTitle": "Video von {{advertiser}}",
+    "loading": "Video wird geladen…",
+    "error": "Das Video konnte nicht geladen werden (der von der Quelle gelieferte Link ist möglicherweise abgelaufen).",
+    "noMedia": "Die Quelle liefert für diese Anzeige kein abspielbares Video.",
+    "officialLink": "Video in der offiziellen Anzeigenbibliothek ansehen",
+    "noOfficialLink": "Kein Link zu einer offiziellen Anzeigenbibliothek verfügbar.",
+    "mediaSource": "Medium zur Anzeige bereitgestellt von {{source}}",
+    "videoLabel": "Werbevideo von {{advertiser}}",
+    "imageAlt": "Werbebild von {{advertiser}}",
+    "videos": "Videos der Anzeige",
+    "videoN": "Video {{n}}",
+    "demo": {
+      "badge": "Generierte Videovorschau — Demo",
+      "roleDescription": "generierte Videovorschau",
+      "label": "Generierte animierte Videovorschau für die Demo-Anzeige von {{advertiser}}",
+      "disclaimer": "Von TrendHunter aus dem Text dieser Demo-Anzeige erstellte Animation. Es ist nicht das echte Video eines Werbetreibenden.",
+      "play": "Vorschau abspielen",
+      "pause": "Vorschau pausieren",
+      "restart": "Vorschau neu starten",
+      "scene": "Szene {{n}} von {{total}}",
+      "progress": "Fortschritt der Vorschau",
+      "keyboard": "Tastatur: Leertaste für Wiedergabe/Pause, ← → zum Szenenwechsel.",
+      "reducedMotion": "Reduzierte Bewegung (Systemeinstellung): Wiedergabe manuell starten."
+    }
   }
 }

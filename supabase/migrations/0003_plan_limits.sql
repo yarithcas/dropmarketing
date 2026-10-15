@@ -60,8 +60,10 @@ begin
     return new;
   end if;
   -- The swipe file is created automatically and never counts toward the collection limit.
-  if tg_table_name = 'collections' and new.kind = 'swipe' then
-    return new;
+  if tg_table_name = 'collections' then
+    if new.kind = 'swipe' then
+      return new;
+    end if;
   end if;
   -- Serialize concurrent writes of the same user so two inserts cannot both pass a count.
   perform pg_advisory_xact_lock(hashtext('plan_limits:' || owner::text));

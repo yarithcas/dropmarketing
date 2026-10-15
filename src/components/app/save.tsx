@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Bookmark, BookmarkCheck, Eye, EyeOff, Plus } from "lucide-react";
+import Link from "next/link";
+import { Bookmark, BookmarkCheck, Eye, EyeOff, Lock, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, Textarea } from "@/components/ui/input";
+import { useSession } from "@/lib/client/session";
 import { useWorkspace } from "@/lib/client/workspace";
 import type { ItemType } from "@/lib/workspace";
 import { cn } from "@/lib/cn";
@@ -116,7 +118,15 @@ function SaveDialog({ type, refId, label, onClose, preferSwipe }: { type: ItemTy
 export function WatchButton({ type, refId, label, size = "sm" }: { type: "product" | "store" | "category"; refId: string; label: string; size?: "sm" | "md" }) {
   const { t } = useTranslation();
   const { watchId, dispatch } = useWorkspace();
+  const { session } = useSession();
   const id = watchId(type, refId);
+  // Watchlists are a Pro feature; existing entries can still be removed after a downgrade.
+  if (!id && session && !session.entitlements.watchlists)
+    return (
+      <Link href="/app/settings?tab=billing" className={buttonVariants({ size, variant: "secondary" })} title={t("watchlist.locked")} data-testid="watch-locked">
+        <Lock /> {t("watchlist.watch")}
+      </Link>
+    );
   return (
     <Button
       size={size}

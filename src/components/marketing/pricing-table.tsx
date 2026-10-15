@@ -11,13 +11,27 @@ import { PLAN_IDS, PLANS, type PlanId } from "@/lib/plans";
 import { useFormat } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
-export function PricingTable({ current, onChoose, busy, demo }: { current?: PlanId; onChoose?: (p: PlanId) => void; busy?: PlanId | "portal" | null; demo?: boolean }) {
+export function PricingTable({
+  current,
+  onChoose,
+  busy,
+  demo,
+  yearlyAvailable = true,
+}: {
+  current?: PlanId;
+  onChoose?: (p: PlanId, interval: "month" | "year") => void;
+  busy?: PlanId | "portal" | null;
+  demo?: boolean;
+  /** False when the deployment has no yearly Stripe prices: only monthly billing is offered. */
+  yearlyAvailable?: boolean;
+}) {
   const { t } = useTranslation();
   const f = useFormat();
-  const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
+  const [chosen, setInterval] = useState<"monthly" | "yearly">("monthly");
+  const interval = yearlyAvailable ? chosen : "monthly";
   return (
     <div>
-      <div className="mb-6 flex justify-center">
+      <div className={cn("mb-6 flex justify-center", !yearlyAvailable && "hidden")}>
         <Tabs
           value={interval}
           onChange={setInterval}
@@ -45,6 +59,7 @@ export function PricingTable({ current, onChoose, busy, demo }: { current?: Plan
             e.calculator ? t("pricing.f.calculator") : null,
             e.exports ? t("pricing.f.exports") : null,
             e.shopifyIntegration ? t("pricing.f.shopify") : null,
+            e.shopifyStores > 1 ? t("pricing.f.shopifyStores", { n: e.shopifyStores }) : null,
             e.advancedReports ? t("pricing.f.advancedReports") : t("pricing.f.basicTrends"),
             e.workspaces > 1 ? t("pricing.f.workspaces", { n: e.workspaces, seats: e.seats }) : null,
             e.prioritySupport ? t("pricing.f.support") : null,
@@ -72,7 +87,7 @@ export function PricingTable({ current, onChoose, busy, demo }: { current?: Plan
               </ul>
               <div className="mt-6">
                 {onChoose ? (
-                  <Button className="w-full" variant={current === id ? "secondary" : highlight ? "primary" : "secondary"} disabled={current === id || busy === id} onClick={() => onChoose(id)} data-testid={`choose-${id}`}>
+                  <Button className="w-full" variant={current === id ? "secondary" : highlight ? "primary" : "secondary"} disabled={current === id || busy === id} onClick={() => onChoose(id, interval === "yearly" ? "year" : "month")} data-testid={`choose-${id}`}>
                     {current === id ? t("pricing.current") : demo ? t("pricing.switchDemo") : id === "free" ? t("pricing.downgrade") : t("pricing.upgradeTo", { plan: t(`plans.${id}.name`) })}
                   </Button>
                 ) : (

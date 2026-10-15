@@ -63,7 +63,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
           <ArrowLeft className="size-4" /> {t("reports.back")}
         </Link>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => window.print()} data-testid="export-pdf">
+          <Button variant="secondary" onClick={() => window.print()} disabled={!canExport} title={canExport ? undefined : t("billing.exportLocked")} data-testid="export-pdf">
             <Printer /> {t("reports.exportPdf")}
           </Button>
           {canExport ? (

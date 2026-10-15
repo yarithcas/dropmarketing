@@ -28,12 +28,15 @@ export async function POST(req: NextRequest) {
     const plan = planForPrice(item?.price.id) ?? "free";
     const active = sub.status === "active" || sub.status === "trialing";
     const periodEnd = (item as unknown as { current_period_end?: number })?.current_period_end;
+    const interval = item?.price.recurring?.interval;
     await db.from("subscriptions").update({
       plan: active ? plan : "free",
       status: sub.status,
       stripe_customer_id: typeof sub.customer === "string" ? sub.customer : sub.customer.id,
       stripe_subscription_id: sub.id,
       current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+      billing_interval: interval === "month" || interval === "year" ? interval : null,
+      cancel_at_period_end: Boolean(sub.cancel_at_period_end),
       updated_at: new Date().toISOString(),
     }).eq("organization_id", orgId);
   };

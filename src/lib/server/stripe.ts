@@ -9,12 +9,17 @@ export function stripe(): Stripe | null {
   return client;
 }
 
-export function priceFor(plan: "pro" | "business"): string {
-  return plan === "pro" ? env.stripePricePro! : env.stripePriceBusiness!;
+export type BillingInterval = "month" | "year";
+
+/** Stripe price for a plan and interval, or null when that price is not configured. */
+export function priceFor(plan: "pro" | "business", interval: BillingInterval = "month"): string | null {
+  const id = interval === "year" ? (plan === "pro" ? env.stripePriceProYearly : env.stripePriceBusinessYearly) : plan === "pro" ? env.stripePricePro : env.stripePriceBusiness;
+  return id ?? null;
 }
 
 export function planForPrice(priceId: string | undefined): "pro" | "business" | null {
-  if (priceId === env.stripePricePro) return "pro";
-  if (priceId === env.stripePriceBusiness) return "business";
+  if (!priceId) return null;
+  if (priceId === env.stripePricePro || priceId === env.stripePriceProYearly) return "pro";
+  if (priceId === env.stripePriceBusiness || priceId === env.stripePriceBusinessYearly) return "business";
   return null;
 }

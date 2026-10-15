@@ -5,12 +5,18 @@ import { adQuerySchema } from "@/lib/queries";
 import { isLiveDb, listAds, meta } from "@/lib/server/repository";
 import { listAdsDb } from "@/lib/server/supabase-repository";
 import { supabaseAdmin } from "@/lib/server/supabase";
+import { searchKey } from "@/lib/server/usage";
+import { stripFilters } from "@/lib/server/plan-filters";
+import { ADVANCED_AD_FILTERS, PLANS } from "@/lib/plans";
 
 export async function GET(req: NextRequest) {
   const q = parseQuery(req, adQuerySchema);
   if (!q.ok) return q.res;
-  const g = await guard(req, { bucket: "ads", meter: q.data.page > 1 ? undefined : "ad_search" });
+  // One metered search per distinct query and day: page turns are free, new searches always count.
+  const g = await guard(req, { bucket: "ads", meter: "ad_search", meterKey: searchKey(q.data) });
   if (g.res) return g.res;
-  const page = isLiveDb() ? await listAdsDb(supabaseAdmin()!, q.data, meta().asOf) : listAds(q.data);
-  return json({ ...page, meta: meta() });
+  // Free plan: advanced filters are not applied server-side (and reported back).
+  const { query, ignored } = PLANS[g.session.plan].entitlements.advancedFilters ? { query: q.data, ignored: [] as string[] } : stripFilters(q.data, ADVANCED_AD_FILTERS);
+  const page = isLiveDb() ? await listAdsDb(supabaseAdmin()!, query, meta().asOf) : listAds(query);
+  return json({ ...page, meta: meta(), ignoredFilters: ignored });
 }

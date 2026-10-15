@@ -72,7 +72,10 @@
       "invalid_body": "Le informazioni inviate non sono valide.",
       "network": "Rete non disponibile. Controlla la connessione.",
       "no_customer": "Nessun abbonamento a pagamento è associato a questo account.",
-      "delete_failed": "Eliminazione dell'account non riuscita. Contatta il supporto."
+      "delete_failed": "Eliminazione dell'account non riuscita. Contatta il supporto.",
+      "interval_unavailable": "La fatturazione annuale non è disponibile in questa installazione.",
+      "support_not_configured": "Il supporto non è configurato in questa installazione.",
+      "database_error": "Si è verificato un errore del database. Riprova."
     }
   },
   "search": {
@@ -782,7 +785,8 @@
       "product": "Prodotto",
       "store": "Negozio",
       "category": "Categoria"
-    }
+    },
+    "locked": "Le watchlist sono incluse nei piani Pro e Business."
   },
   "workspace": {
     "errors": {
@@ -1150,7 +1154,21 @@
     "advancedFilterLocked": "Filtro avanzato — piano Pro",
     "filtersIgnored": "Alcuni filtri avanzati non sono stati applicati con il piano Free.",
     "limitReached": "Hai raggiunto il limite giornaliero del tuo piano.",
-    "exportLocked": "Le esportazioni sono disponibili nei piani Pro e Business."
+    "exportLocked": "Le esportazioni sono disponibili nei piani Pro e Business.",
+    "status": "Stato",
+    "interval": "Fatturazione",
+    "renewsOn": "Si rinnova il",
+    "endsOn": "Termina il",
+    "statuses": {
+      "active": "Attivo",
+      "trialing": "Prova",
+      "past_due": "Pagamento in ritardo",
+      "canceled": "Annullato",
+      "unpaid": "Non pagato",
+      "incomplete": "Incompleto",
+      "incomplete_expired": "Scaduto",
+      "paused": "In pausa"
+    }
   },
   "plans": {
     "free": {
@@ -1198,7 +1216,8 @@
       "basicTrends": "Dashboard delle tendenze e report di mercato",
       "advancedReports": "Report avanzati (panorama competitivo)",
       "workspaces": "{{n}} spazi di lavoro · {{seats}} posti",
-      "support": "Assistenza prioritaria"
+      "support": "Assistenza prioritaria",
+      "shopifyStores": "Fino a {{n}} negozi Shopify collegati"
     },
     "faq": {
       "q1": "I dati sono reali?",
@@ -1548,5 +1567,24 @@
     "intro": "Nuovi risultati per il tuo avviso «{{rule}}»:",
     "manage": "Gestisci i tuoi avvisi: {{url}}",
     "footer": "I valori stimati o generati dall'IA non sono fatti misurati. Ricevi questa email perché le notifiche email sono attive per questo avviso."
+  },
+  "support": {
+    "title": "Aiuto e supporto",
+    "standardText": "Una domanda, un bug o un problema con i dati? Scrivici e ti risponderemo via email.",
+    "priorityText": "Il tuo piano Business include il supporto prioritario: le tue richieste vengono gestite per prime.",
+    "priority": "Prioritario",
+    "category": "Categoria",
+    "subject": "Oggetto",
+    "message": "Messaggio",
+    "send": "Invia",
+    "sent": "Richiesta inviata. Ti risponderemo via email.",
+    "unavailable": "Il modulo di supporto non è configurato in questa installazione (servono una casella di supporto e l'invio email, solo account con accesso).",
+    "categories": {
+      "question": "Domanda",
+      "bug": "Bug",
+      "billing": "Fatturazione",
+      "data": "Dati",
+      "other": "Altro"
+    }
   }
 }

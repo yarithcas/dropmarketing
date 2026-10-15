@@ -22,6 +22,9 @@ export const ERROR_CODES = [
   "network",
   "no_customer",
   "delete_failed",
+  "interval_unavailable",
+  "support_not_configured",
+  "database_error",
 ] as const;
 
 const KNOWN = new Set<string>(ERROR_CODES);

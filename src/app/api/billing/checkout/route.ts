@@ -14,13 +14,15 @@ export async function POST(req: NextRequest) {
   if (!s) return apiError(400, "billing_not_configured", "Stripe is not configured (demo billing mode)");
   const session = await getSession();
   if (!session.authenticated || !session.organizationId) return apiError(401, "unauthenticated");
-  const body = await parseBody(req, z.object({ plan: z.enum(["pro", "business"]) }));
+  const body = await parseBody(req, z.object({ plan: z.enum(["pro", "business"]), interval: z.enum(["month", "year"]).default("month") }));
   if (!body.ok) return body.res;
+  const price = priceFor(body.data.plan, body.data.interval);
+  if (!price) return apiError(400, "interval_unavailable", "This billing interval is not configured");
   const db = supabaseAdmin();
   const { data: sub } = (await db?.from("subscriptions").select("stripe_customer_id").eq("organization_id", session.organizationId).maybeSingle()) ?? { data: null };
   const checkout = await s.checkout.sessions.create({
     mode: "subscription",
-    line_items: [{ price: priceFor(body.data.plan), quantity: 1 }],
+    line_items: [{ price, quantity: 1 }],
     success_url: `${env.appUrl}/app/settings?tab=billing&checkout=success`,
     cancel_url: `${env.appUrl}/app/settings?tab=billing&checkout=cancelled`,
     client_reference_id: session.organizationId,

@@ -93,7 +93,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
           setWorkspace(ws);
         } else {
           const e = session.entitlements;
-          const next = applyOp(wsRef.current, op, { collections: e.collections, savedItems: e.savedItems, alertRules: e.alertRules, alerts: e.alerts });
+          const next = applyOp(wsRef.current, op, { collections: e.collections, savedItems: e.savedItems, alertRules: e.alertRules, alerts: e.alerts, watchlists: e.watchlists });
           setWorkspace(next);
           saveLocal(next);
         }

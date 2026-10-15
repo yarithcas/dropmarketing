@@ -72,7 +72,10 @@
       "invalid_body": "Les informations envoyées sont invalides.",
       "network": "Connexion réseau impossible. Vérifiez votre connexion.",
       "no_customer": "Aucun abonnement payant n'est associé à ce compte.",
-      "delete_failed": "La suppression du compte a échoué. Contactez le support."
+      "delete_failed": "La suppression du compte a échoué. Contactez le support.",
+      "interval_unavailable": "La facturation annuelle n'est pas disponible sur ce déploiement.",
+      "support_not_configured": "Le support n'est pas configuré sur ce déploiement.",
+      "database_error": "Une erreur de base de données est survenue. Réessayez."
     }
   },
   "search": {
@@ -782,7 +785,8 @@
       "product": "Produit",
       "store": "Boutique",
       "category": "Catégorie"
-    }
+    },
+    "locked": "Les listes de suivi sont incluses dans les offres Pro et Business."
   },
   "workspace": {
     "errors": {
@@ -1150,7 +1154,21 @@
     "advancedFilterLocked": "Filtre avancé — offre Pro",
     "filtersIgnored": "Certains filtres avancés n'ont pas été appliqués avec l'offre Free.",
     "limitReached": "Vous avez atteint la limite quotidienne de votre offre.",
-    "exportLocked": "Les exports sont disponibles avec les offres Pro et Business."
+    "exportLocked": "Les exports sont disponibles avec les offres Pro et Business.",
+    "status": "Statut",
+    "interval": "Facturation",
+    "renewsOn": "Renouvellement le",
+    "endsOn": "Se termine le",
+    "statuses": {
+      "active": "Actif",
+      "trialing": "Essai",
+      "past_due": "Paiement en retard",
+      "canceled": "Annulé",
+      "unpaid": "Impayé",
+      "incomplete": "Incomplet",
+      "incomplete_expired": "Expiré",
+      "paused": "En pause"
+    }
   },
   "plans": {
     "free": {
@@ -1198,7 +1216,8 @@
       "basicTrends": "Tableau de tendances et rapports de marché",
       "advancedReports": "Rapports avancés (paysage concurrentiel)",
       "workspaces": "{{n}} espaces de travail · {{seats}} sièges",
-      "support": "Support prioritaire"
+      "support": "Support prioritaire",
+      "shopifyStores": "Jusqu'à {{n}} boutiques Shopify connectées"
     },
     "faq": {
       "q1": "Les données sont-elles réelles ?",
@@ -1548,5 +1567,24 @@
     "intro": "Nouveaux résultats pour votre alerte « {{rule}} » :",
     "manage": "Gérer vos alertes : {{url}}",
     "footer": "Les valeurs estimées ou générées par l'IA ne sont pas des faits mesurés. Vous recevez cet e-mail car les notifications e-mail sont activées pour cette alerte."
+  },
+  "support": {
+    "title": "Aide et support",
+    "standardText": "Une question, un bug ou un souci de données ? Écrivez-nous, nous répondons par e-mail.",
+    "priorityText": "Votre offre Business inclut le support prioritaire : vos demandes sont traitées en premier.",
+    "priority": "Prioritaire",
+    "category": "Catégorie",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer",
+    "sent": "Demande envoyée. Nous vous répondrons par e-mail.",
+    "unavailable": "Le formulaire de support n'est pas configuré sur ce déploiement (boîte de réception de support et envoi d'e-mails requis, comptes connectés uniquement).",
+    "categories": {
+      "question": "Question",
+      "bug": "Bug",
+      "billing": "Facturation",
+      "data": "Données",
+      "other": "Autre"
+    }
   }
 }

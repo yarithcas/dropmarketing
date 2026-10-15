@@ -72,7 +72,10 @@
       "invalid_body": "Die übermittelten Angaben sind ungültig.",
       "network": "Netzwerk nicht verfügbar. Prüfe deine Verbindung.",
       "no_customer": "Mit diesem Konto ist kein kostenpflichtiges Abo verknüpft.",
-      "delete_failed": "Das Löschen des Kontos ist fehlgeschlagen. Bitte kontaktiere den Support."
+      "delete_failed": "Das Löschen des Kontos ist fehlgeschlagen. Bitte kontaktiere den Support.",
+      "interval_unavailable": "Jährliche Abrechnung ist in dieser Installation nicht verfügbar.",
+      "support_not_configured": "Der Support ist in dieser Installation nicht konfiguriert.",
+      "database_error": "Ein Datenbankfehler ist aufgetreten. Bitte erneut versuchen."
     }
   },
   "search": {
@@ -782,7 +785,8 @@
       "product": "Produkt",
       "store": "Shop",
       "category": "Kategorie"
-    }
+    },
+    "locked": "Watchlists sind in den Tarifen Pro und Business enthalten."
   },
   "workspace": {
     "errors": {
@@ -1150,7 +1154,21 @@
     "advancedFilterLocked": "Erweiterter Filter — Pro-Plan",
     "filtersIgnored": "Einige erweiterte Filter wurden im Free-Plan nicht angewendet.",
     "limitReached": "Du hast das Tageslimit deines Plans erreicht.",
-    "exportLocked": "Exporte sind in den Plänen Pro und Business verfügbar."
+    "exportLocked": "Exporte sind in den Plänen Pro und Business verfügbar.",
+    "status": "Status",
+    "interval": "Abrechnung",
+    "renewsOn": "Verlängert sich am",
+    "endsOn": "Endet am",
+    "statuses": {
+      "active": "Aktiv",
+      "trialing": "Testphase",
+      "past_due": "Zahlung überfällig",
+      "canceled": "Gekündigt",
+      "unpaid": "Unbezahlt",
+      "incomplete": "Unvollständig",
+      "incomplete_expired": "Abgelaufen",
+      "paused": "Pausiert"
+    }
   },
   "plans": {
     "free": {
@@ -1198,7 +1216,8 @@
       "basicTrends": "Trend-Dashboard und Marktberichte",
       "advancedReports": "Erweiterte Berichte (Wettbewerbslandschaft)",
       "workspaces": "{{n}} Workspaces · {{seats}} Team-Plätze",
-      "support": "Priorisierter Support"
+      "support": "Priorisierter Support",
+      "shopifyStores": "Bis zu {{n}} verbundene Shopify-Shops"
     },
     "faq": {
       "q1": "Sind die Daten echt?",
@@ -1548,5 +1567,24 @@
     "intro": "Neue Ergebnisse für deine Benachrichtigung „{{rule}}“:",
     "manage": "Benachrichtigungen verwalten: {{url}}",
     "footer": "Geschätzte oder KI-generierte Werte sind keine gemessenen Fakten. Du erhältst diese E-Mail, weil E-Mail-Benachrichtigungen für diese Regel aktiviert sind."
+  },
+  "support": {
+    "title": "Hilfe & Support",
+    "standardText": "Eine Frage, ein Fehler oder ein Datenproblem? Schreib uns, wir antworten per E-Mail.",
+    "priorityText": "Dein Business-Tarif enthält Priority-Support: Deine Anfragen werden zuerst bearbeitet.",
+    "priority": "Priorität",
+    "category": "Kategorie",
+    "subject": "Betreff",
+    "message": "Nachricht",
+    "send": "Senden",
+    "sent": "Anfrage gesendet. Wir antworten per E-Mail.",
+    "unavailable": "Das Support-Formular ist in dieser Installation nicht konfiguriert (Support-Postfach und E-Mail-Versand erforderlich, nur angemeldete Konten).",
+    "categories": {
+      "question": "Frage",
+      "bug": "Fehler",
+      "billing": "Abrechnung",
+      "data": "Daten",
+      "other": "Sonstiges"
+    }
   }
 }

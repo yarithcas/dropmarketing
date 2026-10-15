@@ -130,6 +130,7 @@ export interface Limits {
   savedItems: number;
   alertRules: number;
   alerts: boolean;
+  watchlists: boolean;
 }
 
 /** Pure reducer used for the local (demo) workspace; the live API applies the same ops in SQL. */
@@ -172,6 +173,7 @@ export function applyOp(ws: Workspace, op: WorkspaceOp, limits: Limits, now = ne
       return { ...ws, collections: ws.collections.map((x) => (x.id === c.id ? { ...x, items: x.items.filter((i) => i.id !== op.id) } : x)) };
     }
     case "watch.add":
+      if (!limits.watchlists) throw new WorkspaceError("plan_required");
       if (ws.watchlist.some((w) => w.type === op.type && w.refId === op.refId)) throw new WorkspaceError("duplicate");
       if (ws.watchlist.length >= limits.savedItems) throw new WorkspaceError("limit_items");
       return { ...ws, watchlist: [{ id: uid("wch"), type: op.type, refId: op.refId, label: op.label, addedAt: now }, ...ws.watchlist] };
@@ -183,6 +185,8 @@ export function applyOp(ws: Workspace, op: WorkspaceOp, limits: Limits, now = ne
       return { ...ws, alertRules: [{ id: uid("rul"), ...op.rule, active: true, createdAt: now }, ...ws.alertRules] };
     case "rule.update":
       if (!ws.alertRules.some((r) => r.id === op.id)) throw new WorkspaceError("not_found");
+      // Resuming a rule needs a plan with alerts (pausing and deleting always work).
+      if (op.active && !limits.alerts) throw new WorkspaceError("plan_required");
       return {
         ...ws,
         alertRules: ws.alertRules.map((r) =>

@@ -18,6 +18,10 @@ export const env = {
   stripeWebhookSecret: e.STRIPE_WEBHOOK_SECRET,
   stripePricePro: e.STRIPE_PRICE_PRO,
   stripePriceBusiness: e.STRIPE_PRICE_BUSINESS,
+  /** Optional yearly prices; the yearly option is offered only when both are set. */
+  stripePriceProYearly: e.STRIPE_PRICE_PRO_YEARLY,
+  stripePriceBusinessYearly: e.STRIPE_PRICE_BUSINESS_YEARLY,
+  supportEmail: e.SUPPORT_EMAIL,
   shopifyApiKey: e.SHOPIFY_API_KEY,
   shopifyApiSecret: e.SHOPIFY_API_SECRET,
   shopifyScopes: e.SHOPIFY_SCOPES ?? "read_products,read_orders,read_inventory",
@@ -45,7 +49,9 @@ export function features() {
     ai: Boolean(env.anthropicApiKey),
     stripe: Boolean(env.stripeSecretKey && env.stripeWebhookSecret && env.stripePricePro && env.stripePriceBusiness),
     shopify: Boolean(env.shopifyApiKey && env.shopifyApiSecret && env.encryptionKey && supabase),
+    stripeYearly: Boolean(env.stripePriceProYearly && env.stripePriceBusinessYearly),
     email: Boolean(env.resendApiKey),
+    support: Boolean(env.resendApiKey && env.supportEmail && supabase && env.supabaseServiceRoleKey),
     cron: Boolean(env.cronSecret && supabase && env.supabaseServiceRoleKey),
   };
 }

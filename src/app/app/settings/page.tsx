@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { LanguageSelect } from "@/components/app/language-select";
 import { PageHeader } from "@/components/app/bits";
 import { PricingTable } from "@/components/marketing/pricing-table";
+import { SubscriptionStatus, SupportCard, useSubscription } from "@/components/app/billing-details";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
@@ -129,6 +130,7 @@ function BillingTab() {
   const { workspace } = useWorkspace();
   const url = useUrlState();
   const [busy, setBusy] = useState<PlanId | "portal" | null>(null);
+  const { data: subscription } = useSubscription();
   useEffect(() => {
     if (url.get("checkout") === "success") toast(t("billing.checkoutSuccess"));
     if (url.get("checkout") === "cancelled") toast(t("billing.checkoutCancelled"), "info");
@@ -139,7 +141,7 @@ function BillingTab() {
   const demoBilling = !session.features.stripe;
   const savedItems = workspace.collections.reduce((s, c) => s + c.items.length, 0);
 
-  const choose = async (plan: PlanId) => {
+  const choose = async (plan: PlanId, interval: "month" | "year") => {
     setBusy(plan);
     try {
       if (demoBilling) {
@@ -154,7 +156,7 @@ function BillingTab() {
         const { url: portal } = await apiFetch<{ url: string }>("/api/billing/portal", { method: "POST" });
         window.location.href = portal;
       } else {
-        const { url: checkout } = await apiFetch<{ url: string }>("/api/billing/checkout", { method: "POST", body: JSON.stringify({ plan }) });
+        const { url: checkout } = await apiFetch<{ url: string }>("/api/billing/checkout", { method: "POST", body: JSON.stringify({ plan, interval }) });
         window.location.href = checkout;
       }
     } catch (e) {
@@ -180,6 +182,7 @@ function BillingTab() {
               {demoBilling && <Badge tone="demo">{t("common.demo")}</Badge>}
             </div>
             <p className="text-sm text-muted">{t(`plans.${session.plan}.tagline`)}</p>
+            <SubscriptionStatus info={subscription} />
             {!demoBilling && session.plan !== "free" && (
               <Button
                 variant="secondary"
@@ -212,7 +215,8 @@ function BillingTab() {
           </CardBody>
         </Card>
       </div>
-      <PricingTable current={session.plan} onChoose={choose} busy={busy} demo={demoBilling} />
+      <PricingTable current={session.plan} onChoose={choose} busy={busy} demo={demoBilling} yearlyAvailable={demoBilling || Boolean(subscription?.yearlyAvailable)} />
+      <SupportCard info={subscription} />
     </div>
   );
 }

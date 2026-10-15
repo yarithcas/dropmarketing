@@ -72,7 +72,10 @@
       "invalid_body": "The submitted information is invalid.",
       "network": "Network unavailable. Check your connection.",
       "no_customer": "No paid subscription is linked to this account.",
-      "delete_failed": "Account deletion failed. Please contact support."
+      "delete_failed": "Account deletion failed. Please contact support.",
+      "interval_unavailable": "Yearly billing is not available on this deployment.",
+      "support_not_configured": "Support is not configured on this deployment.",
+      "database_error": "A database error occurred. Please try again."
     }
   },
   "search": {
@@ -782,7 +785,8 @@
       "product": "Product",
       "store": "Store",
       "category": "Category"
-    }
+    },
+    "locked": "Watchlists are included in the Pro and Business plans."
   },
   "workspace": {
     "errors": {
@@ -1150,7 +1154,21 @@
     "advancedFilterLocked": "Advanced filter — Pro plan",
     "filtersIgnored": "Some advanced filters were not applied on the Free plan.",
     "limitReached": "You have reached your plan's daily limit.",
-    "exportLocked": "Exports are available on Pro and Business plans."
+    "exportLocked": "Exports are available on Pro and Business plans.",
+    "status": "Status",
+    "interval": "Billing",
+    "renewsOn": "Renews on",
+    "endsOn": "Ends on",
+    "statuses": {
+      "active": "Active",
+      "trialing": "Trial",
+      "past_due": "Past due",
+      "canceled": "Canceled",
+      "unpaid": "Unpaid",
+      "incomplete": "Incomplete",
+      "incomplete_expired": "Expired",
+      "paused": "Paused"
+    }
   },
   "plans": {
     "free": {
@@ -1198,7 +1216,8 @@
       "basicTrends": "Trend dashboard & market reports",
       "advancedReports": "Advanced reports (competitive landscape)",
       "workspaces": "{{n}} workspaces · {{seats}} team seats",
-      "support": "Priority support"
+      "support": "Priority support",
+      "shopifyStores": "Up to {{n}} connected Shopify stores"
     },
     "faq": {
       "q1": "Is the data real?",
@@ -1548,5 +1567,24 @@
     "intro": "New results for your alert “{{rule}}”:",
     "manage": "Manage your alerts: {{url}}",
     "footer": "Estimated or AI-generated values are not measured facts. You receive this email because email notifications are enabled for this alert."
+  },
+  "support": {
+    "title": "Help & support",
+    "standardText": "A question, a bug or a data issue? Write to us and we reply by email.",
+    "priorityText": "Your Business plan includes priority support: your requests are handled first.",
+    "priority": "Priority",
+    "category": "Category",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send",
+    "sent": "Request sent. We will reply by email.",
+    "unavailable": "The support form is not configured on this deployment (support inbox and email sending required, signed-in accounts only).",
+    "categories": {
+      "question": "Question",
+      "bug": "Bug",
+      "billing": "Billing",
+      "data": "Data",
+      "other": "Other"
+    }
   }
 }

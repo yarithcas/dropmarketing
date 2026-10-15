@@ -12,8 +12,17 @@ export function apiError(status: number, code: string, message?: string, extra?:
   return NextResponse.json({ error: { code, message: message ?? code, ...extra } }, { status });
 }
 
+/**
+ * Client address for rate limiting. Prefers headers set by the hosting edge (Vercel),
+ * then the hop appended by the nearest proxy: the first X-Forwarded-For entry is
+ * supplied by the client and could be spoofed to dodge limits.
+ */
 export function clientIp(req: NextRequest): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0].trim() || req.headers.get("x-real-ip") || "local";
+  const h = req.headers;
+  const edge = h.get("x-vercel-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip")?.trim();
+  if (edge) return edge;
+  const hops = h.get("x-forwarded-for")?.split(",").map((s) => s.trim()).filter(Boolean) ?? [];
+  return hops.at(-1) || "local";
 }
 
 /** Applies a per-IP rate limit; returns a 429 response when exceeded. */

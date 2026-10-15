@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { applyOp, EMPTY_WORKSPACE, WorkspaceError, workspaceOpSchema, type Workspace } from "@/lib/workspace";
 
-const limits = { collections: 2, savedItems: 2, alertRules: 1, alerts: true };
+const limits = { collections: 2, savedItems: 2, alertRules: 1, alerts: true, watchlists: true };
 
 describe("workspace reducer", () => {
   it("creates collections, adds, edits and removes items", () => {
@@ -33,6 +33,15 @@ describe("workspace reducer", () => {
     ws = applyOp(ws, { op: "rule.update", id: ws.alertRules[0].id, active: false }, limits);
     expect(ws.alertRules[0].active).toBe(false);
     expect(() => applyOp(ws, { op: "rule.create", rule }, limits)).toThrowError("limit_rules");
+    // After a downgrade, a paused rule cannot be resumed but can still be deleted.
+    expect(() => applyOp(ws, { op: "rule.update", id: ws.alertRules[0].id, active: true }, { ...limits, alerts: false })).toThrowError("plan_required");
+    expect(applyOp(ws, { op: "rule.delete", id: ws.alertRules[0].id }, { ...limits, alerts: false }).alertRules).toHaveLength(0);
+  });
+
+  it("requires the watchlists entitlement", () => {
+    const op = { op: "watch.add" as const, type: "product" as const, refId: "p1", label: "P1" };
+    expect(() => applyOp(EMPTY_WORKSPACE, op, { ...limits, watchlists: false })).toThrowError("plan_required");
+    expect(applyOp(EMPTY_WORKSPACE, op, limits).watchlist).toHaveLength(1);
   });
 
   it("validates operations at the boundary", () => {

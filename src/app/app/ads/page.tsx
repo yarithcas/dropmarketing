@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { Info, Radar, Search, SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { AdCard } from "@/components/app/ad-card";
@@ -25,6 +26,7 @@ interface AdsResponse {
   page: number;
   pageSize: number;
   meta: { mode: "demo" | "live"; asOf: string };
+  ignoredFilters?: string[];
 }
 
 const KEYS = ["q", "advertiser", "domain", "productId", "platform", "country", "language", "format", "category", "cta", "firstFrom", "firstTo", "lastFrom", "lastTo", "activeOnly"];
@@ -37,41 +39,43 @@ function AdsInner() {
   const { data, error, loading, reload } = useApi<AdsResponse>(session ? `/api/ads?${url.query}` : null);
   const active = KEYS.filter((k) => url.get(k)).length;
   const set = url.set;
+  // Free plan: keyword, category, platform and sort only (enforced server-side too).
+  const locked = session ? !session.entitlements.advancedFilters : false;
 
   const filters = (
     <div className="space-y-5">
       <FilterGroup label={t("filters.platform")}>
         <ChipSet values={PLATFORMS} active={url.getList("platform")} onToggle={(v) => url.toggle("platform", v)} render={(v) => t(`platforms.${v}`)} />
       </FilterGroup>
-      <FilterGroup label={t("filters.format")}>
+      <FilterGroup label={t("filters.format")} locked={locked}>
         <ChipSet values={["video", "image", "carousel"]} active={url.getList("format")} onToggle={(v) => url.toggle("format", v)} render={(v) => t(`formats.${v}`)} />
       </FilterGroup>
-      <FilterGroup label={t("filters.country")}>
+      <FilterGroup label={t("filters.country")} locked={locked}>
         <ChipSet values={COUNTRIES} active={url.getList("country")} onToggle={(v) => url.toggle("country", v)} render={(v) => t(`countries.${v}`)} />
       </FilterGroup>
-      <FilterGroup label={t("filters.language")}>
+      <FilterGroup label={t("filters.language")} locked={locked}>
         <ChipSet values={LANGUAGES} active={url.getList("language")} onToggle={(v) => url.toggle("language", v)} render={(v) => t(`languages.${v}`)} />
       </FilterGroup>
       <FilterGroup label={t("filters.category")}>
         <ChipSet values={CATEGORIES} active={url.getList("category")} onToggle={(v) => url.toggle("category", v)} render={(v) => t(`categories.${v}`)} />
       </FilterGroup>
-      <FilterGroup label={t("filters.cta")}>
+      <FilterGroup label={t("filters.cta")} locked={locked}>
         <ChipSet values={["shop_now", "learn_more", "sign_up", "get_offer", "order_now"]} active={url.getList("cta")} onToggle={(v) => url.toggle("cta", v)} render={(v) => t(`cta.${v}`)} />
       </FilterGroup>
-      <FilterGroup label={t("filters.firstObserved")}>
+      <FilterGroup label={t("filters.firstObserved")} locked={locked}>
         <div className="grid grid-cols-2 gap-2">
           <Input type="date" value={url.get("firstFrom")} onChange={(e) => set({ firstFrom: e.target.value })} aria-label={t("filters.from")} />
           <Input type="date" value={url.get("firstTo")} onChange={(e) => set({ firstTo: e.target.value })} aria-label={t("filters.to")} />
         </div>
       </FilterGroup>
-      <FilterGroup label={t("filters.lastObserved")}>
+      <FilterGroup label={t("filters.lastObserved")} locked={locked}>
         <div className="grid grid-cols-2 gap-2">
           <Input type="date" value={url.get("lastFrom")} onChange={(e) => set({ lastFrom: e.target.value })} aria-label={t("filters.from")} />
           <Input type="date" value={url.get("lastTo")} onChange={(e) => set({ lastTo: e.target.value })} aria-label={t("filters.to")} />
         </div>
       </FilterGroup>
-      <label className="flex items-center gap-2 text-sm text-muted">
-        <input type="checkbox" className="accent-[rgb(var(--accent))]" checked={url.get("activeOnly") === "true"} onChange={(e) => set({ activeOnly: e.target.checked ? "true" : null })} />
+      <label className={cn("flex items-center gap-2 text-sm text-muted", locked && "opacity-40")} title={locked ? t("billing.advancedFilterLocked") : undefined}>
+        <input type="checkbox" className="accent-[rgb(var(--accent))]" disabled={locked} checked={url.get("activeOnly") === "true"} onChange={(e) => set({ activeOnly: e.target.checked ? "true" : null })} />
         {t("filters.activeOnly")}
       </label>
     </div>
@@ -100,8 +104,8 @@ function AdsInner() {
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-subtle" />
               <DebouncedInput value={url.get("q")} onCommit={(q) => set({ q })} placeholder={t("ads.searchKeyword")} className="pl-9" aria-label={t("ads.searchKeyword")} data-testid="ads-search" />
             </div>
-            <DebouncedInput value={url.get("advertiser")} onCommit={(advertiser) => set({ advertiser })} placeholder={t("ads.searchAdvertiser")} aria-label={t("ads.searchAdvertiser")} />
-            <DebouncedInput value={url.get("domain")} onCommit={(domain) => set({ domain })} placeholder={t("ads.searchDomain")} aria-label={t("ads.searchDomain")} />
+            <DebouncedInput value={url.get("advertiser")} onCommit={(advertiser) => set({ advertiser })} placeholder={t("ads.searchAdvertiser")} aria-label={t("ads.searchAdvertiser")} disabled={locked} title={locked ? t("billing.advancedFilterLocked") : undefined} />
+            <DebouncedInput value={url.get("domain")} onCommit={(domain) => set({ domain })} placeholder={t("ads.searchDomain")} aria-label={t("ads.searchDomain")} disabled={locked} title={locked ? t("billing.advancedFilterLocked") : undefined} />
             <Select value={url.get("sort") || "newest"} onChange={(e) => set({ sort: e.target.value })} aria-label={t("sort.label")} className="sm:w-auto">
               {AD_SORTS.map((s) => (
                 <option key={s} value={s}>
@@ -122,6 +126,14 @@ function AdsInner() {
               </button>
             </div>
           )}
+          {data?.ignoredFilters?.length ? (
+            <div className="mb-4 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-xs text-muted" data-testid="ads-filters-ignored">
+              {t("billing.filtersIgnored")}{" "}
+              <Link href="/app/settings?tab=billing" className="text-accent hover:underline">
+                {t("billing.upgrade")}
+              </Link>
+            </div>
+          ) : null}
           <div className="mb-3 text-xs text-subtle" aria-live="polite">
             {data ? t("ads.resultCount", { count: data.total }) : " "}
           </div>

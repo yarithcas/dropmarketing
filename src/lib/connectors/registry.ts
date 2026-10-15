@@ -282,13 +282,14 @@ const shopifyAdmin: Connector = {
   envVars: ["SHOPIFY_API_KEY", "SHOPIFY_API_SECRET", "ENCRYPTION_KEY"],
   permittedKey: "connectors.permitted.shopify",
   rateLimit: { requests: 2, per: "second" },
-  fields: ["products", "orders (60 days)", "inventory"],
-  syncFrequency: "every6h",
+  fields: ["products", "orders (60 days)", "inventory (daily snapshots)"],
+  syncFrequency: "daily",
   retentionDays: 400,
   docsUrl: "https://shopify.dev/docs/api/admin-graphql",
   configured: () => Boolean(env.shopifyApiKey && env.shopifyApiSecret && env.encryptionKey),
   async sync() {
-    return skipped("per_user_sync"); // synced per connected merchant (see lib/server/shopify.ts)
+    // Synced per connected merchant, daily by syncDueShopifyIntegrations() (lib/server/shopify.ts) and on demand.
+    return skipped("per_user_sync");
   },
 };
 

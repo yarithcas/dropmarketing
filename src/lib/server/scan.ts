@@ -23,6 +23,7 @@ import type { PlanId } from "../plans";
 import { loadLiveDataset } from "./supabase-repository";
 import { loadEvaluationSource, runAlertsForUser } from "./alert-runner";
 import { ensureDataset } from "./repository";
+import { syncDueShopifyIntegrations } from "./shopify";
 
 /**
  * Scheduled scan, run by /api/cron/scan whenever a scheduler calls it (daily on Vercel Hobby, more often with a
@@ -40,14 +41,15 @@ export async function runScan(db: SupabaseClient, opts: { now?: Date } = {}) {
   };
   try {
     const ingestion = await ingestDueConnectors(db, now);
-    // Merchants' own Shopify stores (shopify_admin) are not research data and are synced per merchant by the
-    // Shopify job, not here. Integration point: call syncDueShopifyIntegrations() at this step.
+    // Merchants' own Shopify stores (shopify_admin) are not research data: they are synced per merchant,
+    // daily, by the Shopify job. A failure there never blocks research ingestion or alerts.
+    const shopify = await syncDueShopifyIntegrations().catch((e) => ({ error: redactSecrets(errorText(e)) }));
     // Aggregates and scores are rewritten only when records arrived: stale data is never re-dated as today's.
     const scored = ingestion.records > 0 ? await aggregateAndScore(db, today) : null;
     const evaluation = await evaluateDueRules(db, now, scored?.dataset ?? null);
     const retention = await purgeExpiredDataIfDue(db, now);
     await log({ status: "success", connectors: ingestion.connectors, records: ingestion.records, evaluation, retention });
-    return { connectors: ingestion.connectors, records: ingestion.records, products: scored?.count ?? 0, evaluation, retention };
+    return { connectors: ingestion.connectors, records: ingestion.records, products: scored?.count ?? 0, evaluation, retention, shopify };
   } catch (e) {
     await log({ status: "failed", error: redactSecrets(errorText(e)) });
     throw e;

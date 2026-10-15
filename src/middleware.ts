@@ -32,5 +32,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.svg|api/billing/webhook|api/cron).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.svg|api/billing/webhook|api/integrations/shopify/webhooks|api/cron).*)"],
 };

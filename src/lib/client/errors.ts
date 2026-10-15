@@ -38,6 +38,10 @@ export const ERROR_CODES = [
   "invite_expired",
   "invite_email_mismatch",
   "email_unconfirmed",
+  "shopify_revoked",
+  "shopify_access_denied",
+  "shopify_unavailable",
+  "store_limit",
 ] as const;
 
 const KNOWN = new Set<string>(ERROR_CODES);

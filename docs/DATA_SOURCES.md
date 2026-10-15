@@ -12,7 +12,7 @@ Unconfigured connectors report `skipped / not_configured`; nothing is simulated.
 | `search_trends` | Authorized search-interest provider | API key | 60/min | daily | 730 d |
 | `public_storefronts` | Public `products.json` listings only; robots.txt checked; identified UA; 1 req/s/host | none | 1/s | weekly | 180 d |
 | `licensed_dataset` | Contracted third-party feed (JSON) | API key | 10/min | daily | 730 d |
-| `shopify_admin` | The merchant's **own** store via OAuth, read-only scopes | OAuth (merchant) | 2/s | every 6 h | 400 d |
+| `shopify_admin` | The merchant's **own** store via OAuth, read-only scopes | OAuth (merchant) | 2/s | daily | 400 d |
 | `demo` | Synthetic sample data | — | — | static | — |
 
 ## Scheduling

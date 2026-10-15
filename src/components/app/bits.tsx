@@ -9,6 +9,8 @@ import {
   Briefcase,
   Car,
   ChefHat,
+  ChevronLeft,
+  ChevronRight,
   Cpu,
   Dumbbell,
   HeartPulse,
@@ -29,7 +31,7 @@ import { useFormat } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip } from "@/components/ui/tooltip";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 export const CATEGORY_ICON: Record<Category, LucideIcon> = {
   fitness: Dumbbell,
@@ -207,7 +209,7 @@ export function InfoTip({ content }: { content: ReactNode }) {
   const { t } = useTranslation();
   return (
     <Tooltip content={content}>
-      <button type="button" className="focus-ring inline-flex rounded text-subtle hover:text-fg" aria-label={typeof content === "string" ? content : t("common.info")}>
+      <button type="button" data-tooltip-trigger className="focus-ring tap inline-flex rounded-full text-subtle transition-colors hover:text-fg active:text-accent" aria-label={typeof content === "string" ? content : t("common.info")}>
         <Info className="size-3.5" />
       </button>
     </Tooltip>
@@ -259,12 +261,12 @@ export function Pagination({ page, pageSize, total, onPage }: { page: number; pa
     <div className="mt-6 flex items-center justify-between gap-3 text-sm text-subtle">
       <span>{t("common.pageOf", { page, pages, total })}</span>
       <div className="flex gap-2">
-        <button className={buttonVariants({ variant: "secondary", size: "sm" })} disabled={page <= 1} onClick={() => onPage(page - 1)}>
-          {t("common.previous")}
-        </button>
-        <button className={buttonVariants({ variant: "secondary", size: "sm" })} disabled={page >= pages} onClick={() => onPage(page + 1)}>
-          {t("common.next")}
-        </button>
+        <Button variant="secondary" size="sm" disabled={page <= 1} disabledReason={t("common.firstPage")} onClick={() => onPage(page - 1)} data-testid="page-prev">
+          <ChevronLeft /> {t("common.previous")}
+        </Button>
+        <Button variant="secondary" size="sm" disabled={page >= pages} disabledReason={t("common.lastPage")} onClick={() => onPage(page + 1)} data-testid="page-next">
+          {t("common.next")} <ChevronRight />
+        </Button>
       </div>
     </div>
   );

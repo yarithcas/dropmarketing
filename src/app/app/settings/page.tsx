@@ -39,6 +39,7 @@ function ProfileTab() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
   useEffect(() => {
     setName(session?.user?.name ?? "");
     setEmail(session?.user?.email ?? "");
@@ -84,13 +85,16 @@ function ProfileTab() {
             className="space-y-4"
             onSubmit={async (e) => {
               e.preventDefault();
-              if (session?.mode !== "demo") return;
+              if (session?.mode !== "demo" || savingProfile) return;
+              setSavingProfile(true);
               try {
                 await apiFetch("/api/auth/demo-login", { method: "POST", body: JSON.stringify({ name, email }) });
                 await refresh();
                 toast(t("common.saved"));
               } catch {
                 toast(t("auth.invalidEmail"), "error");
+              } finally {
+                setSavingProfile(false);
               }
             }}
           >
@@ -100,7 +104,11 @@ function ProfileTab() {
             <Field label={t("auth.email")} htmlFor="p-email">
               <Input id="p-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} disabled={session?.mode !== "demo"} />
             </Field>
-            {session?.mode === "demo" && <Button type="submit">{t("common.save")}</Button>}
+            {session?.mode === "demo" && (
+              <Button type="submit" loading={savingProfile} data-testid="profile-save">
+                {t("common.save")}
+              </Button>
+            )}
           </form>
         </CardBody>
       </Card>
@@ -189,7 +197,7 @@ function BillingTab() {
             {!demoBilling && session.plan !== "free" && (
               <Button
                 variant="secondary"
-                disabled={busy === "portal"}
+                loading={busy === "portal"}
                 onClick={async () => {
                   setBusy("portal");
                   try {
@@ -285,7 +293,7 @@ function IntegrationsTab() {
                   </Badge>
                 )}
                 {c.docsUrl.startsWith("http") && (
-                  <a href={c.docsUrl} target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center gap-1 text-xs text-accent hover:underline">
+                  <a href={c.docsUrl} target="_blank" rel="noopener noreferrer" className="tap ml-auto inline-flex items-center gap-1 rounded text-xs text-accent underline-offset-4 hover:underline">
                     {t("integrations.docs")} <ExternalLink className="size-3" />
                   </a>
                 )}
@@ -331,7 +339,7 @@ function IntegrationsTab() {
       </Card>
       <p className="text-xs text-subtle">
         {t("integrations.shopifyHint")}{" "}
-        <Link href="/app/stores?tab=mine" className="text-accent hover:underline">
+        <Link href="/app/stores?tab=mine" className="rounded text-accent underline-offset-4 hover:underline">
           {t("stores.tabs.mine")}
         </Link>
       </p>
@@ -464,7 +472,7 @@ function MembersSection() {
                 <Badge tone={m.role === "owner" ? "accent" : "neutral"}>{t(`team.roles.${m.role}`)}</Badge>
               )}
               {m.canRemove && (
-                <Button size="sm" variant="ghost" disabled={busy === `remove:${m.userId}`} onClick={() => remove(m)} data-testid="remove-member">
+                <Button size="sm" variant="ghost" loading={busy === `remove:${m.userId}`} onClick={() => remove(m)} data-testid="remove-member">
                   {m.self ? <LogOut /> : <UserMinus />} {m.self ? t("team.leave") : t("common.remove")}
                 </Button>
               )}
@@ -499,7 +507,7 @@ function MembersSection() {
                 ))}
               </Select>
             </Field>
-            <Button type="submit" disabled={full || !email.trim() || busy === "invite"} data-testid="invite-submit">
+            <Button type="submit" disabled={full || !email.trim()} loading={busy === "invite"} disabledReason={full ? t("team.seatsFull") : t("team.inviteEmailFirst")} data-testid="invite-submit">
               <UserPlus /> {t("team.inviteBtn")}
             </Button>
             <p className="text-[11px] text-subtle sm:col-span-3">{full ? <span className="text-warn">{t("team.seatsFull")}</span> : t("team.seatsHint")}</p>
@@ -515,7 +523,7 @@ function MembersSection() {
             </label>
             <div className="flex gap-2">
               <Input id="invite-link-value" readOnly value={issued.link} onFocus={(e) => e.currentTarget.select()} className="font-mono text-xs" />
-              <Button variant="secondary" onClick={async () => (await copyText(issued.link)) && toast(t("common.copied"))}>
+              <Button variant="secondary" onClick={async () => ((await copyText(issued.link)) ? toast(t("common.copied")) : toast(t("common.copyFailed"), "error"))}>
                 <Copy /> {t("common.copy")}
               </Button>
             </div>
@@ -539,10 +547,10 @@ function MembersSection() {
                     <div className="text-xs text-subtle">{inv.expired ? <Badge tone="critical">{t("team.expired")}</Badge> : t("team.expires", { date: f.dateTime(inv.expiresAt) })}</div>
                   </div>
                   <Badge>{t(`team.roles.${inv.role}`)}</Badge>
-                  <Button size="sm" variant="secondary" disabled={busy === `link:${inv.id}`} onClick={() => renew(inv)} title={t("team.inviteLinkHint")}>
+                  <Button size="sm" variant="secondary" loading={busy === `link:${inv.id}`} onClick={() => renew(inv)} title={t("team.inviteLinkHint")}>
                     <Link2 /> {t("team.newLink")}
                   </Button>
-                  <Button size="sm" variant="ghost" disabled={busy === `revoke:${inv.id}`} onClick={() => revoke(inv)}>
+                  <Button size="sm" variant="ghost" loading={busy === `revoke:${inv.id}`} onClick={() => revoke(inv)}>
                     <X /> {t("team.revoke")}
                   </Button>
                 </li>
@@ -623,7 +631,7 @@ function WorkspacesSection() {
                 }}
               >
                 <Input aria-label={t("workspaces.name")} value={editing.name} maxLength={80} autoFocus onChange={(e) => setEditing({ id: w.id, name: e.target.value })} className="h-8" />
-                <Button size="sm" type="submit" disabled={!editing.name.trim() || busy === `rename:${w.id}`}>
+                <Button size="sm" type="submit" disabled={!editing.name.trim()} loading={busy === `rename:${w.id}`} disabledReason={t("workspaces.nameRequired")}>
                   {t("common.save")}
                 </Button>
                 <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>
@@ -649,7 +657,7 @@ function WorkspacesSection() {
               <Button
                 size="sm"
                 variant="secondary"
-                disabled={busy === `switch:${w.id}`}
+                loading={busy === `switch:${w.id}`}
                 onClick={async () => {
                   setBusy(`switch:${w.id}`);
                   await switchTo(w.id, w.name);
@@ -673,7 +681,7 @@ function WorkspacesSection() {
           <Field label={t("workspaces.createTitle")} htmlFor="ws-name" hint={t("workspaces.billedHint")}>
             <div className="flex gap-2">
               <Input id="ws-name" value={name} maxLength={80} placeholder={t("workspaces.name")} onChange={(e) => setName(e.target.value)} data-testid="workspace-name" />
-              <Button type="submit" disabled={!name.trim() || busy === "create"} data-testid="workspace-create">
+              <Button type="submit" disabled={!name.trim()} loading={busy === "create"} disabledReason={t("workspaces.nameRequired")} data-testid="workspace-create">
                 <Plus /> {t("common.create")}
               </Button>
             </div>
@@ -745,6 +753,8 @@ function PrivacyTab() {
     a.href = URL.createObjectURL(blob);
     a.download = "trendhunter-demo-export.json";
     a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast(t("privacy.exported"));
   };
   const del = async () => {
     try {
@@ -776,7 +786,7 @@ function PrivacyTab() {
           <Field label={t("privacy.typeDelete")} htmlFor="confirm-del">
             <Input id="confirm-del" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="DELETE" />
           </Field>
-          <Button variant="danger" disabled={confirmText !== "DELETE"} onClick={del} data-testid="delete-account">
+          <Button variant="danger" disabled={confirmText !== "DELETE"} disabledReason={t("privacy.typeDeleteReason")} onClick={del} data-testid="delete-account">
             <Trash2 /> {t("privacy.deleteBtn")}
           </Button>
         </CardBody>
@@ -787,7 +797,7 @@ function PrivacyTab() {
           <p>{t("privacy.info1")}</p>
           <p>{t("privacy.info2")}</p>
           <p>{t("privacy.info3")}</p>
-          <Link href="/privacy" className="inline-flex items-center gap-1 text-accent hover:underline">
+          <Link href="/privacy" className="focus-ring tap inline-flex items-center gap-1 rounded text-accent underline-offset-4 hover:underline">
             {t("legal.privacyTitle")} <ExternalLink className="size-3" />
           </Link>
         </CardBody>

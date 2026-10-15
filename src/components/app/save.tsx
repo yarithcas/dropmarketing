@@ -76,7 +76,7 @@ function SaveDialog({ type, refId, label, onClose, preferSwipe }: { type: ItemTy
           <Button variant="ghost" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={save} disabled={!selected || busy} data-testid="confirm-save">
+          <Button onClick={save} disabled={!selected} loading={busy} disabledReason={t("collections.chooseCollection")} data-testid="confirm-save">
             {t("collections.save")}
           </Button>
         </>
@@ -89,7 +89,7 @@ function SaveDialog({ type, refId, label, onClose, preferSwipe }: { type: ItemTy
             {workspace.collections.map((c) => {
               const already = c.items.some((i) => i.type === type && i.refId === refId);
               return (
-                <label key={c.id} className={cn("flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm", selected === c.id ? "border-accent/50 bg-accent/10" : "border-border hover:bg-surface-2", already && "opacity-60")}>
+                <label key={c.id} className={cn("flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors duration-150", already ? "cursor-not-allowed opacity-60" : "cursor-pointer active:bg-surface-3", selected === c.id ? "border-accent/50 bg-accent/10" : "border-border", !already && selected !== c.id && "hover:border-muted/40 hover:bg-surface-2")} title={already ? t("collections.alreadyIn") : undefined}>
                   <input type="radio" name="collection" className="accent-[rgb(var(--accent))]" checked={selected === c.id} onChange={() => setSelected(c.id)} disabled={already} />
                   <span className="flex-1 truncate">{c.kind === "swipe" ? t("collections.swipeFile") : c.name}</span>
                   <span className="text-xs text-subtle">{already ? t("collections.alreadyIn") : c.items.length}</span>
@@ -99,7 +99,7 @@ function SaveDialog({ type, refId, label, onClose, preferSwipe }: { type: ItemTy
           </div>
           <div className="flex gap-2 pt-1">
             <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t("collections.newPlaceholder")} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), create())} />
-            <Button variant="secondary" onClick={create} disabled={!newName.trim()}>
+            <Button variant="secondary" onClick={create} disabled={!newName.trim()} disabledReason={t("collections.newPlaceholder")}>
               <Plus /> {t("common.create")}
             </Button>
           </div>
@@ -123,7 +123,7 @@ export function WatchButton({ type, refId, label, size = "sm" }: { type: "produc
   // Watchlists are a Pro feature; existing entries can still be removed after a downgrade.
   if (!id && session && !session.entitlements.watchlists)
     return (
-      <Link href="/app/settings?tab=billing" className={buttonVariants({ size, variant: "secondary" })} title={t("watchlist.locked")} data-testid="watch-locked">
+      <Link href="/app/settings?tab=billing" className={buttonVariants({ size, variant: "secondary" })} title={t("watchlist.locked")} data-testid="watch-locked" onClick={(e) => e.stopPropagation()}>
         <Lock /> {t("watchlist.watch")}
       </Link>
     );

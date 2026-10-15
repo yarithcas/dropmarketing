@@ -49,8 +49,8 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="space-y-6">
-      <Link href="/app/stores" className="inline-flex items-center gap-1 text-sm text-subtle hover:text-fg">
-        <ArrowLeft className="size-4" /> {t("stores.back")}
+      <Link href="/app/stores" className="focus-ring tap group/back inline-flex items-center gap-1 rounded text-sm text-subtle transition-colors hover:text-fg">
+        <ArrowLeft className="size-4 transition-transform group-hover/back:-translate-x-0.5" /> {t("stores.back")}
       </Link>
       <PageHeader
         eyebrow={
@@ -99,7 +99,7 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
                     s.socials.map((so) =>
                       // Demo profiles carry placeholder URLs: shown, never linked.
                       s.source.kind !== "demo" && isHttps(so.url) ? (
-                        <a key={so.network} href={so.url} target="_blank" rel="noopener noreferrer nofollow" className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
+                        <a key={so.network} href={so.url} target="_blank" rel="noopener noreferrer nofollow" className="focus-ring inline-flex items-center gap-1 rounded text-xs text-accent underline-offset-4 hover:underline">
                           <ExternalLink className="size-3" /> {t(`stores.networks.${so.network}`)}
                         </a>
                       ) : (
@@ -174,7 +174,7 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
                     </td>
                     <td className="table-td">
                       {p ? (
-                        <Link href={`/app/products/${p.id}`} className="flex items-center gap-2 hover:text-accent">
+                        <Link href={`/app/products/${p.id}`} className="focus-ring tap flex items-center gap-2 rounded transition-colors hover:text-accent">
                           <ScoreBadge score={p.score.overall} /> <span className="max-w-[200px] truncate text-xs">{p.name}</span>
                         </Link>
                       ) : (

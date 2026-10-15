@@ -11,6 +11,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/states";
+import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/client/session";
 import { useApi } from "@/lib/client/use-api";
 import { useFormat } from "@/lib/format";
@@ -48,6 +49,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   const { t } = useTranslation();
   const f = useFormat();
   const { session } = useSession();
+  const toast = useToast();
   const { data, error, loading, reload } = useApi<Report>(`/api/reports/${id}`);
   if (error?.code === "plan_required") return <PlanGate feature={t("reports.kinds.competitive")} allowed={false}>{null}</PlanGate>;
   if (error) return <ErrorState message={error.status === 404 ? t("errors.notFound") : undefined} onRetry={reload} />;
@@ -59,15 +61,15 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   return (
     <div className="mx-auto max-w-5xl space-y-4" data-testid="report">
       <div className="no-print flex flex-wrap items-center justify-between gap-2">
-        <Link href="/app/reports" className="inline-flex items-center gap-1 text-sm text-subtle hover:text-fg">
-          <ArrowLeft className="size-4" /> {t("reports.back")}
+        <Link href="/app/reports" className="focus-ring tap group/back inline-flex items-center gap-1 rounded text-sm text-subtle transition-colors hover:text-fg">
+          <ArrowLeft className="size-4 transition-transform group-hover/back:-translate-x-0.5" /> {t("reports.back")}
         </Link>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => window.print()} disabled={!canExport} title={canExport ? undefined : t("billing.exportLocked")} data-testid="export-pdf">
             <Printer /> {t("reports.exportPdf")}
           </Button>
           {canExport ? (
-            <a href={`/api/reports/${id}/csv`} className={buttonVariants({ variant: "secondary" })} data-testid="export-report-csv">
+            <a href={`/api/reports/${id}/csv`} className={buttonVariants({ variant: "secondary" })} onClick={() => toast(t("common.exported", { file: "CSV" }), "info")} data-testid="export-report-csv">
               <Download /> CSV
             </a>
           ) : (
@@ -127,7 +129,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
               {data.opportunities.map((p) => (
                 <tr key={p.id} className="border-b border-border/50 last:border-0">
                   <td className="table-td">
-                    <Link href={`/app/products/${p.id}`} className="hover:text-accent">
+                    <Link href={`/app/products/${p.id}`} className="focus-ring rounded transition-colors hover:text-accent">
                       {p.name}
                     </Link>
                   </td>
@@ -191,7 +193,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
             {data.competitors.map((s) => (
               <tr key={s.id} className="border-b border-border/50 last:border-0">
                 <td className="table-td">
-                  <Link href={`/app/stores/${s.id}`} className="hover:text-accent">
+                  <Link href={`/app/stores/${s.id}`} className="focus-ring rounded transition-colors hover:text-accent">
                     {s.name}
                   </Link>
                   <div className="text-xs text-subtle">{s.domain}</div>

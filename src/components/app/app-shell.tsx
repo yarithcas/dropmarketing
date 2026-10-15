@@ -40,8 +40,8 @@ function NavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void 
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "focus-ring group flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition-colors",
-        active ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2 hover:text-fg",
+        "focus-ring tap group flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium transition-colors duration-150 active:bg-surface-3",
+        active ? "bg-surface-3 text-fg hover:bg-surface-3/80" : "text-muted hover:bg-surface-2 hover:text-fg",
       )}
     >
       <Icon className={cn("size-4 shrink-0", active ? "text-accent" : "text-subtle group-hover:text-muted")} />
@@ -56,7 +56,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-14 items-center px-4">
-        <Link href="/app" onClick={onNavigate} className="focus-ring rounded-md">
+        <Link href="/app" onClick={onNavigate} className="focus-ring rounded-md transition-opacity hover:opacity-80 active:opacity-70">
           <Logo />
         </Link>
       </div>
@@ -68,7 +68,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="space-y-2 border-t border-border p-3">
         <WorkspaceSwitcher />
         <LanguageSelect className="w-full sm:hidden [&_select]:w-full" testId="sidebar-language-select" />
-        <Link href="/app/settings?tab=billing" onClick={onNavigate} className="focus-ring block rounded-lg border border-border bg-surface-2 p-3 hover:bg-surface-3">
+        <Link href="/app/settings?tab=billing" onClick={onNavigate} className="focus-ring block rounded-lg border border-border bg-surface-2 p-3 transition-colors hover:border-accent/40 hover:bg-surface-3 active:bg-surface-3/70">
           <div className="flex items-center justify-between">
             <span className="text-xs text-subtle">{t("billing.currentPlan")}</span>
             <Badge tone={session?.plan === "free" ? "neutral" : "accent"}>{session ? t(`plans.${session.plan}.name`) : "…"}</Badge>
@@ -94,7 +94,7 @@ function NotificationsBell() {
   }, []);
   return (
     <div ref={ref} className="relative">
-      <Button variant="ghost" size="icon" aria-label={t("notifications.title")} onClick={() => setOpen((o) => !o)} data-testid="notifications-bell">
+      <Button variant="ghost" size="icon" aria-label={t("notifications.title")} aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen((o) => !o)} className={cn(open && "bg-surface-2 text-fg")} data-testid="notifications-bell">
         <Bell />
         {unread.length > 0 && <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">{unread.length > 9 ? "9+" : unread.length}</span>}
       </Button>
@@ -103,9 +103,9 @@ function NotificationsBell() {
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <span className="text-sm font-semibold">{t("notifications.title")}</span>
             {unread.length > 0 && (
-              <button className="text-xs text-accent hover:underline" onClick={() => dispatch({ op: "notifications.read", ids: unread.map((n) => n.id) })}>
+              <Button variant="link" size="sm" className="h-auto text-xs" onClick={() => dispatch({ op: "notifications.read", ids: unread.map((n) => n.id) }, t("notifications.markedRead"))}>
                 {t("notifications.markAllRead")}
-              </button>
+              </Button>
             )}
           </div>
           <ul className="max-h-[60vh] overflow-y-auto">
@@ -120,7 +120,7 @@ function NotificationsBell() {
                       setOpen(false);
                       if (!n.read) dispatch({ op: "notifications.read", ids: [n.id] });
                     }}
-                    className="block text-sm hover:text-accent"
+                    className="focus-ring block rounded text-sm transition-colors hover:text-accent"
                   >
                     {t(n.key, notificationParams(n.params, f, (c) => t(`categories.${c}`)))}
                   </Link>
@@ -133,7 +133,7 @@ function NotificationsBell() {
             )}
           </ul>
           <div className="border-t border-border px-4 py-2.5">
-            <Link href="/app/alerts" onClick={() => setOpen(false)} className="text-xs text-accent hover:underline">
+            <Link href="/app/alerts" onClick={() => setOpen(false)} className="focus-ring rounded text-xs text-accent underline-offset-4 hover:underline">
               {t("notifications.manage")}
             </Link>
           </div>
@@ -157,7 +157,16 @@ function UserMenu() {
   const name = session?.user?.name || session?.user?.email || t("auth.visitor");
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="focus-ring flex h-9 items-center gap-2 rounded-lg px-1.5 hover:bg-surface-2" aria-label={t("auth.account")} data-testid="user-menu">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={cn("focus-ring tap flex h-9 items-center gap-2 rounded-lg px-1.5 transition-[background-color,transform] duration-150 hover:bg-surface-2 active:scale-95 motion-reduce:active:scale-100", open && "bg-surface-2")}
+        aria-label={t("auth.account")}
+        title={t("auth.account")}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        data-testid="user-menu"
+      >
         <span className="flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-2 text-xs font-semibold text-white">
           {session?.user ? name.slice(0, 1).toUpperCase() : <UserRound className="size-4" />}
         </span>
@@ -169,12 +178,14 @@ function UserMenu() {
             <div className="truncate text-xs text-subtle">{session?.user?.email ?? t("auth.notSignedIn")}</div>
           </div>
           <div className="my-1 border-t border-border" />
-          <Link href="/app/settings" onClick={() => setOpen(false)} className="block rounded-md px-2.5 py-1.5 text-sm text-muted hover:bg-surface-2 hover:text-fg">
+          <Link href="/app/settings" onClick={() => setOpen(false)} className="focus-ring block rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface-2 hover:text-fg active:bg-surface-3">
             {t("nav.settings")}
           </Link>
           {session?.authenticated ? (
-            <button
-              className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-sm text-muted hover:bg-surface-2 hover:text-fg"
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start px-2.5 text-sm"
               onClick={async () => {
                 await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
                 await refresh();
@@ -182,9 +193,9 @@ function UserMenu() {
               }}
             >
               <LogOut className="size-4" /> {t("auth.logout")}
-            </button>
+            </Button>
           ) : (
-            <Link href="/login" className="block rounded-md px-2.5 py-1.5 text-sm text-muted hover:bg-surface-2 hover:text-fg">
+            <Link href="/login" className="focus-ring block rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:bg-surface-2 hover:text-fg active:bg-surface-3">
               {t("auth.login")}
             </Link>
           )}
@@ -204,7 +215,7 @@ function DemoBanner() {
       <FlaskConical className="size-3.5 shrink-0" />
       <span className="font-medium">{t("demo.bannerTitle")}</span>
       <span className="text-warn/80">{t("demo.bannerText", { date: f.date(session.data.asOf) })}</span>
-      <Link href="/app/settings?tab=integrations" className="ml-auto underline-offset-2 hover:underline">
+      <Link href="/app/settings?tab=integrations" className="focus-ring tap ml-auto rounded underline-offset-2 transition-colors hover:text-fg hover:underline">
         {t("demo.connectSources")}
       </Link>
     </div>
@@ -226,9 +237,9 @@ function Shell({ children }: { children: ReactNode }) {
         <div className="fixed inset-0 z-[90] lg:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
           <aside className="absolute inset-y-0 left-0 w-72 border-r border-border bg-surface">
-            <button className="absolute right-3 top-4 rounded-md p-1 text-subtle hover:text-fg" onClick={() => setMobileOpen(false)} aria-label={t("common.close")}>
+            <Button variant="ghost" size="icon-sm" className="absolute right-3 top-3.5 z-10" onClick={() => setMobileOpen(false)} aria-label={t("common.close")}>
               <X className="size-5" />
-            </button>
+            </Button>
             <Sidebar onNavigate={() => setMobileOpen(false)} />
           </aside>
         </div>

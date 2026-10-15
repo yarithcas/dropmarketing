@@ -246,7 +246,7 @@ export default function LandingPage() {
         <div className="mt-8 divide-y divide-border rounded-xl border border-border">
           {[1, 2, 3, 4, 5].map((n) => (
             <details key={n} className="group px-5 py-4">
-              <summary className="cursor-pointer list-none text-sm font-medium marker:hidden">
+              <summary className="focus-ring tap -mx-2 cursor-pointer list-none rounded-md px-2 py-1 text-sm font-medium transition-colors marker:hidden hover:bg-surface-2 hover:text-fg">
                 <span className="flex items-center justify-between gap-4">
                   {t(`landing.faq.q${n}`)}
                   <span className="text-subtle transition-transform group-open:rotate-45">+</span>

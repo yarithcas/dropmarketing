@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
+import { useCardNavigation } from "@/components/app/card-link";
 import { Database, Minus, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CATEGORY_ICON, PageHeader, ProvenanceBadge, ScoreBadge, Thumb, TrendPill } from "@/components/app/bits";
@@ -93,15 +94,16 @@ function SearchPill({ search, range }: { search: SearchTrend; range: TimeRange }
 function ProductRows({ items, range }: { items: TrendRow[]; range: TimeRange }) {
   const { t } = useTranslation();
   const f = useFormat();
+  const cardLink = useCardNavigation();
   if (!items.length) return <EmptyState className="m-4" title={t("trends.noneInRange")} />;
   return (
     <ul className="divide-y divide-border/70">
       {items.map((p) => (
-        <li key={p.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2">
-          <Link href={`/app/products/${p.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+        <li key={p.id} className="group flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors hover:bg-surface-2 active:bg-surface-3" {...cardLink(`/app/products/${p.id}`)}>
+          <Link href={`/app/products/${p.id}`} className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded">
             <Thumb category={p.category} hue={p.hue} className="size-9 shrink-0" />
             <div className="min-w-0">
-              <div className="truncate text-sm hover:text-accent">{p.name}</div>
+              <div className="truncate text-sm transition-colors group-hover:text-accent">{p.name}</div>
               <div className="text-xs text-subtle">
                 {t(`categories.${p.category}`)} · {t("products.firstDetectedOn", { date: f.date(p.firstDetected) })}
               </div>
@@ -123,6 +125,7 @@ function ProductRows({ items, range }: { items: TrendRow[]; range: TimeRange }) 
 
 function NicheRows({ items, insufficient }: { items: NicheEmergence[]; insufficient: number }) {
   const { t } = useTranslation();
+  const cardLink = useCardNavigation();
   const note = insufficient > 0 ? t("trends.nichesInsufficient", { n: insufficient, ads: MIN_AGGREGATE.ads, products: MIN_AGGREGATE.products }) : undefined;
   if (!items.length) return <EmptyState className="m-4" title={t("trends.nichesNone")} description={note} />;
   return (
@@ -133,14 +136,14 @@ function NicheRows({ items, insufficient }: { items: NicheEmergence[]; insuffici
           const label = n.kind === "category" ? t(`categories.${n.value}`) : `#${n.value}`;
           const href = n.kind === "category" ? `/app/products?category=${n.value}` : `/app/products?q=${encodeURIComponent(n.value)}`;
           return (
-            <li key={`${n.kind}-${n.value}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2">
-              <Link href={href} className="flex min-w-0 flex-1 items-center gap-3">
+            <li key={`${n.kind}-${n.value}`} className="group flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors hover:bg-surface-2 active:bg-surface-3" {...cardLink(href)}>
+              <Link href={href} className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-3 text-muted">
                   <Icon className="size-4" />
                 </span>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="truncate text-sm hover:text-accent">{label}</span>
+                    <span className="truncate text-sm transition-colors group-hover:text-accent">{label}</span>
                     <Badge>{t(`trends.nicheKinds.${n.kind}`)}</Badge>
                   </div>
                   <div className="text-xs text-subtle">

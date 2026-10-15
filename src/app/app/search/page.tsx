@@ -44,7 +44,7 @@ function SearchInner() {
                     const Icon = l.icon;
                     return (
                       <li key={l.href}>
-                        <Link href={l.href} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-2">
+                        <Link href={l.href} className="focus-ring flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-surface-2 active:bg-surface-3">
                           <Icon className="size-4 text-subtle" />
                           <span className="truncate">{g === "niches" && l.label.length < 12 ? t(`categories.${l.label}`, { defaultValue: l.label }) : l.label}</span>
                           {l.growth !== undefined ? (

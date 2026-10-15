@@ -15,13 +15,14 @@ export function FilterGroup({ label, children, locked, className }: { label: str
         <span className="label">{label}</span>
         {locked && (
           <Tooltip content={t("billing.advancedFilterLocked")}>
-            <Lock className="size-3 text-accent" aria-label={t("billing.advancedFilterLocked")} />
+            <Lock className="size-3 text-accent" aria-label={t("billing.advancedFilterLocked")} tabIndex={0} />
           </Tooltip>
         )}
       </div>
-      <div className={cn(locked && "pointer-events-none opacity-40")} aria-disabled={locked}>
+      {/* A disabled fieldset disables every nested chip/input natively; the title explains why on hover. */}
+      <fieldset disabled={locked} title={locked ? t("billing.advancedFilterLocked") : undefined} className={cn("min-w-0", locked && "opacity-40")}>
         {children}
-      </div>
+      </fieldset>
     </div>
   );
 }
@@ -42,7 +43,7 @@ export function ResetFilters({ onReset, count }: { onReset: () => void; count: n
   const { t } = useTranslation();
   if (!count) return null;
   return (
-    <button onClick={onReset} className="focus-ring inline-flex items-center gap-1 rounded text-xs text-accent hover:underline">
+    <button type="button" onClick={onReset} className="focus-ring tap inline-flex items-center gap-1 rounded text-xs text-accent underline-offset-4 transition-colors hover:underline active:text-accent/80">
       <RotateCcw className="size-3" /> {t("filters.reset", { count })}
     </button>
   );

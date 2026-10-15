@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { BellRing, CalendarClock, Eye, Mail, Pause, Play, Plus, Radar, Trash2 } from "lucide-react";
+import { BellRing, CalendarClock, Database, Eye, Mail, Pause, Play, Plus, Radar, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { PageHeader, PlanGate } from "@/components/app/bits";
 import { Badge } from "@/components/ui/badge";
@@ -18,17 +18,35 @@ import { useSession } from "@/lib/client/session";
 import { useApi } from "@/lib/client/use-api";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { useWorkspace } from "@/lib/client/workspace";
-import { useFormat } from "@/lib/format";
+import { useFormat, type Formatters } from "@/lib/format";
+import type { MonitoringStatus } from "@/lib/monitoring";
 import { notificationParams } from "@/lib/notification-text";
 import { CATEGORIES, type ProductWithMetrics, type Store } from "@/lib/types";
 import { ALERT_TYPES, type AlertRule, type AlertType } from "@/lib/workspace";
 import { cn } from "@/lib/cn";
 
-interface Status {
-  scheduler: boolean;
-  email: boolean;
-  lastSuccess: string | null;
-  failures: { connector: string; at: string; error: string | null }[];
+type T = (k: string, o?: Record<string, unknown>) => string;
+
+const reasonText = (t: T, code: string | null | undefined) => t(`alerts.runReasons.${code ?? "unknown"}`, { defaultValue: t("alerts.runReasons.unknown") });
+
+/** Data ingestion line: what was actually collected, never inferred from rule runs. */
+function ingestionText(s: MonitoringStatus, t: T, f: Formatters) {
+  if (!s.scheduler) return t("alerts.notScheduled");
+  if (!s.connectors.length) return t("alerts.noConnector");
+  if (!s.lastIngestion) return t("alerts.noIngestionYet");
+  return t("alerts.lastIngestion", { date: f.dateTime(s.lastIngestion.at), source: t(`connectors.names.${s.lastIngestion.connector}`), n: f.number(s.lastIngestion.records) });
+}
+
+/** Rule evaluation lines: the user's latest scheduled run, with the reason when it did not evaluate. */
+function evaluationText(s: MonitoringStatus, t: T, f: Formatters): string[] {
+  const e = s.lastEvaluation;
+  if (!s.scheduler) return [t("alerts.evaluationManualOnly")];
+  if (!e) return [t("alerts.noEvaluationYet")];
+  if (e.status === "running") return [t("alerts.evaluationRunning", { date: f.dateTime(e.at) })];
+  if (e.status === "success") return [t("alerts.lastEvaluation", { date: f.dateTime(e.at), asOf: f.date(e.dataAsOf) }), ...(e.reason ? [reasonText(t, e.reason)] : [])];
+  const lines = [t("alerts.lastEvaluationNotRun", { date: f.dateTime(e.at), status: t(`alerts.runStatus.${e.status}`), reason: reasonText(t, e.reason) })];
+  if (s.lastSuccessfulEvaluation) lines.push(t("alerts.lastSuccessfulEvaluation", { date: f.dateTime(s.lastSuccessfulEvaluation.at) }));
+  return lines;
 }
 
 function RuleDialog({ onClose, preset }: { onClose: () => void; preset?: Partial<AlertRule> }) {
@@ -179,15 +197,21 @@ function AlertsInner() {
   const tab = (url.get("tab") || "rules") as "rules" | "watchlist" | "history";
   const [creating, setCreating] = useState<Partial<AlertRule> | null>(null);
   const [checking, setChecking] = useState(false);
-  const { data: status } = useApi<Status>("/api/alerts/status");
+  const { data: status, reload: reloadStatus } = useApi<MonitoringStatus>("/api/alerts/status");
   const labels = new Map(workspace.watchlist.map((w) => [w.refId, w.label]));
   const demo = session?.mode === "demo";
+  const ingesting = Boolean(status?.scheduler && status.connectors.length && status.lastIngestion);
+  const evaluated = Boolean(status?.scheduler && status.lastEvaluation?.status === "success");
 
   const runNow = async () => {
     setChecking(true);
     const r = await runAlertCheck();
     setChecking(false);
-    if (r) toast(t("alerts.checkDone", { n: r.matches }), "info");
+    if (!r) return;
+    reloadStatus();
+    // A live check without live research data is recorded as skipped, never reported as complete.
+    if (r.status === "skipped" || r.status === "failed") toast(t("alerts.checkNotRun", { reason: reasonText(t, r.reason) }), "error");
+    else toast(t("alerts.checkDone", { n: r.matches }), "info");
   };
 
   return (
@@ -209,14 +233,24 @@ function AlertsInner() {
       />
 
       <Card>
-        <CardBody className="grid gap-4 md:grid-cols-3">
+        <CardBody className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <div className="flex gap-3">
-            <CalendarClock className={cn("mt-0.5 size-5 shrink-0", status?.scheduler ? "text-good" : "text-warn")} />
+            <Database className={cn("mt-0.5 size-5 shrink-0", ingesting ? "text-good" : "text-warn")} />
             <div className="text-sm">
               <div className="font-medium">{t("alerts.monitoring")}</div>
               <div className="text-muted" data-testid="monitoring-status">
-                {!status ? "…" : status.scheduler ? (status.lastSuccess ? t("alerts.lastScan", { date: f.dateTime(status.lastSuccess) }) : t("alerts.noScanYet")) : t("alerts.notScheduled")}
+                {status ? ingestionText(status, t, f) : "…"}
               </div>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <CalendarClock className={cn("mt-0.5 size-5 shrink-0", evaluated ? "text-good" : "text-warn")} />
+            <div className="text-sm">
+              <div className="font-medium">{t("alerts.evaluation")}</div>
+              <div className="text-muted" data-testid="evaluation-status">
+                {status ? evaluationText(status, t, f).map((line) => <div key={line}>{line}</div>) : "…"}
+              </div>
+              {status?.scheduler && <p className="mt-1 text-[11px] text-subtle">{t("alerts.scheduleNote")}</p>}
             </div>
           </div>
           <div className="flex gap-3">
@@ -226,17 +260,18 @@ function AlertsInner() {
               <div className="text-muted">{status?.email ? t("alerts.emailOn") : t("alerts.emailNotConfigured")}</div>
             </div>
           </div>
-          <div className="flex items-center justify-start gap-2 md:justify-end">
+          <div className="flex items-center justify-start gap-2 xl:justify-end">
             <Button variant="secondary" onClick={runNow} disabled={checking || !session?.entitlements.alerts} data-testid="run-check">
               <Radar className={checking ? "animate-spin" : ""} /> {demo ? t("alerts.runDemoCheck") : t("alerts.runCheck")}
             </Button>
           </div>
           {status?.failures.length ? (
-            <div className="rounded-lg border border-critical/30 bg-critical/5 p-3 text-xs text-critical md:col-span-3">
-              {t("alerts.failures")}: {status.failures.map((x) => `${x.connector} (${f.dateTime(x.at)})`).join(", ")}
+            <div className="rounded-lg border border-critical/30 bg-critical/5 p-3 text-xs text-critical md:col-span-2 xl:col-span-4">
+              {t("alerts.failures")}:{" "}
+              {status.failures.map((x) => `${t(`connectors.names.${x.connector}`)} (${f.dateTime(x.at)} · ${t(`integrations.errorCategories.${x.category}`)})`).join(", ")}
             </div>
           ) : null}
-          {demo && <p className="text-[11px] text-subtle md:col-span-3">{t("alerts.demoNote")}</p>}
+          {demo && <p className="text-[11px] text-subtle md:col-span-2 xl:col-span-4">{t("alerts.demoNote")}</p>}
         </CardBody>
       </Card>
 
@@ -373,11 +408,13 @@ function AlertsInner() {
                   <li key={r.id} className="px-4 py-2.5 text-xs">
                     <div className="flex justify-between">
                       <span>{f.dateTime(r.at)}</span>
-                      <Badge tone={r.status === "success" ? "good" : "critical"}>{t(`alerts.runStatus.${r.status}`)}</Badge>
+                      <Badge tone={r.status === "success" ? "good" : r.status === "failed" ? "critical" : r.status === "skipped" ? "warn" : "neutral"}>{t(`alerts.runStatus.${r.status}`)}</Badge>
                     </div>
                     <div className="mt-0.5 text-subtle">
                       {t(`alerts.origins.${r.origin}`)} · {t("alerts.runSummary", { rules: r.rules, matches: r.matches })}
                     </div>
+                    {/* Live runs store a reason code (demo runs keep the snapshot date in `message`). */}
+                    {r.origin !== "demo" && r.message && <div className={cn("mt-0.5", r.status === "success" ? "text-subtle" : "text-warn")}>{reasonText(t, r.message)}</div>}
                   </li>
                 ))}
               </ul>

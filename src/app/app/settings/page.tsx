@@ -242,7 +242,7 @@ interface IntegrationsResponse {
     retentionDays: number;
     docsUrl: string;
     configured: boolean;
-    lastRun: { status: string; at: string; records: number; error: string | null } | null;
+    lastRun: { status: string; at: string; records: number; errorCategory: string | null } | null;
   }[];
   services: { id: string; configured: boolean; envVars: string[] }[];
 }
@@ -316,10 +316,10 @@ function IntegrationsTab() {
                     <dd className="inline font-mono text-[11px]">{c.envVars.join(" · ")}</dd>
                   </div>
                 )}
-                {c.lastRun?.error && (
+                {c.lastRun?.errorCategory && (
                   <div className="text-critical sm:col-span-3">
                     <AlertTriangle className="mr-1 inline size-3" />
-                    {c.lastRun.error}
+                    {t(`integrations.errorCategories.${c.lastRun.errorCategory}`, { defaultValue: t("integrations.errorCategories.unknown") })}
                   </div>
                 )}
               </dl>

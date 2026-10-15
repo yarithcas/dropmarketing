@@ -8,17 +8,30 @@ clearly labelled demo behaviour when it is not.
 
 ### Supabase (database, auth, RLS)
 1. Create a project at supabase.com.
-2. Run the migration: `supabase db push` (or paste `supabase/migrations/0001_init.sql` into the SQL editor).
+2. Run the migrations: `supabase db push` (or paste the files of `supabase/migrations/` into the SQL editor, in order).
 3. Auth → URL configuration: site URL = `NEXT_PUBLIC_APP_URL`, redirect URL = `${APP_URL}/auth/callback`.
 4. Env: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (server only).
 5. Optional: `npm run seed:demo` to load the labelled demo dataset into the database.
 
 ### Background jobs
-- Set `CRON_SECRET` (random string). `vercel.json` schedules `/api/cron/scan` hourly (alerts),
-  daily (ingestion + scoring + alerts) and weekly. Vercel sends `Authorization: Bearer $CRON_SECRET`.
-- Other schedulers: `curl -H "Authorization: Bearer $CRON_SECRET" https://app/api/cron/scan?frequency=daily`.
-- Results are logged in `connector_runs` and `alert_runs`; the Alerts page shows the last successful scan
-  and recent failures.
+- Set `CRON_SECRET` (random string) **and** `SUPABASE_SERVICE_ROLE_KEY`: jobs write with the service role,
+  so the scheduler counts as configured only with both. Vercel sends `Authorization: Bearer $CRON_SECRET`.
+- `vercel.json` declares a **daily cron** (`15 5 * * *`, UTC) and a **weekly cron** (Mondays `30 5 * * 1`) calling
+  `/api/cron/scan`, so the project deploys on Vercel's free **Hobby** plan, which only accepts cron jobs that run
+  at most once a day (and may fire them anywhere within the scheduled hour). The weekly call is a safety net: the
+  scan is due-based, so it only does work that is still due (the `frequency` parameter is ignored). Each call syncs the connectors that are due, recomputes aggregates and
+  scores when records arrived, evaluates the alert rules that are due and runs the daily retention purge.
+  With this default, hourly and daily rules are checked once a day and weekly rules on Mondays — see
+  [DATA_SOURCES.md → Scheduling](DATA_SOURCES.md#scheduling) and [→ Retention](DATA_SOURCES.md#retention).
+- **Hourly evaluation (optional)**: the endpoint can be called as often as you like; work that is not due is
+  skipped, so daily connectors still sync once a day and the purge still runs once a day.
+  - Vercel Pro (or any plan allowing sub-daily crons): add an entry to `vercel.json`, keeping the others:
+    `{ "path": "/api/cron/scan", "schedule": "0 * * * *" }`
+  - Any plan, with an external scheduler (GitHub Actions `schedule`, cron-job.org, a server crontab…) every hour:
+    `curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://app.example.com/api/cron/scan`
+    (keep the secret in the scheduler's secret store; the call can take up to `maxDuration` = 300 s).
+- Results are logged in `connector_runs`, `alert_runs` (per user) and `scan_runs`; the Alerts page shows the
+  last data ingestion, the last evaluation of the user's rules and current connector failures.
 
 ## 2. Payments — Stripe
 1. Create two recurring Prices (Pro, Business) → `STRIPE_PRICE_PRO`, `STRIPE_PRICE_BUSINESS`.
@@ -61,7 +74,7 @@ See [DATA_SOURCES.md](DATA_SOURCES.md). Each requires approval/terms from the pr
       (`lib/server/rate-limit.ts` is per instance).
 - [ ] Configure a cookie-consent banner if you add analytics/advertising cookies.
 - [ ] Run `npm run typecheck && npm test && npm run test:e2e`.
-- [ ] Monitor `connector_runs` failures and Stripe webhook deliveries.
+- [ ] Monitor `connector_runs` failures, `scan_runs` and Stripe webhook deliveries.
 
 ## Known limitations of this MVP
 - Team invitations and multiple workspaces (Business plan) have the data model (`organizations`,

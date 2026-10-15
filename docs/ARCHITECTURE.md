@@ -13,11 +13,13 @@ Next.js route handlers ── guard(): rate limit · auth (live) · plan meterin
    ├─ lib/alerts.ts + server/alert-runner.ts  rule evaluation → notifications (+ email)
    ├─ lib/analyst/*  + server/ai.ts      rule-based analyst / Claude with structured output
    ├─ lib/connectors/*                   ingestion connectors (official APIs, licensed, public pages)
-   ├─ server/scan.ts  ← /api/cron/scan   background job: ingest → aggregate → score → alerts
+   ├─ server/scan.ts  ← /api/cron/scan   background job: due connectors → aggregate → score → alerts → retention
+   ├─ lib/monitoring.ts                  due-ness, plan filtering, live-data filter, retention cutoffs (pure)
    ├─ server/shopify.ts                  merchant OAuth, HMAC, encrypted tokens, sync
    └─ server/stripe.ts + billing routes  checkout, portal, verified webhook
    ▼
 Supabase Postgres (supabase/migrations/*.sql) — RLS on every table
+Supabase Postgres (supabase/migrations/*.sql, applied in order) — RLS on every table
 ```
 
 ## Modes
@@ -29,10 +31,11 @@ Supabase Postgres (supabase/migrations/*.sql) — RLS on every table
 | Workspace | `localStorage`, seeded per language | `collections`, `collection_items`, `watchlists`, `alerts`, `notifications` with RLS |
 | Plan | demo plan cookie (Pro by default) | `subscriptions` updated only by Stripe webhook |
 | Usage limits | in-memory per visitor | `usage_events` table |
-| Alerts | manual check against demo snapshot, labelled | Vercel Cron → `/api/cron/scan` → notifications + email |
+| Alerts | manual check against demo snapshot, labelled | Vercel Cron → `/api/cron/scan` → notifications + email, on live data only |
 
 If Supabase is configured but contains no research rows, the UI shows empty states — demo data is never
-presented as live.
+presented as live. Alert rules are never evaluated on demo data in live mode: without real research rows a
+run is recorded as skipped. Scheduling and retention: see [DATA_SOURCES.md](DATA_SOURCES.md#scheduling).
 
 ## Opportunity score (0–100)
 
@@ -79,6 +82,9 @@ same inputs. The UI shows the formula on every product page.
 - Postgres RLS: research tables read-only for authenticated users; user tables owner-only (team collections
   readable by workspace members); integration tokens and invitation token hashes readable only by the
   service role (column grants revoked).
+- Postgres RLS: research tables read-only for authenticated users; user tables owner-only (alert runs
+  included); operations logs (`connector_runs`, `scan_runs`) and integration tokens readable only by the
+  service role; API routes return connector errors as short categories, never raw provider messages.
 - Shopify: OAuth `state` cookie + HMAC verification, read-only scopes, AES-256-GCM token encryption.
 - Stripe: plan changes only via signature-verified webhook.
 - CSV exports neutralize spreadsheet formula injection. Security headers set in `next.config.ts`.

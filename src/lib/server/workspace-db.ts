@@ -60,7 +60,8 @@ export async function loadWorkspace(sb: SupabaseClient, scope: WorkspaceScope, o
     watch.order("added_at", { ascending: false }),
     rules.order("created_at", { ascending: false }),
     notes.order("created_at", { ascending: false }).limit(200),
-    sb.from("alert_runs").select("*").order("started_at", { ascending: false }).limit(20),
+    // Own runs only (also enforced by RLS); `message` holds a reason code, never raw error text.
+    sb.from("alert_runs").select("id,started_at,origin,rules,matches,status,message").eq("user_id", uid).order("started_at", { ascending: false }).limit(20),
     org ? sb.from("collections").select(COLLECTION_FIELDS).eq("organization_id", org).eq("visibility", "team").neq("user_id", uid).order("created_at") : null,
   ]);
   for (const res of [own, w, r, n, shared]) if (res?.error) throw res.error;
@@ -121,7 +122,7 @@ export async function applyOpDb(sb: SupabaseClient, session: Session, op: Worksp
   if (!org) throw new WorkspaceError("not_found");
   const ent = PLANS[session.plan].entitlements;
   // Plan limits apply per member within the active workspace; the swipe file is not counted.
-  const count = async (table: "collections" | "alerts") => {
+  const count = async (table: "collections" | "alerts" | "watchlists") => {
     let q = sb.from(table).select("id", { count: "exact", head: true }).eq("user_id", uid).eq("organization_id", org);
     if (table === "collections") q = q.eq("kind", "standard");
     return (await q).count ?? 0;
@@ -157,6 +158,8 @@ export async function applyOpDb(sb: SupabaseClient, session: Session, op: Worksp
     case "item.remove":
       return check(sb.from("collection_items").delete().eq("id", op.id).eq("collection_id", op.collectionId));
     case "watch.add":
+      if (!ent.watchlists) throw new WorkspaceError("plan_required");
+      if ((await count("watchlists")) >= ent.savedItems) throw new WorkspaceError("limit_items");
       return check(sb.from("watchlists").insert({ user_id: uid, organization_id: org, item_type: op.type, ref_id: op.refId, label: op.label }));
     case "watch.remove":
       return check(sb.from("watchlists").delete().eq("id", op.id).eq("organization_id", org));
@@ -176,6 +179,8 @@ export async function applyOpDb(sb: SupabaseClient, session: Session, op: Worksp
         }),
       );
     case "rule.update": {
+      // Resuming a rule needs a plan with alerts (pausing and deleting always work).
+      if (op.active && !ent.alerts) throw new WorkspaceError("plan_required");
       const patch: Record<string, unknown> = {};
       if (op.active != null) patch.active = op.active;
       if (op.rule?.name) patch.name = op.rule.name;

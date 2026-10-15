@@ -25,7 +25,7 @@ donne le lien. Tu peux aussi le faire toi-même : onglet **Deployments**,
 bouton **Redeploy** sur le dernier déploiement, ou **Create Deployment** avec
 la branche ci-dessus.
 
-Le site sera alors accessible à l'adresse **https://trendhunter-ycg35.vercel.app**.
+Le site est accessible à l'adresse **https://trendhunter-one.vercel.app**.
 
 Aucune variable d'environnement n'est nécessaire pour cette première version.
 Le site tourne en **mode démo** : données d'exemple signalées comme telles,
@@ -72,10 +72,10 @@ puis **Redeploy**.
 | Shopify | `SHOPIFY_API_KEY`, `SHOPIFY_API_SECRET`, `ENCRYPTION_KEY` |
 | E-mails | `RESEND_API_KEY`, `EMAIL_FROM`, `SUPPORT_EMAIL` |
 | Tâches planifiées | `CRON_SECRET` |
-| Adresse du site | `NEXT_PUBLIC_APP_URL=https://trendhunter-ycg35.vercel.app` |
+| Adresse du site | `NEXT_PUBLIC_APP_URL=https://trendhunter-one.vercel.app` |
 
 Avec Supabase, applique les migrations de `supabase/migrations/` **dans l'ordre**
-(0001 → 0006) avant le déploiement.
+(0001, 0002, … jusqu'au dernier numéro) avant le déploiement.
 
 Le plan gratuit Vercel (Hobby) n'accepte que des tâches planifiées quotidiennes.
 `vercel.json` est déjà réglé pour ça : une tâche par jour et une par semaine.

@@ -22,7 +22,8 @@ interface Ctx {
   dispatch: (op: WorkspaceOp, successMessage?: string) => Promise<boolean>;
   isSaved: (type: ItemType, refId: string) => boolean;
   watchId: (type: "product" | "store" | "category", refId: string) => string | null;
-  runAlertCheck: () => Promise<{ matches: number } | null>;
+  /** Live checks also report whether rules were actually evaluated (skipped without live data). */
+  runAlertCheck: () => Promise<{ matches: number; status?: "success" | "skipped" | "failed"; reason?: string | null } | null>;
   replace: (ws: Workspace) => void;
 }
 
@@ -111,9 +112,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const runAlertCheck = useCallback(async () => {
     try {
       if (server) {
-        const res = await apiFetch<{ workspace: Workspace; matches: number }>("/api/alerts/evaluate", { method: "POST", body: JSON.stringify({}) });
+        const res = await apiFetch<{ workspace: Workspace; matches: number; status: "success" | "skipped" | "failed"; reason: string | null }>("/api/alerts/evaluate", {
+          method: "POST",
+          body: JSON.stringify({}),
+        });
         setWorkspace(res.workspace);
-        return { matches: res.matches };
+        return { matches: res.matches, status: res.status, reason: res.reason };
       }
       const cur = wsRef.current;
       const res = await apiFetch<{ asOf: string; since: string; matches: { ruleId: string; key: string; params: Record<string, string | number>; link: string | null }[] }>(

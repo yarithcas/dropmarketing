@@ -12,7 +12,8 @@ export async function loadWorkspace(sb: SupabaseClient, userId: string): Promise
     sb.from("watchlists").select("id,item_type,ref_id,label,added_at").eq("user_id", userId).order("added_at", { ascending: false }),
     sb.from("alerts").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     sb.from("notifications").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(200),
-    sb.from("alert_runs").select("*").order("started_at", { ascending: false }).limit(20),
+    // Own runs only (also enforced by RLS); `message` holds a reason code, never raw error text.
+    sb.from("alert_runs").select("id,started_at,origin,rules,matches,status,message").eq("user_id", userId).order("started_at", { ascending: false }).limit(20),
   ]);
   for (const r of [cols, watch, rules, notes]) if (r.error) throw r.error;
   type ItemRow = { id: string; item_type: "product" | "ad" | "store"; ref_id: string; label: string; note: string; tags: string[]; added_at: string };

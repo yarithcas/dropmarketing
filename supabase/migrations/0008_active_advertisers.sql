@@ -28,7 +28,7 @@ set search_path = pg_catalog
 as $$
   select btrim(
     regexp_replace(
-      lower(regexp_replace(normalize(coalesce(name, ''), NFKD), '[̀-ͯ]', '', 'g')),
+      lower(regexp_replace(normalize(coalesce(name, ''), NFKD), '[\u0300-\u036f]', '', 'g')),
       '[\t\n\v\f\r ]+', ' ', 'g'
     ),
     ' '

@@ -217,18 +217,23 @@ Live mode (Postgres, service role only, `SECURITY INVOKER`):
   activity on `as_of` (advertisers with at least one active ad; `keys` restricts it to one result page).
 - `public.ads_of_active_advertisers(as_of date, min_ads int default 5, min_days int default 7)` — the ads of the
   qualifying advertisers, `setof advertisements`. `listAdsDb` calls it as a PostgREST RPC (arguments in the JSON
-  body, never in a filter string) and applies the usual filters, order, range and exact count to it. It has no
-  `SET` clause so the planner inlines it and keeps using the `advertisements` indexes.
+  body, never in a filter string) and applies the usual filters, order (sort column, then `id`, so pages never
+  overlap), range and exact count to it. It has no `SET` clause so the planner inlines it and keeps using the
+  `advertisements` indexes.
 - Indexes: `advertisements (advertiser_key)` and `advertisements (last_seen, advertiser_key, first_seen)`.
 - `supabase/tests/0008_active_advertisers.test.sql` and `tests/active-advertisers.test.ts` check the same
   boundary fixture (`tests/fixtures/active-advertisers.json`: exactly 5 / 4 ads, exactly 7 / 6 days, an
-  inactive ad, the 2-day grace boundary, an ad starting after `asOf`, case/accent variants) against both
-  implementations.
+  inactive ad, the 2-day grace boundary, an ad starting after `asOf`, case/accent variants, decomposed accents
+  and Unicode spaces) against both implementations.
 
-Demo data: the synthetic generator links 60 % (instead of 55 %) of base-window ads of carried products to
-the stores that sell them, so a realistic subset qualifies every day: 9 advertisers / 511 of 1,522 ads on the
-pinned test date (2026-10-12), 11 / 610 of 1,566 on 2026-10-14, and at least 9 advertisers and 511 ads on every
-day checked through 2028 (`tests/active-advertisers.test.ts` checks a full year).
+Demo data: in the synthetic generator, 40 % of the base-window ads still running on the base day whose product
+a store carries, and that the existing 55 % store-linking pass left with a brand advertiser, are run by one of
+those stores (seeded per ad: 71 of 1,522 ads change advertiser and landing domain, plus the daily
+new-advertiser counts derived from them; product ids, ad ids, dates, stores and the ads of later days are
+unchanged). A realistic subset then qualifies every day:
+9 of 179 advertisers / 521 of 1,522 ads on the pinned test date (2026-10-12; 7 / 378 before the change),
+13 / 640 of 1,566 on 2026-10-14, and at least 9 advertisers and 521 ads on every day checked through 2028
+(`tests/active-advertisers.test.ts` checks a full year at ≥ 8 advertisers and ≥ 40 ads).
 
 ## Provenance
 

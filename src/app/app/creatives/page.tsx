@@ -26,8 +26,8 @@ import { useLocale } from "@/lib/i18n/provider";
 import { daysBetween } from "@/lib/dates";
 import { formatInfo, type CreativeAnalysis } from "@/lib/analyst/creative";
 import type { Advertisement, ProductWithMetrics, Store } from "@/lib/types";
-import type { AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
-import { ActiveAdvertiserBadge, ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
+import type { AdvertiserActivity, AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
+import { ActiveAdvertiserBadge, ActiveAdvertiserFlag, ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
 import { cn } from "@/lib/cn";
 
 interface AdDetail {
@@ -312,12 +312,14 @@ function CreativesInner() {
   const adId = url.get("ad");
   // Recent / long-running lists: active advertisers only by default, like Ad Spy.
   const [allAds, setAllAds] = useState(false);
-  const { data } = useApi<{ items: Advertisement[]; advertiserRule?: AdvertiserRule }>(
+  const { data } = useApi<{ items: AdWithActivity[]; advertiserRule?: AdvertiserRule }>(
     tab === "swipe" ? null : `/api/ads?pageSize=20&sort=${tab === "long" ? "longest" : "newest"}&page=1${allAds ? "&activeAdvertisers=false" : ""}`,
   );
   const swipe = workspace.collections.find((c) => c.kind === "swipe");
-  const list: { id: string; title: string; subtitle: string }[] =
-    tab === "swipe" ? (swipe?.items ?? []).filter((i) => i.type === "ad").map((i) => ({ id: i.refId, title: i.label, subtitle: i.note })) : (data?.items ?? []).map((a) => ({ id: a.id, title: a.advertiser, subtitle: a.headline }));
+  const list: { id: string; title: string; subtitle: string; activity?: AdvertiserActivity }[] =
+    tab === "swipe"
+      ? (swipe?.items ?? []).filter((i) => i.type === "ad").map((i) => ({ id: i.refId, title: i.label, subtitle: i.note }))
+      : (data?.items ?? []).map((a) => ({ id: a.id, title: a.advertiser, subtitle: a.headline, activity: a.advertiserActivity }));
 
   return (
     <div>
@@ -349,7 +351,7 @@ function CreativesInner() {
               )}
             </div>
           ) : (
-            <ul className="max-h-[70vh] divide-y divide-border/70 overflow-y-auto">
+            <ul className="max-h-[70vh] divide-y divide-border/70 overflow-y-auto" data-testid="creatives-list">
               {list.map((it) => (
                 <li key={it.id}>
                   <button
@@ -358,7 +360,10 @@ function CreativesInner() {
                     aria-current={adId === it.id ? "true" : undefined}
                     className={cn("focus-ring block w-full px-4 py-3 text-left transition-colors hover:bg-surface-2 active:bg-surface-3", adId === it.id && "bg-surface-2 shadow-[inset_2px_0_0_rgb(var(--accent))]")}
                   >
-                    <div className="truncate text-sm font-medium">{it.title}</div>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-sm font-medium">{it.title}</span>
+                      {it.activity?.qualifies ? <ActiveAdvertiserFlag count={it.activity.activeSinceMinDays} days={it.activity.minDays} /> : null}
+                    </div>
                     {it.subtitle ? <div className="mt-0.5 truncate text-xs text-subtle">{it.subtitle}</div> : null}
                   </button>
                 </li>

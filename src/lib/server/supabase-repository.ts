@@ -265,9 +265,14 @@ export async function listAdsDb(db: SupabaseClient, q: AdQuery, asOf: string): P
   const order = { ascending: q.sort === "longest" };
   const from = (q.page - 1) * q.pageSize;
   const to = from + q.pageSize - 1;
+  // Many ads share a first/last-seen day: the id tie-break keeps pages disjoint (as in demo mode).
   const { data, count, error } = q.activeAdvertisers
-    ? await applyAdFilters(db.rpc("ads_of_active_advertisers", { as_of: asOf, min_ads: t.minAds, min_days: t.minDays }, { count: "exact" }), q, asOf).select(select).order(sortColumn, order).range(from, to)
-    : await applyAdFilters(db.from("advertisements").select(select, { count: "exact" }), q, asOf).order(sortColumn, order).range(from, to);
+    ? await applyAdFilters(db.rpc("ads_of_active_advertisers", { as_of: asOf, min_ads: t.minAds, min_days: t.minDays }, { count: "exact" }), q, asOf)
+        .select(select)
+        .order(sortColumn, order)
+        .order("id", { ascending: true })
+        .range(from, to)
+    : await applyAdFilters(db.from("advertisements").select(select, { count: "exact" }), q, asOf).order(sortColumn, order).order("id", { ascending: true }).range(from, to);
   if (error) throw error;
   const rows = (data ?? []) as Row[];
   const keyOf = (r: Row) => (typeof r.advertiser_key === "string" ? r.advertiser_key : advertiserKey(String(r.advertiser ?? "")));

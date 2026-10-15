@@ -203,7 +203,7 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
           {data.ads.length > 0 ? (
             <div className="flex flex-wrap items-center gap-3">
               <ActiveAdvertisersSwitch checked={!allAds} thresholds={data.advertiserRule} onChange={(on) => setAllAds(!on)} className="text-xs" testId="store-ads-active-toggle" />
-              <span className="text-[11px] text-subtle">{t("activeAdvertisers.qualifyingOf", { qualifying: qualifyingAds.length, total: data.ads.length })}</span>
+              <span className="text-[11px] text-subtle" data-testid="store-ads-count">{t("activeAdvertisers.qualifyingOf", { qualifying: qualifyingAds.length, total: data.ads.length })}</span>
             </div>
           ) : null}
         </div>

@@ -37,6 +37,12 @@ interface AdvertiserSuggestions {
   advertiserRule: AdvertiserRule;
 }
 
+/** Threshold field value → URL parameter: empty means the default, anything else is clamped to the allowed range (never a 400). */
+function thresholdParam(v: string, limits: { min: number; max: number }): string | null {
+  const n = Number.parseInt(v, 10);
+  return v.trim() === "" || Number.isNaN(n) ? null : String(Math.min(limits.max, Math.max(limits.min, n)));
+}
+
 const KEYS = ["q", "advertiser", "domain", "productId", "platform", "country", "language", "format", "category", "cta", "firstFrom", "firstTo", "lastFrom", "lastTo", "activeOnly", "activeAdvertisers", "minActiveAds", "minActiveDays"];
 
 function AdsInner() {
@@ -102,7 +108,7 @@ function AdsInner() {
               max={THRESHOLD_LIMITS.minAds.max}
               value={url.get("minActiveAds")}
               placeholder={String(DEFAULT_THRESHOLDS.minAds)}
-              onCommit={(v) => set({ minActiveAds: v })}
+              onCommit={(v) => set({ minActiveAds: thresholdParam(v, THRESHOLD_LIMITS.minAds) })}
               disabled={locked || !activeAdvertisers}
               data-testid="min-active-ads"
             />
@@ -116,7 +122,7 @@ function AdsInner() {
               max={THRESHOLD_LIMITS.minDays.max}
               value={url.get("minActiveDays")}
               placeholder={String(DEFAULT_THRESHOLDS.minDays)}
-              onCommit={(v) => set({ minActiveDays: v })}
+              onCommit={(v) => set({ minActiveDays: thresholdParam(v, THRESHOLD_LIMITS.minDays) })}
               disabled={locked || !activeAdvertisers}
               data-testid="min-active-days"
             />

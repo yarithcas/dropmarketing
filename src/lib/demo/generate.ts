@@ -460,22 +460,26 @@ export function generateDemoDataset(snapshot: string = demoSnapshot()): DemoData
     }
   }
 
-  // Link a fraction of ads to stores' domains so "associated ads" exist. 60 % of the base-window ads of a
-  // carried product (55 % before the active-advertiser rule): established stores run several ads at
-  // once, so a realistic set of advertisers qualifies as active (≥ 5 ads active for ≥ 7 days) from the
-  // base snapshot on (9 on the base day instead of 7). Only advertiser/landing fields of base-window
-  // ads change (and the daily new-advertiser counts derived from them); ad ids, dates, products and the
-  // ads generated for later days are unchanged.
+  // Link a fraction of ads to stores' domains so "associated ads" exist.
   const arand = prng(777);
   const baseListings = [...storeProducts];
+  const linkToStore = (ad: Advertisement, sp: StoreProduct) => {
+    const store = stores.find((s) => s.id === sp.storeId)!;
+    ad.advertiser = store.name;
+    ad.landingDomain = store.domain;
+    ad.landingUrl = `https://${store.domain}/products/${ad.productId}`;
+  };
   for (const ad of ads) {
     const carriers = baseListings.filter((sp) => sp.productId === ad.productId);
-    if (carriers.length && arand() > 0.4) {
-      const sp = pick(arand, carriers);
-      const store = stores.find((s) => s.id === sp.storeId)!;
-      ad.advertiser = store.name;
-      ad.landingDomain = store.domain;
-      ad.landingUrl = `https://${store.domain}/products/${ad.productId}`;
+    if (carriers.length && arand() > 0.45) {
+      linkToStore(ad, pick(arand, carriers));
+    } else if (carriers.length && ad.lastSeen >= addDays(B, -2) && prng(hashString(`store-ad-${ad.id}`))() < 0.4) {
+      // Active-advertiser rule (lib/advertisers.ts): stores keep advertising what they sell, so 40 % of the
+      // ads still running on the base day that the pass above left with a brand advertiser are run by a
+      // store carrying the product. Seeded per ad (the stream above is untouched) and independent of the
+      // snapshot (an ad running on the base day has lastSeen >= B - 2 on every snapshot): 71 ads change
+      // advertiser and 9 advertisers instead of 7 qualify on the base day (>= 9 every day through 2028).
+      linkToStore(ad, pick(prng(hashString(`store-ad-pick-${ad.id}`)), carriers));
     }
   }
 

@@ -61,7 +61,7 @@ export type AdWithActivity<T extends Advertisement = Advertisement> = T & { adve
 export function advertiserKey(name: string): string {
   return name
     .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[\t\n\v\f\r ]+/g, " ")
     .replace(/^ | $/g, "");

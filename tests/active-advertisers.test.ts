@@ -326,6 +326,10 @@ describe("live mode (PostgREST)", () => {
     expect(list.url.searchParams.get("select")).toBe("*,products(name)");
     expect(list.url.searchParams.get("or")).toBe('(copy.ilike."%x,id.neq.zz%",headline.ilike."%x,id.neq.zz%",advertiser.ilike."%x,id.neq.zz%")');
     expect(list.url.searchParams.get("advertiser_key")).toBe("ilike.%maison eclat%");
+    // Stable pages: the sort column, then the id.
+    expect(list.url.searchParams.get("order")).toBe("first_seen.desc,id.asc");
+    expect(list.url.searchParams.get("offset")).toBe("0");
+    expect(list.url.searchParams.get("limit")).toBe("24");
     // Advertiser keys of the page travel in the body, never in a filter string.
     expect(activity.url.pathname).toBe("/rest/v1/rpc/advertiser_activity");
     expect(activity.body).toEqual({ as_of: "2026-10-15", min_days: 7, keys: ["maison eclat", "other, inc. (x)"] });

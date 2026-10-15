@@ -23,6 +23,7 @@ test("landing page leads to the demo (French by default)", async ({ page }) => {
   await page.getByTestId("cta-demo").click();
   await expect(page).toHaveURL(/\/app$/);
   await expect(page.getByTestId("demo-banner")).toBeVisible();
+  await expect(page.getByTestId("demo-banner")).toContainText("Données de démonstration, régénérées chaque jour");
 });
 
 test("every app route renders its heading without errors", async ({ page }) => {

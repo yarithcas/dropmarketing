@@ -4,6 +4,9 @@ import { getSession } from "@/lib/server/session";
 import { supabaseForRequest } from "@/lib/server/supabase";
 import { loadWorkspace } from "@/lib/server/workspace-db";
 
+/** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
+export const dynamic = "force-dynamic";
+
 /** GDPR data export (live mode). Demo visitors export their browser-stored workspace client-side. */
 export async function GET(req: NextRequest) {
   const limited = limitOr429(req, "export", 5);
@@ -19,5 +22,5 @@ export async function GET(req: NextRequest) {
     sb.from("reports").select("*").eq("user_id", session.id),
   ]);
   const body = JSON.stringify({ exportedAt: new Date().toISOString(), user: session.user, plan: session.plan, profile, workspace, usage, integrations, reports }, null, 2);
-  return new Response(body, { headers: { "content-type": "application/json", "content-disposition": 'attachment; filename="trendhunter-export.json"' } });
+  return new Response(body, { headers: { "content-type": "application/json", "cache-control": "no-store", "content-disposition": 'attachment; filename="trendhunter-export.json"' } });
 }

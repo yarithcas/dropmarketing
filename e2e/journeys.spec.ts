@@ -91,6 +91,8 @@ test("alerts: create, pause/resume and run a demo check", async ({ page }) => {
   await rule.getByTestId("toggle-rule").click();
   await expect(rule).toContainText("Active");
   await expect(page.getByTestId("monitoring-status")).toContainText("Not connected");
+  // Demo data is labelled as regenerated daily, never as live monitoring.
+  await expect(page.getByTestId("refresh-status")).toContainText("Demo data, regenerated every day");
   await page.getByTestId("run-check").click();
   await expect(page.getByText(/Check complete/)).toBeVisible();
   await page.getByRole("tab", { name: /History/ }).click();

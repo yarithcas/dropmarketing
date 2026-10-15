@@ -5,7 +5,7 @@ import { env, features } from "./env";
 import { decrypt, encrypt, hmacHex, safeEqual } from "./crypto";
 import { supabaseAdmin } from "./supabase";
 import { allProducts, ensureDataset, fold, isLiveDb } from "./repository";
-import { DEMO_SNAPSHOT, hashString, prng } from "../demo/generate";
+import { demoSnapshot, hashString, prng } from "../demo/generate";
 import { addDays } from "../dates";
 import { PLANS, isPlan, type PlanId } from "../plans";
 import type { ProductWithMetrics } from "../types";
@@ -329,8 +329,8 @@ export function ownPerformance(products: OwnProduct[], sales: OwnSales[], asOf: 
   });
 }
 
-/** Deterministic mock store used when Shopify credentials are not configured. */
-export function mockStore(market: ProductWithMetrics[]): { products: OwnProduct[]; sales: OwnSales[]; inventory: Map<string, InventoryPoint[]>; asOf: string } {
+/** Deterministic mock store used when Shopify credentials are not configured (rolls with the demo snapshot day). */
+export function mockStore(market: ProductWithMetrics[], asOf: string = demoSnapshot()): { products: OwnProduct[]; sales: OwnSales[]; inventory: Map<string, InventoryPoint[]>; asOf: string } {
   const picks = market.filter((p) => p.priceEstimate != null).slice(0, 9);
   const products: OwnProduct[] = picks.map((p, i) => ({
     externalId: `gid://shopify/Product/mock-${i + 1}`,
@@ -345,7 +345,7 @@ export function mockStore(market: ProductWithMetrics[]): { products: OwnProduct[
     const rand = prng(hashString(`sales-${p.externalId}`));
     const drift = [1.6, 1.1, 0.5, 1.0, 1.3, 0.6, 0.9, 1.2, 0][i] ?? 1;
     for (let d = 59; d >= 0; d--) {
-      const date = addDays(DEMO_SNAPSHOT, -d);
+      const date = addDays(asOf, -d);
       const base = 3 + i * 0.7;
       const factor = d >= 30 ? 1 : drift;
       const units = Math.max(0, Math.round(base * factor + (rand() - 0.5) * 4));
@@ -359,14 +359,14 @@ export function mockStore(market: ProductWithMetrics[]): { products: OwnProduct[
     const points: InventoryPoint[] = [];
     let level = p.inventory ?? 0;
     for (let d = 0; d < 30; d++) {
-      const date = addDays(DEMO_SNAPSHOT, -d);
+      const date = addDays(asOf, -d);
       points.push({ date, inventory: level });
       level += sold.get(date) ?? 0;
       if (level > 160) level -= 120; // a restock of 120 units arrived that day
     }
     inventory.set(p.externalId, points.reverse());
   }
-  return { products, sales, inventory, asOf: DEMO_SNAPSHOT };
+  return { products, sales, inventory, asOf };
 }
 
 /** Mock mode has no database: manual matches of the mock store live in this visitor's cookie. */

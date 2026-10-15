@@ -44,7 +44,7 @@
   },
   "demo": {
     "bannerTitle": "Demo mode",
-    "bannerText": "Sample data generated for exploration — not real market observations. Snapshot: {{date}}.",
+    "bannerText": "Demo data, regenerated every day — not real market observations. Snapshot of {{date}}.",
     "connectSources": "Connect real data sources →"
   },
   "errors": {
@@ -331,7 +331,7 @@
     "ai": "AI-generated",
     "aiTip": "Conclusions produced by the analyst engine from the records shown. Not a fact or a guarantee.",
     "demo": "Demo data",
-    "demoTip": "Synthetic sample data for exploring the product. It does not describe the real market.",
+    "demoTip": "Synthetic sample data, regenerated every day, for exploring the product. It does not describe the real market.",
     "sourceLine": "Source: {{source}} · updated {{date}}",
     "measuredShort": "Measured",
     "estimateShort": "Est."
@@ -1209,7 +1209,7 @@
     "checkDone": "Check complete: {{n}} match(es).",
     "checkNotRun": "Check not run: {{reason}}",
     "failures": "Sources whose last synchronization failed",
-    "demoNote": "Demo: checks run on demand against the fixed demo snapshot (last 7 days). This is not live monitoring.",
+    "demoNote": "Demo: checks run on demand against today's demo snapshot (last 7 days), regenerated every day. This is not live monitoring.",
     "rules": "Alert rules",
     "rulesUsage": "{{n}} of {{max}} rules used",
     "newRule": "New rule",
@@ -1292,6 +1292,12 @@
       "new_product": "New product in {{category}}: {{name}}",
       "competitor_products": "{{store}} added {{n}} new product(s)",
       "daily_summary": "{{n}} opportunities updated: {{top}}"
+    },
+    "refresh": {
+      "title": "Data refresh",
+      "demo_daily": "Demo data, regenerated every day (snapshot of {{date}}). Next regeneration: {{next}}. These are not real market observations.",
+      "cron_daily": "Daily background job at 05:15 UTC: connector ingestion, rescoring, alert evaluation and purge. Data as of {{date}} · next run: {{next}}.",
+      "none": "No automatic refresh: the daily background job (05:15 UTC) is not configured (CRON_SECRET). Data as of {{date}}."
     }
   },
   "reports": {
@@ -1573,7 +1579,7 @@
       "storefronts": "Publicly accessible listings only (Shopify products.json/meta.json, WooCommerce Store API), respecting robots.txt, site terms and a 1 request/second limit.",
       "licensed": "Licensed third-party dataset under contract; fields as agreed with the provider.",
       "shopify": "Your own store only, via OAuth with read-only scopes you approve.",
-      "demo": "Synthetic sample data for demonstration. Never presented as real observations."
+      "demo": "Synthetic sample data for demonstration, regenerated every day. Never presented as real observations."
     }
   },
   "team": {

@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { BellRing, CalendarClock, Database, Eye, Mail, Pause, Play, Plus, Radar, Trash2 } from "lucide-react";
+import { BellRing, CalendarClock, Database, Eye, Mail, Pause, Play, Plus, Radar, RefreshCw, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { PageHeader, PlanGate } from "@/components/app/bits";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +47,12 @@ function evaluationText(s: MonitoringStatus, t: T, f: Formatters): string[] {
   const lines = [t("alerts.lastEvaluationNotRun", { date: f.dateTime(e.at), status: t(`alerts.runStatus.${e.status}`), reason: reasonText(t, e.reason) })];
   if (s.lastSuccessfulEvaluation) lines.push(t("alerts.lastSuccessfulEvaluation", { date: f.dateTime(s.lastSuccessfulEvaluation.at) }));
   return lines;
+}
+
+/** How the data shown in the app is refreshed: daily demo regeneration, the daily cron, or nothing scheduled. */
+function refreshText(s: MonitoringStatus, t: T, f: Formatters) {
+  const r = s.refresh;
+  return t(`alerts.refresh.${r.kind}`, { date: r.dataAsOf ? f.date(r.dataAsOf) : "—", next: r.nextAt ? f.dateTime(r.nextAt) : "—" });
 }
 
 function RuleDialog({ onClose, preset }: { onClose: () => void; preset?: Partial<AlertRule> }) {
@@ -271,6 +277,17 @@ function AlertsInner() {
               {status.failures.map((x) => `${t(`connectors.names.${x.connector}`)} (${f.dateTime(x.at)} · ${t(`integrations.errorCategories.${x.category}`)})`).join(", ")}
             </div>
           ) : null}
+          {status?.refresh && (
+            <div className="flex gap-3 border-t border-border pt-3 md:col-span-2 xl:col-span-4">
+              <RefreshCw className={cn("mt-0.5 size-5 shrink-0", status.refresh.kind === "none" ? "text-warn" : "text-good")} />
+              <div className="text-sm">
+                <div className="font-medium">{t("alerts.refresh.title")}</div>
+                <div className="text-muted" data-testid="refresh-status">
+                  {refreshText(status, t, f)}
+                </div>
+              </div>
+            </div>
+          )}
           {demo && <p className="text-[11px] text-subtle md:col-span-2 xl:col-span-4">{t("alerts.demoNote")}</p>}
         </CardBody>
       </Card>

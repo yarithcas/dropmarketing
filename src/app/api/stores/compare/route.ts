@@ -4,6 +4,9 @@ import { apiError, json, parseQuery } from "@/lib/server/api";
 import { guard } from "@/lib/server/guard";
 import { getStore, meta } from "@/lib/server/repository";
 
+/** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
+export const dynamic = "force-dynamic";
+
 const schema = z.object({
   ids: z
     .string()

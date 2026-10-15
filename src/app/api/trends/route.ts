@@ -5,6 +5,9 @@ import { trendQuerySchema } from "@/lib/queries";
 import { meta, trendInsights } from "@/lib/server/repository";
 import type { TimeRange } from "@/lib/types";
 
+/** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const q = parseQuery(req, trendQuerySchema);
   if (!q.ok) return q.res;

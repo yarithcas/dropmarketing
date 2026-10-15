@@ -2,9 +2,10 @@ import type { NextRequest } from "next/server";
 import { apiError, json, limitOr429 } from "@/lib/server/api";
 import { CONNECTORS } from "@/lib/connectors/registry";
 import { features } from "@/lib/server/env";
-import { currentFailures, evaluationStatus, isScheduledConnector, type AlertRunRow, type ConnectorRunRow, type MonitoringStatus } from "@/lib/monitoring";
+import { currentFailures, evaluationStatus, isScheduledConnector, refreshStatus, type AlertRunRow, type ConnectorRunRow, type MonitoringStatus } from "@/lib/monitoring";
 import { getSession } from "@/lib/server/session";
 import { supabaseAdmin, supabaseForRequest } from "@/lib/server/supabase";
+import { ensureDataset, meta } from "@/lib/server/repository";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,7 @@ export async function GET(req: NextRequest) {
   const session = await getSession();
   if (session.mode === "live" && !session.authenticated) return apiError(401, "unauthenticated");
   const f = features();
+  await ensureDataset().catch(() => {});
   const status: MonitoringStatus = {
     mode: session.mode,
     scheduler: f.cron,
@@ -28,6 +30,7 @@ export async function GET(req: NextRequest) {
     lastEvaluation: null,
     lastSuccessfulEvaluation: null,
     failures: [],
+    refresh: refreshStatus({ mode: session.mode, scheduler: f.cron, dataAsOf: meta().asOf, now: new Date() }),
   };
   const db = session.mode === "live" ? supabaseAdmin() : null;
   const sb = db ? await supabaseForRequest() : null;

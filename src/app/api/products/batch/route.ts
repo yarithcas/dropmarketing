@@ -4,6 +4,9 @@ import { json, parseQuery } from "@/lib/server/api";
 import { guard } from "@/lib/server/guard";
 import { allProducts, meta } from "@/lib/server/repository";
 
+/** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
+export const dynamic = "force-dynamic";
+
 const schema = z.object({ ids: z.string().transform((s) => s.split(",").filter(Boolean).slice(0, 100)) });
 
 /** Fetches specific products by id (collections, comparisons). Not metered: no search is performed. */

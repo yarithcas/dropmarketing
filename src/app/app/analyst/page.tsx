@@ -112,7 +112,7 @@ function AnalystInner() {
                 </div>
                 <div className="mx-auto flex max-w-2xl flex-wrap justify-center gap-2">
                   {EXAMPLES.map((ex) => (
-                    <button key={ex} onClick={() => ask(t(`analyst.examples.${ex}`))} className="focus-ring rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs text-muted hover:border-accent/40 hover:text-fg" data-testid="analyst-example">
+                    <button key={ex} type="button" disabled={busy} onClick={() => ask(t(`analyst.examples.${ex}`))} className="focus-ring tap rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs text-muted transition-[color,border-color,background-color,transform] duration-150 hover:border-accent/40 hover:bg-surface-3 hover:text-fg active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:active:scale-100" data-testid="analyst-example">
                       {t(`analyst.examples.${ex}`)}
                     </button>
                   ))}
@@ -156,7 +156,7 @@ function AnalystInner() {
                 {picked.map((p) => (
                   <span key={p.id} className="inline-flex items-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-0.5 text-xs">
                     <Package className="size-3" /> {p.name}
-                    <button onClick={() => setPicked((ps) => ps.filter((x) => x.id !== p.id))} aria-label={t("common.remove")}>
+                    <button type="button" onClick={() => setPicked((ps) => ps.filter((x) => x.id !== p.id))} aria-label={t("common.remove")} title={t("common.remove")} className="focus-ring tap rounded-full text-subtle transition-colors hover:text-fg active:scale-90">
                       <X className="size-3" />
                     </button>
                   </span>
@@ -186,8 +186,8 @@ function AnalystInner() {
                 aria-label={t("analyst.placeholder")}
                 data-testid="analyst-input"
               />
-              <Button type="submit" size="icon" disabled={busy || !question.trim()} aria-label={t("analyst.send")}>
-                {busy ? <Loader2 className="animate-spin" /> : <Send />}
+              <Button type="submit" size="icon" loading={busy} disabled={!question.trim()} disabledReason={t("analyst.typeQuestion")} aria-label={t("analyst.send")} data-testid="analyst-send">
+                <Send />
               </Button>
             </form>
           </Card>
@@ -201,7 +201,13 @@ function AnalystInner() {
                 {(searchResults?.items ?? []).map((p) => (
                   <li key={p.id} className="flex items-center justify-between gap-2 py-2 text-sm">
                     <span className="truncate">{p.name}</span>
-                    <Button size="sm" variant="secondary" disabled={picked.some((x) => x.id === p.id) || picked.length >= COMPARE_MAX} onClick={() => addProduct({ id: p.id, name: p.name })}>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={picked.some((x) => x.id === p.id) || picked.length >= COMPARE_MAX}
+                      disabledReason={picked.some((x) => x.id === p.id) ? t("analyst.alreadyAdded") : t("analyst.contextFull", { n: COMPARE_MAX })}
+                      onClick={() => addProduct({ id: p.id, name: p.name })}
+                    >
                       {t("competitors.add")}
                     </Button>
                   </li>

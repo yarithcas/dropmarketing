@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { CompetitionBadge, PageHeader, Pagination, ProvenanceBadge, ScoreBadge, Thumb, TrendPill } from "@/components/app/bits";
 import { ChipSet, FilterGroup, ResetFilters } from "@/components/app/filters";
 import { ProductCard } from "@/components/app/product-card";
+import { useCardNavigation } from "@/components/app/card-link";
 import { SaveButton } from "@/components/app/save";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -39,6 +40,7 @@ function ProductsInner() {
   const url = useUrlState();
   const [view, setView] = useState<"grid" | "table">("grid");
   const [showFilters, setShowFilters] = useState(false);
+  const cardLink = useCardNavigation();
   const [q, setQ] = useState(url.get("q"));
   const locked = session ? !session.entitlements.advancedFilters : false;
 
@@ -167,7 +169,7 @@ function ProductsInner() {
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-subtle" />
               <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("products.searchPlaceholder")} className="pl-9" aria-label={t("products.searchPlaceholder")} data-testid="products-search" />
             </div>
-            <Button variant="secondary" className="lg:hidden" onClick={() => setShowFilters((s) => !s)}>
+            <Button variant="secondary" className="lg:hidden" onClick={() => setShowFilters((s) => !s)} aria-expanded={showFilters}>
               <SlidersHorizontal /> {t("filters.title")} {activeCount ? `(${activeCount})` : ""}
             </Button>
             <Select value={sort} onChange={(e) => url.set({ sort: e.target.value })} className="w-auto min-w-[190px]" aria-label={t("sort.label")} data-testid="products-sort">
@@ -178,10 +180,10 @@ function ProductsInner() {
               ))}
             </Select>
             <div className="flex rounded-lg border border-border bg-surface-2 p-0.5">
-              <button onClick={() => changeView("grid")} className={cn("focus-ring rounded-md p-1.5", view === "grid" ? "bg-surface-3 text-fg" : "text-subtle")} aria-label={t("common.gridView")} aria-pressed={view === "grid"}>
+              <button type="button" onClick={() => changeView("grid")} className={cn("focus-ring tap rounded-md p-1.5 transition-[color,background-color,transform] duration-150 active:scale-90 motion-reduce:active:scale-100", view === "grid" ? "bg-surface-3 text-fg" : "text-subtle hover:bg-surface-3/60 hover:text-fg")} aria-label={t("common.gridView")} title={t("common.gridView")} aria-pressed={view === "grid"}>
                 <LayoutGrid className="size-4" />
               </button>
-              <button onClick={() => changeView("table")} className={cn("focus-ring rounded-md p-1.5", view === "table" ? "bg-surface-3 text-fg" : "text-subtle")} aria-label={t("common.tableView")} aria-pressed={view === "table"}>
+              <button type="button" onClick={() => changeView("table")} className={cn("focus-ring tap rounded-md p-1.5 transition-[color,background-color,transform] duration-150 active:scale-90 motion-reduce:active:scale-100", view === "table" ? "bg-surface-3 text-fg" : "text-subtle hover:bg-surface-3/60 hover:text-fg")} aria-label={t("common.tableView")} title={t("common.tableView")} aria-pressed={view === "table"}>
                 <List className="size-4" />
               </button>
             </div>
@@ -191,7 +193,7 @@ function ProductsInner() {
           {data?.ignoredFilters?.length ? (
             <div className="mb-4 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-xs text-muted">
               {t("billing.filtersIgnored")}{" "}
-              <Link href="/app/settings?tab=billing" className="text-accent hover:underline">
+              <Link href="/app/settings?tab=billing" className="rounded text-accent underline-offset-4 hover:underline">
                 {t("billing.upgrade")}
               </Link>
             </div>
@@ -234,9 +236,9 @@ function ProductsInner() {
                     </thead>
                     <tbody>
                       {data.items.map((p) => (
-                        <tr key={p.id} className="border-b border-border/50 last:border-0 hover:bg-surface-2">
+                        <tr key={p.id} className="cursor-pointer border-b border-border/50 transition-colors last:border-0 hover:bg-surface-2 active:bg-surface-3" {...cardLink(`/app/products/${p.id}`)} data-testid="product-row">
                           <td className="table-td">
-                            <Link href={`/app/products/${p.id}`} className="flex items-center gap-2.5 hover:text-accent">
+                            <Link href={`/app/products/${p.id}`} className="focus-ring flex items-center gap-2.5 rounded hover:text-accent">
                               <Thumb category={p.category} hue={p.hue} src={p.imageUrl} className="size-8 shrink-0" />
                               <span>
                                 <span className="block max-w-[240px] truncate">{p.name}</span>

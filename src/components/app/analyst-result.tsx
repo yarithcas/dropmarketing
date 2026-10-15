@@ -103,7 +103,7 @@ function NeedsProducts({ result, actions }: { result: AnalystResponse; actions: 
                 <ScoreBadge score={s.score} />
                 <span className="min-w-0 basis-full text-xs text-subtle sm:basis-0 sm:flex-1">{tx(s.reason)}</span>
                 {actions.onAddProduct ? (
-                  <Button size="sm" variant="ghost" disabled={picked.has(s.id) || picked.size >= need.max} onClick={() => actions.onAddProduct!({ id: s.id, name: s.name })}>
+                  <Button size="sm" variant="ghost" disabled={picked.has(s.id) || picked.size >= need.max} disabledReason={picked.has(s.id) ? t("analyst.alreadyAdded") : t("analyst.contextFull", { n: need.max })} onClick={() => actions.onAddProduct!({ id: s.id, name: s.name })}>
                     {picked.has(s.id) ? t("analyst.needsProducts.added") : t("competitors.add")}
                   </Button>
                 ) : null}
@@ -177,7 +177,7 @@ export function AnalystResult({ result, compact = false, actions = {} }: { resul
         <div className="flex flex-wrap items-center gap-2 text-xs text-subtle">
           <Link2 className="size-3.5" /> {t("analyst.labels.sources")}:
           {result.sources.map((s) => (
-            <Link key={s.href} href={s.href} className="rounded border border-border px-1.5 py-0.5 text-muted hover:text-accent">
+            <Link key={s.href} href={s.href} className="focus-ring rounded border border-border px-1.5 py-0.5 text-muted transition-colors hover:border-accent/40 hover:text-accent">
               {s.label}
             </Link>
           ))}

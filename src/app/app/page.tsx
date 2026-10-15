@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Clapperboard, Radar, Store, TrendingUp, Trophy } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useCardNavigation } from "@/components/app/card-link";
 import { PageHeader, ProvenanceBadge, ScoreBadge, Stat, Thumb, TrendPill, PlatformBadge } from "@/components/app/bits";
 import { TimeSeriesChart } from "@/components/app/charts";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
@@ -34,6 +35,7 @@ const QUESTIONS = [
 
 export default function OverviewPage() {
   const { t } = useTranslation();
+  const cardLink = useCardNavigation();
   const f = useFormat();
   const { session } = useSession();
   const { data, error, loading, reload } = useApi<Overview>("/api/overview");
@@ -51,7 +53,7 @@ export default function OverviewPage() {
         {QUESTIONS.map((q, i) => {
           const Icon = q.icon;
           return (
-            <Link key={q.key} href={q.href} className="card focus-ring group p-4 transition-colors hover:border-accent/40">
+            <Link key={q.key} href={q.href} className="card card-interactive focus-ring group p-4">
               <div className="flex items-center justify-between">
                 <span className="flex size-8 items-center justify-center rounded-lg bg-accent/10 text-accent">
                   <Icon className="size-4" />
@@ -104,7 +106,7 @@ export default function OverviewPage() {
               </CardBody>
             </Card>
             <Card>
-              <CardHeader title={t("overview.trendingTitle")} description={t("overview.trendingDesc")} action={<Link href="/app/trends" className="text-xs text-accent hover:underline">{t("common.viewAll")}</Link>} />
+              <CardHeader title={t("overview.trendingTitle")} description={t("overview.trendingDesc")} action={<Link href="/app/trends" className="focus-ring tap rounded text-xs text-accent underline-offset-4 hover:underline">{t("common.viewAll")}</Link>} />
               <ul className="divide-y divide-border/70">
                 {loading || !data
                   ? Array.from({ length: 5 }).map((_, i) => (
@@ -114,7 +116,7 @@ export default function OverviewPage() {
                     ))
                   : data.trends.map((p) => (
                       <li key={p.id}>
-                        <Link href={`/app/products/${p.id}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2">
+                        <Link href={`/app/products/${p.id}`} className="focus-ring flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-surface-2 active:bg-surface-3">
                           <Thumb category={p.category} hue={p.hue} className="size-9 shrink-0" />
                           <div className="min-w-0 flex-1">
                             <div className="truncate text-sm">{p.name}</div>
@@ -130,7 +132,7 @@ export default function OverviewPage() {
 
           <div className="grid gap-4 xl:grid-cols-3">
             <Card className="xl:col-span-2">
-              <CardHeader title={t("overview.topTitle")} description={t("overview.topDesc")} action={<Link href="/app/products" className="text-xs text-accent hover:underline">{t("common.viewAll")}</Link>} />
+              <CardHeader title={t("overview.topTitle")} description={t("overview.topDesc")} action={<Link href="/app/products" className="focus-ring tap rounded text-xs text-accent underline-offset-4 hover:underline">{t("common.viewAll")}</Link>} />
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -144,9 +146,9 @@ export default function OverviewPage() {
                   </thead>
                   <tbody>
                     {(data?.top ?? []).map((p) => (
-                      <tr key={p.id} className="border-b border-border/50 last:border-0 hover:bg-surface-2">
+                      <tr key={p.id} className="cursor-pointer border-b border-border/50 transition-colors last:border-0 hover:bg-surface-2 active:bg-surface-3" {...cardLink(`/app/products/${p.id}`)}>
                         <td className="table-td">
-                          <Link href={`/app/products/${p.id}`} className="flex items-center gap-2.5 hover:text-accent">
+                          <Link href={`/app/products/${p.id}`} className="focus-ring tap flex items-center gap-2.5 rounded hover:text-accent">
                             <Thumb category={p.category} hue={p.hue} className="size-8 shrink-0" />
                             <span className="max-w-[260px] truncate">{p.name}</span>
                           </Link>
@@ -167,11 +169,11 @@ export default function OverviewPage() {
               </div>
             </Card>
             <Card>
-              <CardHeader title={t("overview.recentAdsTitle")} action={<Link href="/app/ads" className="text-xs text-accent hover:underline">{t("common.viewAll")}</Link>} />
+              <CardHeader title={t("overview.recentAdsTitle")} action={<Link href="/app/ads" className="focus-ring tap rounded text-xs text-accent underline-offset-4 hover:underline">{t("common.viewAll")}</Link>} />
               <ul className="divide-y divide-border/70">
                 {(data?.recentAds ?? []).map((a) => (
                   <li key={a.id}>
-                    <Link href={`/app/creatives?ad=${a.id}`} className="block px-4 py-3 hover:bg-surface-2">
+                    <Link href={`/app/creatives?ad=${a.id}`} className="focus-ring block px-4 py-3 transition-colors hover:bg-surface-2 active:bg-surface-3">
                       <div className="flex items-center justify-between gap-2">
                         <span className="truncate text-sm font-medium">{a.advertiser}</span>
                         <PlatformBadge platform={a.platform} />

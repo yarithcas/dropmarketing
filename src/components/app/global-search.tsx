@@ -191,7 +191,7 @@ export function GlobalSearch() {
                 );
               })}
               <li className="border-t border-border">
-                <Link href={`/app/search?q=${encodeURIComponent(q.trim())}`} onClick={() => setOpen(false)} className="block px-3 py-2 text-sm text-accent hover:bg-surface-2">
+                <Link href={`/app/search?q=${encodeURIComponent(q.trim())}`} onClick={() => setOpen(false)} className="block px-3 py-2 text-sm text-accent transition-colors hover:bg-surface-2 active:bg-surface-3">
                   {t("search.seeAll", { q: q.trim() })}
                 </Link>
               </li>

@@ -37,7 +37,7 @@ export default function ReportsPage() {
             const Icon = r.category ? CATEGORY_ICON[r.category] : FileBarChart2;
             const locked = r.advanced && !session?.entitlements.advancedReports;
             return (
-              <Link key={r.id} href={`/app/reports/${r.id}`} className="card focus-ring group flex gap-3 p-4 hover:border-accent/40" data-testid="report-card">
+              <Link key={r.id} href={`/app/reports/${r.id}`} className="card card-interactive focus-ring group flex gap-3 p-4" data-testid="report-card">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
                   <Icon className="size-5" />
                 </span>

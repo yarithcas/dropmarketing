@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Input, Select } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/client/session";
 import { CURRENCIES, useCurrency, type CurrencyCode } from "@/lib/client/prefs";
 import { useUrlState } from "@/lib/client/use-url-state";
@@ -44,6 +45,7 @@ function Output({ label, value, tip, tone, big, id }: { label: string; value: st
 
 function CalculatorInner() {
   const { t } = useTranslation();
+  const toast = useToast();
   const f = useFormat();
   const { session } = useSession();
   const url = useUrlState();
@@ -84,7 +86,14 @@ function CalculatorInner() {
                   <option key={c}>{c}</option>
                 ))}
               </Select>
-              <Button variant="secondary" onClick={() => setInputs(DEFAULT_INPUTS)}>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setInputs(DEFAULT_INPUTS);
+                  toast(t("calculator.resetDone"), "info");
+                }}
+                data-testid="calc-reset"
+              >
                 <RotateCcw /> {t("calculator.reset")}
               </Button>
             </>

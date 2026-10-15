@@ -9,6 +9,7 @@ import { PageHeader, Pagination, ProvenanceBadge, Thumb } from "@/components/app
 import { DebouncedInput } from "@/components/app/debounced-input";
 import { ChipSet } from "@/components/app/filters";
 import { MyStorePanel } from "@/components/app/my-store";
+import { useCardNavigation } from "@/components/app/card-link";
 import { TechBadge } from "@/components/app/tech-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -35,6 +36,7 @@ function PublicStores() {
   const url = useUrlState();
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
+  const cardLink = useCardNavigation();
   const { data, error, loading, reload } = useApi<StoresResponse>(`/api/stores?${url.query}`);
   const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : s.length >= 5 ? s : [...s, id]));
 
@@ -63,7 +65,7 @@ function PublicStores() {
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-xs text-subtle">{data ? t("stores.resultCount", { count: data.total }) : " "}</span>
-        <Button size="sm" disabled={selected.length < 2} onClick={() => router.push(`/app/competitors?ids=${selected.join(",")}`)} data-testid="compare-selected">
+        <Button size="sm" disabled={selected.length < 2} disabledReason={t("stores.compareHint")} onClick={() => router.push(`/app/competitors?ids=${selected.join(",")}`)} data-testid="compare-selected">
           <Swords /> {t("stores.compareSelected", { n: selected.length })}
         </Button>
       </div>
@@ -94,12 +96,23 @@ function PublicStores() {
             </thead>
             <tbody>
               {data.items.map((s) => (
-                <tr key={s.id} className="border-b border-border/50 last:border-0 hover:bg-surface-2">
-                  <td className="table-td">
-                    <input type="checkbox" className="accent-[rgb(var(--accent))]" checked={selected.includes(s.id)} onChange={() => toggle(s.id)} aria-label={t("stores.selectStore", { name: s.name })} disabled={!selected.includes(s.id) && selected.length >= 5} />
+                <tr key={s.id} className="cursor-pointer border-b border-border/50 transition-colors last:border-0 hover:bg-surface-2 active:bg-surface-3" {...cardLink(`/app/stores/${s.id}`)} data-testid="store-row">
+                  <td className="p-0">
+                    {/* The whole cell toggles the checkbox (bigger target) and never opens the row. */}
+                    <label className="flex min-h-10 cursor-pointer items-center justify-center px-3">
+                    <input
+                      type="checkbox"
+                      className="size-4 cursor-pointer accent-[rgb(var(--accent))] disabled:cursor-not-allowed"
+                      checked={selected.includes(s.id)}
+                      onChange={() => toggle(s.id)}
+                      aria-label={t("stores.selectStore", { name: s.name })}
+                      disabled={!selected.includes(s.id) && selected.length >= 5}
+                      title={!selected.includes(s.id) && selected.length >= 5 ? t("stores.compareMax") : undefined}
+                    />
+                    </label>
                   </td>
                   <td className="table-td">
-                    <Link href={`/app/stores/${s.id}`} className="flex items-center gap-2.5 hover:text-accent">
+                    <Link href={`/app/stores/${s.id}`} className="focus-ring flex items-center gap-2.5 rounded hover:text-accent">
                       <Thumb category={s.categories[0]} hue={s.hue} className="size-8 shrink-0" />
                       <span>
                         <span className="block font-medium">{s.name}</span>

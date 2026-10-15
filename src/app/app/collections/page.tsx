@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Columns3, Download, FolderHeart, Lock, Megaphone, Package, Pencil, Plus, Store as StoreIcon, Trash2, Users, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/states";
+import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/client/session";
 import { useApi } from "@/lib/client/use-api";
 import { useUrlState } from "@/lib/client/use-url-state";
@@ -49,7 +50,7 @@ function ItemRow({ c, item, readOnly = false }: { c: Collection; item: Collectio
           <Icon className="size-4" />
         </span>
         <div className="min-w-0 flex-1">
-          <Link href={hrefFor(item)} className="block truncate text-sm font-medium hover:text-accent">
+          <Link href={hrefFor(item)} className="focus-ring block truncate rounded text-sm font-medium transition-colors hover:text-accent coarse:-my-2.5 coarse:py-2.5">
             {item.label}
           </Link>
           <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-subtle">
@@ -159,6 +160,7 @@ function CompareProducts({ ids, onClose }: { ids: string[]; onClose: () => void 
 
 function CollectionsInner() {
   const { t } = useTranslation();
+  const toast = useToast();
   const { session } = useSession();
   const { ready, workspace, dispatch, persistence } = useWorkspace();
   const url = useUrlState();
@@ -170,7 +172,16 @@ function CollectionsInner() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [comparing, setComparing] = useState(false);
   const shared = workspace.sharedCollections ?? [];
-  const selectedId = url.get("c") || workspace.collections[0]?.id;
+  // The URL is the source of truth for the selection, but router.replace waits for a server round trip: a click
+  // applies at once so Edit/Delete never act on the previously selected collection in the meantime.
+  const urlSelected = url.get("c");
+  const [picked, setPicked] = useState<string | null>(null);
+  useEffect(() => setPicked(null), [urlSelected]);
+  const select = (id: string) => {
+    setPicked(id);
+    url.set({ c: id });
+  };
+  const selectedId = picked || urlSelected || workspace.collections[0]?.id;
   const c = workspace.collections.find((x) => x.id === selectedId) ?? shared.find((x) => x.id === selectedId);
   // Teammates' shared collections are read-only; only their creator edits them.
   const readOnly = Boolean(c?.sharedBy);
@@ -207,6 +218,7 @@ function CollectionsInner() {
       ]);
     });
     download(`${c.name.replace(/[^\w-]+/g, "_")}.csv`, "text/csv;charset=utf-8", [header.join(","), ...lines].join("\n"));
+    toast(t("common.exported", { file: "CSV" }));
   };
 
   if (!ready)
@@ -242,8 +254,10 @@ function CollectionsInner() {
             {workspace.collections.map((col) => (
               <li key={col.id}>
                 <button
-                  onClick={() => url.set({ c: col.id })}
-                  className={cn("flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2")}
+                  type="button"
+                  onClick={() => select(col.id)}
+                  aria-current={col.id === selectedId ? "true" : undefined}
+                  className={cn("focus-ring tap flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors duration-150 active:bg-surface-3", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2 hover:text-fg")}
                 >
                   <span className="flex min-w-0 items-center gap-1.5">
                     <span className="truncate">{col.kind === "swipe" ? t("collections.swipeFile") : col.name}</span>
@@ -261,8 +275,10 @@ function CollectionsInner() {
                 {shared.map((col) => (
                   <li key={col.id}>
                     <button
-                      onClick={() => url.set({ c: col.id })}
-                      className={cn("flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2")}
+                      type="button"
+                      onClick={() => select(col.id)}
+                      aria-current={col.id === selectedId ? "true" : undefined}
+                      className={cn("focus-ring tap flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors duration-150 active:bg-surface-3", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2 hover:text-fg")}
                     >
                       <span className="min-w-0">
                         <span className="block truncate">{col.kind === "swipe" ? t("collections.swipeFile") : col.name}</span>
@@ -300,17 +316,22 @@ function CollectionsInner() {
               description={readOnly ? [c.description, t("collections.readOnly")].filter(Boolean).join(" · ") : c.description || (c.kind === "swipe" ? t("collections.swipeDesc") : undefined)}
               action={
                 <div className="flex flex-wrap gap-1.5">
-                  <Button size="sm" variant="secondary" disabled={compareIds.length < 2} onClick={() => setComparing(true)} data-testid="compare-products-btn">
+                  <Button size="sm" variant="secondary" disabled={compareIds.length < 2} disabledReason={t("collections.compareHint")} onClick={() => setComparing(true)} data-testid="compare-products-btn">
                     <Columns3 /> {t("collections.compare", { n: compareIds.length })}
                   </Button>
-                  <Button size="sm" variant="secondary" onClick={exportCsv} disabled={!canExport || !c.items.length} title={canExport ? undefined : t("billing.exportLocked")} data-testid="export-csv">
+                  <Button size="sm" variant="secondary" onClick={exportCsv} disabled={!canExport || !c.items.length} disabledReason={canExport ? t("collections.noItems") : t("billing.exportLocked")} data-testid="export-csv">
                     <Download /> CSV
                   </Button>
                   <Button
                     size="sm"
                     variant="secondary"
                     disabled={!canExport || !c.items.length}
-                    onClick={() => download(`${c.name.replace(/[^\w-]+/g, "_")}.json`, "application/json", JSON.stringify({ exportedAt: new Date().toISOString(), collection: c }, null, 2))}
+                    disabledReason={canExport ? t("collections.noItems") : t("billing.exportLocked")}
+                    onClick={() => {
+                      download(`${c.name.replace(/[^\w-]+/g, "_")}.json`, "application/json", JSON.stringify({ exportedAt: new Date().toISOString(), collection: c }, null, 2));
+                      toast(t("common.exported", { file: "JSON" }));
+                    }}
+                    data-testid="export-json"
                   >
                     <Download /> JSON
                   </Button>
@@ -358,7 +379,13 @@ function CollectionsInner() {
             />
             <div className="flex flex-wrap items-center gap-2 border-b border-border/70 px-4 py-2">
               {(["all", "product", "ad", "store"] as const).map((ty) => (
-                <button key={ty} onClick={() => setTypeFilter(ty)} className={cn("rounded-md px-2 py-1 text-xs", typeFilter === ty ? "bg-surface-3 text-fg" : "text-subtle hover:text-fg")}>
+                <button
+                  key={ty}
+                  type="button"
+                  onClick={() => setTypeFilter(ty)}
+                  aria-pressed={typeFilter === ty}
+                  className={cn("focus-ring tap rounded-md px-2 py-1 text-xs transition-colors duration-150 active:scale-95 motion-reduce:active:scale-100", typeFilter === ty ? "bg-surface-3 text-fg" : "text-subtle hover:bg-surface-2 hover:text-fg")}
+                >
                   {ty === "all" ? t("common.all") : t(`collections.types.${ty}`)}
                 </button>
               ))}
@@ -373,11 +400,11 @@ function CollectionsInner() {
                 {items.map((item) => (
                   <li key={item.id} className="flex items-start">
                     {item.type === "product" ? (
-                      <label className="pl-4 pt-5">
+                      <label className="tap cursor-pointer pl-4 pt-5" title={!compareIds.includes(item.refId) && compareIds.length >= 4 ? t("collections.compareHint") : undefined}>
                         <span className="sr-only">{t("collections.selectCompare")}</span>
                         <input
                           type="checkbox"
-                          className="accent-[rgb(var(--accent))]"
+                          className="size-4 cursor-pointer accent-[rgb(var(--accent))] disabled:cursor-not-allowed"
                           checked={compareIds.includes(item.refId)}
                           disabled={!compareIds.includes(item.refId) && compareIds.length >= 4}
                           onChange={() => setCompareIds((ids) => (ids.includes(item.refId) ? ids.filter((x) => x !== item.refId) : [...ids, item.refId]))}
@@ -419,6 +446,7 @@ function CollectionsInner() {
             </Button>
             <Button
               disabled={!name.trim()}
+              disabledReason={t("collections.nameRequired")}
               data-testid="create-collection"
               onClick={async () => {
                 const ok = renaming

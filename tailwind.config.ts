@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 export default {
   darkMode: "class",
@@ -28,11 +29,22 @@ export default {
       keyframes: {
         shimmer: { "100%": { transform: "translateX(100%)" } },
         "fade-in": { from: { opacity: "0", transform: "translateY(4px)" }, to: { opacity: "1", transform: "none" } },
+        "nav-progress": { "0%": { transform: "translateX(-100%)" }, "100%": { transform: "translateX(300%)" } },
+        "toast-in": { from: { opacity: "0", transform: "translateY(8px) scale(.98)" }, to: { opacity: "1", transform: "none" } },
       },
       animation: {
         "fade-in": "fade-in .25s ease-out both",
+        "nav-progress": "nav-progress 1.1s ease-in-out infinite",
+        "toast-in": "toast-in .2s cubic-bezier(.2,.8,.2,1) both",
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Interaction variants that never fire on disabled controls (also covers <a> styled as buttons via aria-disabled).
+    plugin(({ addVariant }) => {
+      addVariant("hov", '&:hover:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"])');
+      addVariant("press", '&:active:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"])');
+      addVariant("coarse", "@media (pointer: coarse)");
+    }),
+  ],
 } satisfies Config;

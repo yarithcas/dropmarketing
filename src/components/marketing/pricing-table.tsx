@@ -87,7 +87,7 @@ export function PricingTable({
               </ul>
               <div className="mt-6">
                 {onChoose ? (
-                  <Button className="w-full" variant={current === id ? "secondary" : highlight ? "primary" : "secondary"} disabled={current === id || busy === id} onClick={() => onChoose(id, interval === "yearly" ? "year" : "month")} data-testid={`choose-${id}`}>
+                  <Button className="w-full" variant={current === id ? "secondary" : highlight ? "primary" : "secondary"} disabled={current === id || (busy != null && busy !== id)} loading={busy === id} disabledReason={current === id ? t("pricing.currentReason") : undefined} onClick={() => onChoose(id, interval === "yearly" ? "year" : "month")} data-testid={`choose-${id}`}>
                     {current === id ? t("pricing.current") : demo ? t("pricing.switchDemo") : id === "free" ? t("pricing.downgrade") : t("pricing.upgradeTo", { plan: t(`plans.${id}.name`) })}
                   </Button>
                 ) : (

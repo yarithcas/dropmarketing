@@ -22,7 +22,12 @@
     "tableView": "Vue tableau",
     "viewAll": "Tout voir",
     "info": "Informations",
-    "unknown": "Inconnu"
+    "unknown": "Inconnu",
+    "copyFailed": "Copie impossible : votre navigateur a bloqué l'accès au presse-papiers",
+    "analysisReady": "Analyse prête",
+    "firstPage": "Vous êtes sur la première page",
+    "lastPage": "Vous êtes sur la dernière page",
+    "exported": "Export {{file}} téléchargé"
   },
   "nav": {
     "main": "Navigation principale",
@@ -115,7 +120,8 @@
     "title": "Notifications",
     "empty": "Aucune notification pour l'instant.",
     "markAllRead": "Tout marquer comme lu",
-    "manage": "Gérer les alertes et listes de suivi"
+    "manage": "Gérer les alertes et listes de suivi",
+    "markedRead": "Toutes les notifications sont marquées comme lues"
   },
   "auth": {
     "account": "Compte",
@@ -803,7 +809,9 @@
     "trackedProduct": "Produit suivi",
     "associatedAds": "Publicités associées ({{n}})",
     "lastObserved": "Dernière observation",
-    "socialDemo": "Lien de démonstration, pas un vrai profil"
+    "socialDemo": "Lien de démonstration, pas un vrai profil",
+    "compareHint": "Cochez au moins 2 boutiques pour les comparer",
+    "compareMax": "Vous pouvez comparer jusqu'à 5 boutiques à la fois"
   },
   "competitors": {
     "title": "Analyse concurrentielle",
@@ -909,7 +917,9 @@
     "matchAuto": "Automatique (estimation)",
     "matchNone": "Aucune correspondance",
     "matchSaved": "Correspondance enregistrée",
-    "matchNote": "Les correspondances marché sont des estimations fondées sur les noms de produits, sauf si vous les définissez manuellement."
+    "matchNote": "Les correspondances marché sont des estimations fondées sur les noms de produits, sauf si vous les définissez manuellement.",
+    "disconnected": "Boutique déconnectée",
+    "enterDomain": "Saisissez d'abord le domaine de votre boutique (ex. my-store.myshopify.com)"
   },
   "collections": {
     "title": "Collections de produits",
@@ -962,7 +972,8 @@
     "stopSharing": "Ne plus partager",
     "sharedOn": "Collection partagée avec l'équipe",
     "sharedOff": "La collection est de nouveau privée",
-    "readOnly": "Lecture seule : seul son créateur peut la modifier"
+    "readOnly": "Lecture seule : seul son créateur peut la modifier",
+    "nameRequired": "Donnez d'abord un nom à la collection"
   },
   "watchlist": {
     "watch": "Suivre",
@@ -1135,7 +1146,10 @@
       "autoPicked": "Aucun produit sélectionné : cette réponse porte sur {{names}}, retenu(s) pour le meilleur score d'opportunité (tendance récente positive privilégiée). Ajoutez des produits dans le panneau Contexte produit pour choisir vous-même.",
       "autoPickedCategory": "Aucun produit sélectionné : cette réponse porte sur {{names}}, retenu(s) pour le meilleur score d'opportunité en {{categories}} (tendance récente positive privilégiée). Ajoutez des produits dans le panneau Contexte produit pour choisir vous-même.",
       "candidatesAi": "Aucun produit sélectionné : l'IA a répondu à partir des meilleurs candidats de TrendHunter pour cette question (meilleurs scores d'opportunité, tendances récentes). Les fiches utilisées sont listées ci-dessous."
-    }
+    },
+    "typeQuestion": "Saisissez d'abord une question",
+    "alreadyAdded": "Déjà ajouté",
+    "contextFull": "{{n}} éléments maximum : retirez-en un pour en ajouter un autre"
   },
   "calculator": {
     "title": "Calculateur de rentabilité",
@@ -1200,7 +1214,8 @@
     "price": "Prix",
     "note1": "La marge de contribution n'est pas le bénéfice net. Le bénéfice net déduit aussi impôts, salaires, financement et coûts exceptionnels.",
     "note2": "Les marges produits estimées dans les fiches de recherche ne sont ni des devis fournisseurs vérifiés, ni des résultats d'exploitation réels.",
-    "note3": "Changer la langue de l'interface ne modifie que le format des nombres, jamais les calculs."
+    "note3": "Changer la langue de l'interface ne modifie que le format des nombres, jamais les calculs.",
+    "resetDone": "Hypothèses réinitialisées aux valeurs par défaut"
   },
   "alerts": {
     "title": "Alertes et listes de suivi",
@@ -1320,7 +1335,9 @@
       "demo_daily": "Données de démonstration, régénérées chaque jour (instantané du {{date}}). Prochaine régénération : {{next}}. Ce ne sont pas des observations réelles du marché.",
       "cron_daily": "Tâche de fond quotidienne à 05:15 UTC : ingestion des connecteurs, recalcul des scores, évaluation des alertes et purge. Données du {{date}} · prochaine exécution : {{next}}.",
       "none": "Pas d'actualisation automatique : la tâche de fond quotidienne (05:15 UTC) n'est pas configurée (CRON_SECRET). Données du {{date}}."
-    }
+    },
+    "ruleIncomplete": "Renseignez un nom et la cible requise pour créer la règle",
+    "cleared": "Historique des notifications effacé"
   },
   "reports": {
     "title": "Rapports de marché",
@@ -1489,7 +1506,8 @@
       "a2": "Non. Les statistiques privées, ventes, taux de conversion et dépenses publicitaires ne sont pas publics. Nous ne les présentons jamais comme des faits connus.",
       "q3": "Puis-je résilier à tout moment ?",
       "a3": "Oui. Les abonnements sont gérés via le portail client Stripe et peuvent être résiliés à tout moment."
-    }
+    },
+    "currentReason": "C'est votre formule actuelle"
   },
   "settings": {
     "title": "Paramètres et abonnement",
@@ -1645,7 +1663,8 @@
     "newLinkDone": "Nouveau lien pour {{email}} : l'ancien lien ne fonctionne plus.",
     "revoke": "Révoquer",
     "revoked": "Invitation révoquée",
-    "confirmRevoke": "Révoquer l'invitation envoyée à {{email}} ?"
+    "confirmRevoke": "Révoquer l'invitation envoyée à {{email}} ?",
+    "inviteEmailFirst": "Saisissez une adresse e-mail pour envoyer une invitation"
   },
   "privacy": {
     "exportTitle": "Exporter mes données",
@@ -1660,7 +1679,9 @@
     "infoTitle": "Comment nous traitons les données",
     "info1": "Nous ne collectons que ce dont chaque fonctionnalité a besoin : informations de compte, vos recherches enregistrées et des compteurs d'utilisation pour les limites d'offre.",
     "info2": "Les données de recherche proviennent d'API officielles, de fournisseurs sous licence ou de pages publiquement accessibles, avec source et date conservées pour chaque indicateur important.",
-    "info3": "Les jetons d'intégration sont chiffrés côté serveur. Nous n'accédons jamais aux données privées d'autres marchands et ne contournons aucune restriction technique."
+    "info3": "Les jetons d'intégration sont chiffrés côté serveur. Nous n'accédons jamais aux données privées d'autres marchands et ne contournons aucune restriction technique.",
+    "exported": "L'export de vos données a été téléchargé",
+    "typeDeleteReason": "Saisissez DELETE dans le champ ci-dessus pour confirmer"
   },
   "landing": {
     "nav": {
@@ -1918,7 +1939,8 @@
       "plan_required": "Les espaces de travail multiples sont disponibles avec l'offre Business.",
       "role_required": "Seuls les propriétaires et les administrateurs de l'espace qui porte l'abonnement peuvent ajouter des espaces.",
       "limit_workspaces": "Vous avez atteint la limite d'espaces de travail de votre offre."
-    }
+    },
+    "nameRequired": "Saisissez d'abord un nom d'espace de travail"
   },
   "invite": {
     "title": "Invitation",

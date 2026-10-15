@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/logo";
 import { LanguageSelect } from "@/components/app/language-select";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
 export function MarketingHeader() {
@@ -21,12 +21,12 @@ export function MarketingHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-bg/75 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
-        <Link href="/" className="focus-ring rounded-md">
+        <Link href="/" className="focus-ring tap rounded-md transition-opacity hover:opacity-80 active:opacity-70">
           <Logo />
         </Link>
         <nav className="hidden items-center gap-6 text-sm text-muted md:flex">
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="hover:text-fg">
+            <Link key={l.href} href={l.href} className="focus-ring rounded transition-colors hover:text-fg active:text-fg/80">
               {l.label}
             </Link>
           ))}
@@ -40,14 +40,14 @@ export function MarketingHeader() {
             {t("landing.ctaDemo")}
           </Link>
         </div>
-        <button className="ml-auto rounded-md p-2 text-muted md:hidden" onClick={() => setOpen((o) => !o)} aria-label={t("nav.openMenu")}>
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <Button variant="ghost" size="icon" className="ml-auto md:hidden [&_svg]:size-5" onClick={() => setOpen((o) => !o)} aria-label={open ? t("common.close") : t("nav.openMenu")} aria-expanded={open}>
+          {open ? <X /> : <Menu />}
+        </Button>
       </div>
       {open && (
         <div className="space-y-3 border-t border-border px-4 py-4 md:hidden">
           {links.map((l) => (
-            <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="block text-sm text-muted">
+            <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="focus-ring tap block rounded py-1 text-sm text-muted transition-colors hover:text-fg active:text-fg/80">
               {l.label}
             </Link>
           ))}
@@ -77,22 +77,22 @@ export function MarketingFooter() {
         </div>
         <div className="space-y-2 text-sm">
           <div className="label">{t("landing.footer.product")}</div>
-          <Link href="/app" className="block text-muted hover:text-fg">
+          <Link href="/app" className="focus-ring tap block w-fit rounded text-muted transition-colors hover:text-fg active:text-fg/80">
             {t("landing.ctaDemo")}
           </Link>
-          <Link href="/pricing" className="block text-muted hover:text-fg">
+          <Link href="/pricing" className="focus-ring tap block w-fit rounded text-muted transition-colors hover:text-fg active:text-fg/80">
             {t("landing.nav.pricing")}
           </Link>
-          <Link href="/signup" className="block text-muted hover:text-fg">
+          <Link href="/signup" className="focus-ring tap block w-fit rounded text-muted transition-colors hover:text-fg active:text-fg/80">
             {t("auth.signup")}
           </Link>
         </div>
         <div className="space-y-2 text-sm">
           <div className="label">{t("landing.footer.legal")}</div>
-          <Link href="/privacy" className="block text-muted hover:text-fg">
+          <Link href="/privacy" className="focus-ring tap block w-fit rounded text-muted transition-colors hover:text-fg active:text-fg/80">
             {t("legal.privacyTitle")}
           </Link>
-          <Link href="/terms" className="block text-muted hover:text-fg">
+          <Link href="/terms" className="focus-ring tap block w-fit rounded text-muted transition-colors hover:text-fg active:text-fg/80">
             {t("legal.termsTitle")}
           </Link>
         </div>

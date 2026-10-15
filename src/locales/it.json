@@ -22,7 +22,12 @@
     "tableView": "Vista tabella",
     "viewAll": "Vedi tutto",
     "info": "Informazioni",
-    "unknown": "Sconosciuto"
+    "unknown": "Sconosciuto",
+    "copyFailed": "Impossibile copiare: il browser ha bloccato l'accesso agli appunti",
+    "analysisReady": "Analisi pronta",
+    "firstPage": "Sei sulla prima pagina",
+    "lastPage": "Sei sull'ultima pagina",
+    "exported": "Esportazione {{file}} scaricata"
   },
   "nav": {
     "main": "Navigazione principale",
@@ -115,7 +120,8 @@
     "title": "Notifiche",
     "empty": "Nessuna notifica per ora.",
     "markAllRead": "Segna tutto come letto",
-    "manage": "Gestisci avvisi e liste di monitoraggio"
+    "manage": "Gestisci avvisi e liste di monitoraggio",
+    "markedRead": "Tutte le notifiche segnate come lette"
   },
   "auth": {
     "account": "Account",
@@ -803,7 +809,9 @@
     "trackedProduct": "Prodotto monitorato",
     "associatedAds": "Annunci associati ({{n}})",
     "lastObserved": "Ultima osservazione",
-    "socialDemo": "Link demo, non un profilo reale"
+    "socialDemo": "Link demo, non un profilo reale",
+    "compareHint": "Seleziona almeno 2 negozi per confrontarli",
+    "compareMax": "Puoi confrontare fino a 5 negozi alla volta"
   },
   "competitors": {
     "title": "Analisi della concorrenza",
@@ -909,7 +917,9 @@
     "matchAuto": "Automatico (stima)",
     "matchNone": "Nessuna corrispondenza",
     "matchSaved": "Abbinamento salvato",
-    "matchNote": "Gli abbinamenti di mercato sono stime basate sui nomi dei prodotti, a meno che tu non li imposti manualmente."
+    "matchNote": "Gli abbinamenti di mercato sono stime basate sui nomi dei prodotti, a meno che tu non li imposti manualmente.",
+    "disconnected": "Negozio disconnesso",
+    "enterDomain": "Inserisci prima il dominio del tuo negozio (es. my-store.myshopify.com)"
   },
   "collections": {
     "title": "Raccolte di prodotti",
@@ -962,7 +972,8 @@
     "stopSharing": "Interrompi condivisione",
     "sharedOn": "Raccolta condivisa con il team",
     "sharedOff": "La raccolta è di nuovo privata",
-    "readOnly": "Sola lettura: solo chi l'ha creata può modificarla"
+    "readOnly": "Sola lettura: solo chi l'ha creata può modificarla",
+    "nameRequired": "Dai prima un nome alla raccolta"
   },
   "watchlist": {
     "watch": "Monitora",
@@ -1135,7 +1146,10 @@
       "autoPicked": "Nessun prodotto selezionato: questa risposta usa {{names}}, scelto/i per il punteggio di opportunità più alto (preferendo un trend recente positivo). Aggiungi prodotti nel pannello Contesto prodotto per scegliere tu.",
       "autoPickedCategory": "Nessun prodotto selezionato: questa risposta usa {{names}}, scelto/i per il punteggio di opportunità più alto in {{categories}} (preferendo un trend recente positivo). Aggiungi prodotti nel pannello Contesto prodotto per scegliere tu.",
       "candidatesAi": "Nessun prodotto selezionato: l'IA ha risposto partendo dai migliori candidati di TrendHunter per questa domanda (punteggi di opportunità più alti, trend recenti). I record usati sono elencati qui sotto."
-    }
+    },
+    "typeQuestion": "Scrivi prima una domanda",
+    "alreadyAdded": "Già aggiunto",
+    "contextFull": "Fino a {{n}} elementi: rimuovine uno per aggiungerne un altro"
   },
   "calculator": {
     "title": "Calcolatore di redditività",
@@ -1200,7 +1214,8 @@
     "price": "Prezzo",
     "note1": "Il margine di contribuzione non è l'utile netto. L'utile netto sottrae anche imposte, stipendi, finanziamenti e costi una tantum.",
     "note2": "I margini stimati nelle schede di ricerca non sono preventivi verificati dei fornitori né risultati operativi reali.",
-    "note3": "Cambiare la lingua dell'interfaccia modifica solo il formato dei numeri, mai i calcoli."
+    "note3": "Cambiare la lingua dell'interfaccia modifica solo il formato dei numeri, mai i calcoli.",
+    "resetDone": "Ipotesi ripristinate ai valori predefiniti"
   },
   "alerts": {
     "title": "Avvisi e liste di monitoraggio",
@@ -1320,7 +1335,9 @@
       "demo_daily": "Dati dimostrativi, rigenerati ogni giorno (istantanea del {{date}}). Prossima rigenerazione: {{next}}. Non sono osservazioni reali del mercato.",
       "cron_daily": "Attività in background giornaliera alle 05:15 UTC: acquisizione dai connettori, ricalcolo dei punteggi, valutazione degli avvisi ed eliminazione. Dati del {{date}} · prossima esecuzione: {{next}}.",
       "none": "Nessun aggiornamento automatico: l'attività giornaliera in background (05:15 UTC) non è configurata (CRON_SECRET). Dati del {{date}}."
-    }
+    },
+    "ruleIncomplete": "Inserisci un nome e l'obiettivo richiesto per creare la regola",
+    "cleared": "Cronologia delle notifiche cancellata"
   },
   "reports": {
     "title": "Report di mercato",
@@ -1489,7 +1506,8 @@
       "a2": "No. Analytics privati, vendite, tassi di conversione e spesa pubblicitaria non sono pubblici. Non li presentiamo mai come fatti noti.",
       "q3": "Posso disdire in qualsiasi momento?",
       "a3": "Sì. Gli abbonamenti si gestiscono dal portale clienti di Stripe e si possono disdire in qualsiasi momento."
-    }
+    },
+    "currentReason": "Questo è il tuo piano attuale"
   },
   "settings": {
     "title": "Impostazioni e abbonamento",
@@ -1645,7 +1663,8 @@
     "newLinkDone": "Nuovo link per {{email}}: il link precedente non funziona più.",
     "revoke": "Revoca",
     "revoked": "Invito revocato",
-    "confirmRevoke": "Revocare l'invito inviato a {{email}}?"
+    "confirmRevoke": "Revocare l'invito inviato a {{email}}?",
+    "inviteEmailFirst": "Inserisci un indirizzo email per inviare un invito"
   },
   "privacy": {
     "exportTitle": "Esporta i miei dati",
@@ -1660,7 +1679,9 @@
     "infoTitle": "Come trattiamo i dati",
     "info1": "Raccogliamo solo ciò che serve a ciascuna funzione: dati dell'account, le tue ricerche salvate e contatori di utilizzo per i limiti del piano.",
     "info2": "I dati di ricerca provengono da API ufficiali, fornitori con licenza o pagine accessibili pubblicamente, con fonte e data conservate per ogni metrica importante.",
-    "info3": "I token di integrazione sono cifrati lato server. Non accediamo mai a dati privati di altri commercianti né aggiriamo restrizioni tecniche."
+    "info3": "I token di integrazione sono cifrati lato server. Non accediamo mai a dati privati di altri commercianti né aggiriamo restrizioni tecniche.",
+    "exported": "L'esportazione dei tuoi dati è stata scaricata",
+    "typeDeleteReason": "Digita DELETE nel campo qui sopra per confermare"
   },
   "landing": {
     "nav": {
@@ -1918,7 +1939,8 @@
       "plan_required": "Più spazi di lavoro sono disponibili con il piano Business.",
       "role_required": "Solo proprietari e amministratori dello spazio titolare dell'abbonamento possono aggiungere spazi.",
       "limit_workspaces": "Hai raggiunto il limite di spazi di lavoro del tuo piano."
-    }
+    },
+    "nameRequired": "Inserisci prima un nome per lo spazio di lavoro"
   },
   "invite": {
     "title": "Invito",

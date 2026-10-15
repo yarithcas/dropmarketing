@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FlaskConical, Loader2 } from "lucide-react";
+import { FlaskConical } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { createBrowserClient } from "@supabase/ssr";
 import { Logo } from "@/components/logo";
@@ -75,7 +75,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <LanguageSelect compact />
       </div>
       <div className="card relative w-full max-w-sm p-6 shadow-2xl">
-        <Link href="/" className="mb-6 inline-block">
+        <Link href="/" className="focus-ring tap mb-6 inline-block rounded-md transition-opacity hover:opacity-80">
           <Logo />
         </Link>
         <h1 className="text-xl font-semibold">{mode === "login" ? t("auth.loginTitle") : t("auth.signupTitle")}</h1>
@@ -105,24 +105,23 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             </p>
           )}
           {info && <p className="text-sm text-good">{info}</p>}
-          <Button type="submit" className="w-full" disabled={busy} data-testid="auth-submit">
-            {busy && <Loader2 className="animate-spin" />}
+          <Button type="submit" className="w-full" loading={busy} data-testid="auth-submit">
             {mode === "login" ? t("auth.login") : t("auth.signup")}
           </Button>
         </form>
         <p className="mt-4 text-center text-sm text-subtle">
           {mode === "login" ? t("auth.noAccount") : t("auth.haveAccount")}{" "}
-          <Link href={mode === "login" ? "/signup" : "/login"} className="text-accent hover:underline">
+          <Link href={mode === "login" ? "/signup" : "/login"} className="focus-ring tap rounded text-accent underline-offset-4 hover:underline">
             {mode === "login" ? t("auth.signup") : t("auth.login")}
           </Link>
         </p>
         <p className="mt-3 text-center text-[11px] text-subtle">
           {t("auth.legal")}{" "}
-          <Link href="/terms" className="underline">
+          <Link href="/terms" className="focus-ring rounded underline underline-offset-2 transition-colors hover:text-fg">
             {t("legal.termsTitle")}
           </Link>{" "}
           ·{" "}
-          <Link href="/privacy" className="underline">
+          <Link href="/privacy" className="focus-ring rounded underline underline-offset-2 transition-colors hover:text-fg">
             {t("legal.privacyTitle")}
           </Link>
         </p>

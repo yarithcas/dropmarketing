@@ -1,7 +1,8 @@
 import "server-only";
 import { allProducts, datasetForEngines, meta, trendReport } from "./repository";
 import { addDays, daysBetween } from "../dates";
-import { CATEGORIES, type Category } from "../types";
+import { csvRow } from "../csv";
+import { CATEGORIES, type Advertisement, type Category, type Product, type ProductObservation, type ProvenanceKind, type SourceRef, type Store } from "../types";
 
 /** Generated research reports. Every figure is derived from stored observations; sources are listed. */
 
@@ -17,6 +18,47 @@ export function reportCatalog() {
 
 export function isReportId(id: string): id is ReportId {
   return reportCatalog().some((r) => r.id === id);
+}
+
+/** Provenance of the records a report uses: one row per connector and data kind. */
+export interface ReportSource {
+  connector: string;
+  /** Provenance kind as stored on the records (a licensed dataset supplies estimates, the demo connector demo data). */
+  kind: ProvenanceKind;
+  /** First and last observation dates (YYYY-MM-DD) among those records. */
+  from: string;
+  to: string;
+  records: { products: number; ads: number; observations: number; stores: number };
+}
+
+/**
+ * Per-connector provenance computed from the records actually used: each
+ * record contributes its own connector, kind and observation dates (capped at
+ * the snapshot date), so a mixed database never labels demo or estimated rows
+ * as measured, and every connector gets its own collection period.
+ */
+export function reportSources(
+  used: { products: Product[]; ads: Advertisement[]; observations: ProductObservation[]; stores: Store[] },
+  asOf: string,
+): ReportSource[] {
+  const rows = new Map<string, ReportSource>();
+  const cap = (day: string) => (day > asOf ? asOf : day);
+  const add = (ref: SourceRef | undefined, type: keyof ReportSource["records"], from: string, to: string) => {
+    if (!ref) return;
+    const k = `${ref.connector}|${ref.kind}`;
+    const lo = cap(from.slice(0, 10));
+    const hi = cap(to.slice(0, 10));
+    const r = rows.get(k) ?? { connector: ref.connector, kind: ref.kind, from: lo, to: hi, records: { products: 0, ads: 0, observations: 0, stores: 0 } };
+    r.records[type]++;
+    if (lo < r.from) r.from = lo;
+    if (hi > r.to) r.to = hi;
+    rows.set(k, r);
+  };
+  for (const p of used.products) add(p.source, "products", p.firstDetected, p.lastDetected);
+  for (const a of used.ads) if (a.firstSeen <= asOf) add(a.source, "ads", a.firstSeen, a.lastSeen);
+  for (const o of used.observations) if (o.date <= asOf) add(o.source, "observations", o.date, o.date);
+  for (const st of used.stores) add(st.source, "stores", st.firstSeen, st.source?.observedAt ?? st.firstSeen);
+  return [...rows.values()].sort((a, b) => a.connector.localeCompare(b.connector) || a.kind.localeCompare(b.kind));
 }
 
 export function buildReport(id: ReportId) {
@@ -98,34 +140,32 @@ export function buildReport(id: ReportId) {
     margins: { buckets, note: "estimate" },
     risks: ["reports.risks.estimates", "reports.risks.saturation", "reports.risks.supplier", "reports.risks.policy", "reports.risks.sample"],
     experiments: ["reports.experiments.sample", "reports.experiments.creativeTest", "reports.experiments.landing", "reports.experiments.price", "reports.experiments.killCriteria"],
-    sources: m.sources.map((s) => ({
-      connector: s,
-      kind: m.mode === "demo" ? "demo" : "measured",
-      from: products.length ? products.map((p) => p.firstDetected).sort()[0] : m.asOf,
-      to: m.asOf,
-    })),
+    sources: reportSources(
+      {
+        products,
+        ads,
+        observations: products.flatMap((p) => d.observations[p.id] ?? []),
+        stores: d.stores.filter((s) => storeIds.has(s.id)),
+      },
+      m.asOf,
+    ),
   };
 }
 export type Report = ReturnType<typeof buildReport>;
 
-const cell = (v: unknown) => {
-  const s = v == null ? "" : String(v);
-  const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
-  return `"${safe.replace(/"/g, '""')}"`;
-};
-
+/** CSV export. Cells go through csvRow: numbers stay numeric, formula-like text is neutralised, unknown values are empty. */
 export function reportCsv(r: Report): string {
   const lines = [
     ["section", "name", "score", "confidence", "trend_30d_pct", "est_gross_margin_pct", "est_price", "est_cost", "currency", "ads_observed", "competition"].join(","),
     ...r.opportunities.map((o) =>
-      ["opportunity", o.name, o.score, o.confidence, o.trendGrowth, o.grossMargin == null ? "" : Math.round(o.grossMargin * 1000) / 10, o.price, o.cost, o.currency, o.ads, o.competition].map(cell).join(","),
+      csvRow(["opportunity", o.name, o.score, o.confidence, o.trendGrowth, o.grossMargin == null ? null : Math.round(o.grossMargin * 1000) / 10, o.price, o.cost, o.currency, o.ads, o.competition]),
     ),
     "",
     ["section", "store", "domain", "listings", "relevant_listings", "ads_observed"].join(","),
-    ...r.competitors.map((s) => ["competitor", s.name, s.domain, s.listings, s.relevantListings, s.ads].map(cell).join(",")),
+    ...r.competitors.map((s) => csvRow(["competitor", s.name, s.domain, s.listings, s.relevantListings, s.ads])),
     "",
-    ["section", "source", "data_kind", "collected_from", "collected_to"].join(","),
-    ...r.sources.map((s) => ["source", s.connector, s.kind, s.from, s.to].map(cell).join(",")),
+    ["section", "source", "data_kind", "products", "ads", "observations", "stores", "collected_from", "collected_to"].join(","),
+    ...r.sources.map((s) => csvRow(["source", s.connector, s.kind, s.records.products, s.records.ads, s.records.observations, s.records.stores, s.from, s.to])),
   ];
   return lines.join("\n");
 }

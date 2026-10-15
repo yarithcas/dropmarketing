@@ -14,7 +14,7 @@ import { ErrorState } from "@/components/ui/states";
 import { useSession } from "@/lib/client/session";
 import { useApi } from "@/lib/client/use-api";
 import { useFormat } from "@/lib/format";
-import type { Category, CompetitionLevel, Confidence, Platform } from "@/lib/types";
+import type { Category, CompetitionLevel, Confidence, Platform, ProvenanceKind } from "@/lib/types";
 
 interface Report {
   id: string;
@@ -31,7 +31,7 @@ interface Report {
   margins: { buckets: { label: string; count: number }[] };
   risks: string[];
   experiments: string[];
-  sources: { connector: string; kind: string; from: string; to: string }[];
+  sources: { connector: string; kind: ProvenanceKind; from: string; to: string; records: { products: number; ads: number; observations: number; stores: number } }[];
 }
 
 function Section({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
@@ -228,26 +228,40 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
       </div>
 
       <Section n={9} title={t("reports.sections.sources")}>
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="table-th">{t("reports.source")}</th>
-              <th className="table-th">{t("reports.dataKind")}</th>
-              <th className="table-th">{t("reports.collected")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.sources.map((s) => (
-              <tr key={s.connector}>
-                <td className="table-td">{t(`connectors.names.${s.connector}`, { defaultValue: s.connector })}</td>
-                <td className="table-td">{t(`provenance.${s.kind}`)}</td>
-                <td className="table-td text-muted">
-                  {f.date(s.from)} → {f.date(s.to)}
-                </td>
+        {/* One row per connector and data kind, computed from the records this report uses. */}
+        <div className="overflow-x-auto">
+          <table className="w-full" data-testid="report-sources">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="table-th">{t("reports.source")}</th>
+                <th className="table-th">{t("reports.dataKind")}</th>
+                <th className="table-th">{t("reports.records")}</th>
+                <th className="table-th">{t("reports.collected")}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.sources.map((s) => (
+                <tr key={`${s.connector}-${s.kind}`}>
+                  <td className="table-td">{t(`connectors.names.${s.connector}`, { defaultValue: s.connector })}</td>
+                  <td className="table-td">
+                    <ProvenanceBadge kind={s.kind} />
+                  </td>
+                  <td className="table-td text-xs text-muted">
+                    {(["products", "ads", "observations", "stores"] as const)
+                      .filter((k) => s.records[k] > 0)
+                      .map((k) => t(`reports.recordTypes.${k}`, { n: f.number(s.records[k]) }))
+                      .join(" · ")}
+                  </td>
+                  <td className="table-td text-muted">
+                    {f.date(s.from)} → {f.date(s.to)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {!data.sources.length ? <p className="text-sm text-subtle">{t("reports.noSources")}</p> : null}
+        <p className="mt-2 text-[11px] text-subtle">{t("reports.sourcesNote")}</p>
         <p className="mt-3 text-[11px] text-subtle">{t("reports.disclaimer")}</p>
       </Section>
     </div>

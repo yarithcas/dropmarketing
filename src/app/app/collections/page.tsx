@@ -20,6 +20,7 @@ import { useFormat } from "@/lib/format";
 import type { ProductWithMetrics } from "@/lib/types";
 import type { Collection, CollectionItem } from "@/lib/workspace";
 import { cn } from "@/lib/cn";
+import { csvRow } from "@/lib/csv";
 
 const TYPE_ICON = { product: Package, ad: Megaphone, store: StoreIcon };
 const hrefFor = (i: CollectionItem) => (i.type === "product" ? `/app/products/${i.refId}` : i.type === "ad" ? `/app/creatives?ad=${i.refId}` : `/app/stores/${i.refId}`);
@@ -32,13 +33,6 @@ function download(name: string, mime: string, content: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
-
-const csvCell = (v: unknown) => {
-  const s = v == null ? "" : String(v);
-  // Neutralise spreadsheet formula injection and quote.
-  const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
-  return `"${safe.replace(/"/g, '""')}"`;
-};
 
 function ItemRow({ c, item }: { c: Collection; item: CollectionItem }) {
   const { t } = useTranslation();
@@ -186,7 +180,8 @@ function CollectionsInner() {
     const header = ["type", "label", "reference", "link", "note", "tags", "added_at", "score", "est_price", "est_gross_margin_pct", "trend_30d_pct", "ads_observed", "data_kind"];
     const lines = c.items.map((i) => {
       const p = i.type === "product" ? byId.get(i.refId) : undefined;
-      return [
+      // csvRow keeps numbers numeric and neutralises formula-like text (labels, notes, tags).
+      return csvRow([
         i.type,
         i.label,
         i.refId,
@@ -194,15 +189,14 @@ function CollectionsInner() {
         i.note,
         i.tags.join("|"),
         i.addedAt,
-        p?.score.overall ?? "",
-        p?.priceEstimate ?? "",
-        p?.metrics.grossMargin == null ? "" : Math.round(p.metrics.grossMargin * 1000) / 10,
-        p?.metrics.trendGrowth ?? "",
-        p?.metrics.adsObserved ?? "",
+        // Unknown values are empty fields (null), never zero.
+        p?.score.overall ?? null,
+        p?.priceEstimate ?? null,
+        p?.metrics.grossMargin == null ? null : Math.round(p.metrics.grossMargin * 1000) / 10,
+        p?.metrics.trendGrowth ?? null,
+        p?.metrics.adsObserved ?? null,
         p?.source.kind ?? (session?.data.mode === "demo" ? "demo" : ""),
-      ]
-        .map(csvCell)
-        .join(",");
+      ]);
     });
     download(`${c.name.replace(/[^\w-]+/g, "_")}.csv`, "text/csv;charset=utf-8", [header.join(","), ...lines].join("\n"));
   };

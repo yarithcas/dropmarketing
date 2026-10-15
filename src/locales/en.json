@@ -331,7 +331,9 @@
       "new_activity": "New activity",
       "new_activityTip": "No activity in the previous period, so a growth percentage would be meaningless.",
       "no_activity": "No activity",
-      "no_activityTip": "No observed activity in either period."
+      "no_activityTip": "No observed activity in either period.",
+      "insufficient_data": "Insufficient data",
+      "insufficient_dataTip": "Sample too small for a reliable percentage: at least {{ads}} ads from {{products}} products are needed in the compared window."
     }
   },
   "score": {
@@ -500,13 +502,13 @@
     },
     "problem": {
       "title": "Problem addressed",
-      "detected": "An everyday frustration around {{tag}} is stated explicitly.",
-      "implicit": "The problem around {{tag}} is implied rather than stated."
+      "quoted": "Stated in the copy: “{{quote}}”",
+      "notStated": "No problem is stated explicitly in the copy."
     },
     "benefit": {
       "title": "Product benefit",
-      "detected": "Convenience / improvement benefits are stated (ease, results, time saved).",
-      "unclear": "The concrete benefit is not clearly stated."
+      "unclear": "The concrete benefit is not clearly stated.",
+      "quoted": "Stated in the ad: “{{quote}}”"
     },
     "audience": {
       "title": "Target audience hypothesis",
@@ -514,7 +516,13 @@
     },
     "value": {
       "title": "Value proposition",
-      "summary": "{{name}} positioned as a simple everyday upgrade without commitment."
+      "promiseWithTerms": "Stated promise: “{{promise}}”, supported by {{terms}}.",
+      "promise": "Stated promise: “{{promise}}”. No offer or usage terms are stated.",
+      "termsOnly": "No explicit promise; the copy relies on {{terms}}.",
+      "problemOnly": "The copy names a problem (“{{problem}}”) but states no explicit promise or offer.",
+      "appealsOnly": "No explicit promise is stated; the wording appeals to {{triggers}}.",
+      "notDeterminable": "Not determinable from the copy.",
+      "evidence": "Phrases quoted from the ad"
     },
     "cta": {
       "title": "Call to action",
@@ -549,7 +557,7 @@
     "strengths": {
       "shortHook": "Short, scannable hook.",
       "problemFirst": "Leads with the problem, which qualifies the audience.",
-      "objection": "Pre-empts an objection (setup, subscription).",
+      "objection": "Pre-empts an objection with stated terms (offer, ease of use).",
       "videoDemo": "Video format allows a product demonstration."
     },
     "weaknesses": {
@@ -569,7 +577,25 @@
       "founder": "Founder-to-camera story: why we redesigned the {{tag}} experience."
     },
     "related": "Other creatives for this product",
-    "disclaimer": "AI-assisted analysis for inspiration. Do not reproduce third-party ad content; build original concepts."
+    "disclaimer": "AI-assisted analysis for inspiration. Do not reproduce third-party ad content; build original concepts.",
+    "cues": {
+      "benefit": "Promise",
+      "offer": "Offer",
+      "ease": "Ease",
+      "problem": "Problem",
+      "proof": "Proof"
+    },
+    "formatInfo": {
+      "title": "Creative format",
+      "recorded": "{{format}} (as recorded by the source).",
+      "unknown": "Unknown: the source does not report the creative format for this ad."
+    },
+    "noCopy": {
+      "banner": "This ad has no copy text in the record, so there is no copy to analyze. Only the recorded headline, call to action and format are described.",
+      "hook": "No copy to analyze: the record contains no ad text.",
+      "field": "No copy to analyze."
+    },
+    "notDeterminable": "Not determinable from the copy."
   },
   "trends": {
     "title": "Trending Products",
@@ -579,11 +605,10 @@
     "trending": "Trending products",
     "trendingDesc": "Active-ad growth over {{range}} vs the previous {{range}}",
     "categories": "Fast-growing categories",
-    "categoriesDesc": "Total active-ad growth per category",
-    "categoriesInsufficient": "Insufficient history for: {{list}}",
+    "categoriesDesc": "Active-ad growth per category vs the previous window, shown when that window holds at least {{ads}} ads from {{products}} products",
     "newAdvertisers": "{{n}} new adv.",
-    "emerging": "Emerging niches & new products",
-    "emergingDesc": "First detected in the last 75 days",
+    "emerging": "Emerging niches",
+    "emergingDesc": "Categories and tags gaining new products, advertisers and active ads over {{range}} vs the previous {{range}}.",
     "declining": "Declining trends",
     "decliningDesc": "Largest drops in active ads",
     "geo": "Geographic differences",
@@ -594,7 +619,80 @@
     "noneInRange": "Nothing to show for this window.",
     "sourcesTitle": "Data sources & freshness",
     "sourcesText": "Sources: {{sources}}. Last updated {{date}}.",
-    "insufficientNote": "{{n}} products are excluded from comparisons because their history is too short for this window."
+    "insufficientNote": "{{n}} products are excluded from comparisons because their history is too short for this window.",
+    "categoriesWithheld": "Growth withheld",
+    "categoriesNoneMeasured": "No category has enough observations for a reliable comparison in this window.",
+    "previousSample": "Previous window: {{ads}} ads from {{products}} products",
+    "emergingRule": "Rule: at least {{entrants}} new products or advertisers (more than in the previous window), active ads up {{growth}}% or more, and at least {{ads}} active ads from {{products}} products now.",
+    "nicheKinds": {
+      "category": "Category",
+      "tag": "Tag"
+    },
+    "nicheStats": "New products {{prevProducts}} → {{products}} · new advertisers {{prevAdvertisers}} → {{advertisers}}",
+    "nicheAds": "{{previous}} → {{current}} active ads",
+    "nichesNone": "No niche meets the emergence rule in this window.",
+    "nichesInsufficient": "{{n}} niches have new entrants but fewer than {{ads}} active ads from {{products}} products, or not enough history: they are not listed.",
+    "newProducts": "New products",
+    "newProductsDesc": "First detected within the {{range}} window",
+    "discoveryTitle": "Product discovery frequency",
+    "discoveryDesc": "New products detected per week, overall and for the leading categories.",
+    "discoveryTotal": "All categories",
+    "discoveryByCategory": "New products over the period by category: {{list}}",
+    "discoveryGap": "Observation history starts on {{date}}: earlier weeks are not observed (no value), and products already advertised then are counted in the week collection started.",
+    "discoveryNone": "No new product detected over this period.",
+    "geoRule": "A change is shown only with at least {{ads}} ads from {{products}} products in the previous window.",
+    "entrySources": "{{sources}} · last observed {{date}}",
+    "entrySourcesTip": "Connectors that supplied the records behind this entry, and their latest observation date. Data type: {{kinds}}.",
+    "noSourceRecords": "No source record",
+    "sourcesCol": "Sources",
+    "statusCol": "Status",
+    "signalCol": "Signal",
+    "lastObservedCol": "Last observed",
+    "searchTip": "Change of the search-interest index over {{range}} vs the previous {{range}}. Latest index: {{latest}}/100.",
+    "searchLegend": "Search interest (magnifier icon) is the change of the search-interest index over the same windows. Source: {{sources}}.",
+    "searchConfigured": "A search-interest source is configured but has not supplied data yet.",
+    "searchNotConnected": "No search-interest source is connected, so search interest is not shown.",
+    "signalsTitle": "Signal coverage",
+    "signalsDesc": "Which signals this page can use, from the configured connectors and the records present. A signal without a connected source is neither shown nor estimated.",
+    "signalProviders": "Available via: {{list}}",
+    "signalNoConnector": "No connector available",
+    "signalStatus": {
+      "connected": "Connected",
+      "configured": "Configured, no data yet",
+      "demo": "Demo",
+      "not_connected": "Not connected"
+    },
+    "signals": {
+      "advertising_activity": {
+        "name": "Advertising activity",
+        "desc": "Ads active per day, from ad libraries or a licensed dataset."
+      },
+      "new_advertisers": {
+        "name": "New advertisers",
+        "desc": "Advertisers seen for the first time promoting a product."
+      },
+      "stores_observed": {
+        "name": "Stores observed",
+        "desc": "Public storefronts listing the product."
+      },
+      "search_interest": {
+        "name": "Search interest",
+        "desc": "Search-interest index (0–100) from a search-trends source."
+      },
+      "social_engagement": {
+        "name": "Social engagement",
+        "desc": "Likes, comments and shares on social posts. No connector supplies this signal yet."
+      },
+      "source_popularity": {
+        "name": "Source popularity",
+        "desc": "Popularity on the source marketplace (orders, rankings). No connector supplies this signal yet."
+      },
+      "discovery_frequency": {
+        "name": "Product discovery frequency",
+        "desc": "How many new products are detected per week."
+      }
+    },
+    "aggregateNote": "Category, country and niche growth is shown only when the previous window lies inside the observed history (since {{date}}) and holds at least {{ads}} ads from {{products}} products. In this window, {{categories}} categories and {{countries}} countries show “Insufficient data” or “Insufficient history” instead of a percentage."
   },
   "stores": {
     "title": "Shopify Store Intelligence",
@@ -856,7 +954,9 @@
       "compareInsufficient": "The selected products do not have enough data for a reliable comparison.",
       "angles": "Original advertising angles for {{n}} product(s). Adapt them; do not copy competitor ads.",
       "risks": "Key risks to review before launching.",
-      "checklist": "A practical launch checklist for a Shopify store."
+      "checklist": "A practical launch checklist for a Shopify store.",
+      "compareNeedsProducts": "To compare products, select {{min}} to {{max}} of them first. No comparison was made.",
+      "compareNeedsMore": "A comparison needs {{min}} to {{max}} products, and only {{name}} is selected. No comparison was made."
     },
     "rules": {
       "noStrongSignal": "No strong positive signal — consider this an exploratory candidate."
@@ -893,7 +993,18 @@
       "adPolicy": "Advertising platform policies (health claims, before/after, restricted categories).",
       "returns": "Return rate and cost of refunds for this product type.",
       "saturation": "Market saturation: many sellers may compete on price.",
-      "compliance": "Product safety, CE/UKCA marking, labelling and consumer law in target countries."
+      "compliance": "Product safety, CE/UKCA marking, labelling and consumer law in target countries.",
+      "fallback": {
+        "none": "No specific risk signal detected in the available data — validate supplier, shipping and ad costs before testing.",
+        "confidenceLow": "Low data confidence: few observations or ads, or core inputs missing.",
+        "confidenceMedium": "Medium data confidence: history, ad sample or freshness below the high-confidence level.",
+        "shippingUnverified": "Shipping times and sourcing are not verified.",
+        "marginEstimate": "The {{pct}}% gross margin is an estimate (estimated price and supplier cost), not a supplier quote.",
+        "shortHistory": "Short history: only {{n}} daily observations.",
+        "fewAds": "Small ad sample: {{n}} ads observed.",
+        "trendUnknown": "The 30-day trend is not measurable yet.",
+        "demo": "Demo record: synthetic data that does not describe the real market."
+      }
     },
     "checklist": {
       "title": "Launch checklist",
@@ -908,6 +1019,29 @@
       "testBudget": "Set a capped test budget and duration per angle.",
       "kpis": "Define KPIs and kill criteria (CPA vs break-even CPA, CTR, add-to-cart).",
       "support": "Prepare customer support templates and response times."
+    },
+    "needsProducts": {
+      "title": "Select {{min}} to {{max}} products to compare",
+      "textNone": "No product is selected. The analyst only compares products you choose: add them in the Product context panel, or start from the candidates below.",
+      "textSome_one": "Only {{count}} product is selected. Add at least one more in the Product context panel.",
+      "textSome_other": "Only {{count}} products are selected. Add more in the Product context panel.",
+      "choose": "Choose products",
+      "suggestionsTitle": "Candidates you can add",
+      "suggestionsNote": "Suggested because they have the highest opportunity scores (with a bonus for a positive 30-day trend) among the scored products matching your question. This is not a comparison yet.",
+      "added": "Added",
+      "compareSuggested_one": "Compare this {{count}} candidate",
+      "compareSuggested_other": "Compare these {{count}} candidates",
+      "compareWith_one": "Add {{count}} candidate and compare",
+      "compareWith_other": "Add {{count}} candidates and compare"
+    },
+    "suggest": {
+      "reason": "Score {{score}}/100, among the highest-scored products",
+      "reasonCategory": "Score {{score}}/100, among the highest-scored products in {{category}}"
+    },
+    "context": {
+      "autoPicked": "No product selected: this answer uses {{names}}, picked as the highest opportunity score (with a positive recent trend preferred). Add products in the Product context panel to choose yourself.",
+      "autoPickedCategory": "No product selected: this answer uses {{names}}, picked as the highest opportunity score in {{categories}} (with a positive recent trend preferred). Add products in the Product context panel to choose yourself.",
+      "candidatesAi": "No product selected: the AI answered from TrendHunter's top candidates for this question (highest opportunity scores, recent trends). The records it used are listed below."
     }
   },
   "calculator": {
@@ -1127,7 +1261,16 @@
     "source": "Source",
     "dataKind": "Data type",
     "collected": "Collection period",
-    "disclaimer": "Generated automatically from observations stored in TrendHunter. Not investment advice. Scores and estimates are not guarantees."
+    "disclaimer": "Generated automatically from observations stored in TrendHunter. Not investment advice. Scores and estimates are not guarantees.",
+    "records": "Records used",
+    "recordTypes": {
+      "products": "Products: {{n}}",
+      "ads": "Ads: {{n}}",
+      "observations": "Daily observations: {{n}}",
+      "stores": "Stores: {{n}}"
+    },
+    "noSources": "No record is behind this report.",
+    "sourcesNote": "Computed from the records used in this report: each source shows its own data type and the first and last observation dates of its records."
   },
   "billing": {
     "currentPlan": "Current plan",

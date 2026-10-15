@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useFormat } from "@/lib/format";
 
@@ -119,7 +120,7 @@ export function Sparkline({ values, className }: { values: number[]; className?:
 }
 
 /** Horizontal bar list (labels + values) — readable alternative to pie charts. */
-export function BarList({ items, valueFormat }: { items: { label: string; value: number; hint?: string }[]; valueFormat?: (n: number) => string }) {
+export function BarList({ items, valueFormat }: { items: { label: string; value: number; hint?: string; detail?: ReactNode }[]; valueFormat?: (n: number) => string }) {
   const f = useFormat();
   const max = Math.max(...items.map((i) => Math.abs(i.value)), 1);
   return (
@@ -136,6 +137,7 @@ export function BarList({ items, valueFormat }: { items: { label: string; value:
           <div className="h-1.5 rounded-full bg-surface-3">
             <div className="h-1.5 rounded-full" style={{ width: `${(Math.abs(it.value) / max) * 100}%`, background: it.value < 0 ? "var(--chart-2)" : "var(--chart-1)" }} />
           </div>
+          {it.detail ? <div className="mt-1">{it.detail}</div> : null}
         </li>
       ))}
     </ul>

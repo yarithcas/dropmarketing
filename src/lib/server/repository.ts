@@ -24,6 +24,27 @@ import enLocale from "@/locales/en.json";
 import esLocale from "@/locales/es.json";
 import deLocale from "@/locales/de.json";
 import itLocale from "@/locales/it.json";
+import { connectorStatus } from "../connectors/registry";
+import {
+  coverageStart,
+  discoverySeries,
+  evidenceGrowth,
+  historyCovers,
+  nicheEmergence,
+  productSources,
+  sampleOf,
+  searchInterestTrend,
+  signalCoverage,
+  sourceCollector,
+  windows,
+  type DiscoverySeries,
+  type EntrySources,
+  type Growth,
+  type NicheEmergence,
+  type Sample,
+  type SearchTrend,
+  type SignalCoverage,
+} from "../trends";
 
 /** Accent- and case-insensitive text folding for search. */
 export function fold(s: string): string {
@@ -80,13 +101,36 @@ export interface StoreDetail {
 export interface TrendReport {
   range: TimeRange;
   asOf: string;
+  /** First day of the observed history; growth needs the previous window inside it. */
+  coverageStart: string | null;
   trending: (ProductWithMetrics & { trend: TrendValue })[];
   declining: (ProductWithMetrics & { trend: TrendValue })[];
+  /** Products first detected inside the selected window. */
   emerging: ProductWithMetrics[];
-  categories: { category: Category; growth: number | null; adsActive: number; products: number; newAdvertisers: number }[];
-  countries: { country: Country; adsInRange: number; previous: number; growth: number | null }[];
+  /** Growth is null (with its status) unless the previous window is observed and holds the MIN_AGGREGATE sample. */
+  categories: ({ category: Category; adsActive: number; products: number; newAdvertisers: number; sample: WindowSamples } & Growth)[];
+  countries: ({ country: Country; adsInRange: number; previous: number; sample: WindowSamples } & Growth)[];
   series: { date: string; [category: string]: number | string }[];
   insufficient: number;
+}
+
+type WindowSamples = { current: Sample; previous: Sample };
+type Sourced<T> = T & { sources: EntrySources };
+
+/** Trends page payload: the report plus per-entry sources, search interest, niches and discovery frequency. */
+export interface TrendInsights extends Omit<TrendReport, "trending" | "declining" | "emerging" | "categories" | "countries"> {
+  trending: Sourced<TrendReport["trending"][number] & { search: SearchTrend | null }>[];
+  declining: Sourced<TrendReport["declining"][number] & { search: SearchTrend | null }>[];
+  emerging: Sourced<ProductWithMetrics>[];
+  categories: Sourced<TrendReport["categories"][number]>[];
+  countries: Sourced<TrendReport["countries"][number]>[];
+  niches: NicheEmergence[];
+  /** Niches with new entrants whose evidence is below the minimum. */
+  nichesInsufficient: number;
+  discovery: DiscoverySeries;
+  /** Products in the selection that carry search-interest values, and the connectors behind them. */
+  searchInterest: { products: number; connectors: string[] };
+  signals: SignalCoverage[];
 }
 
 let productCache: { ds: DemoDataset; products: ProductWithMetrics[] } | null = null;
@@ -309,13 +353,17 @@ export function trendReport(range: TimeRange, categories: Category[] = [], count
   const measured = withTrend.filter((p) => p.trend.pct != null);
   const trending = measured.filter((p) => (p.trend.pct as number) > 0).sort((a, b) => (b.trend.pct as number) - (a.trend.pct as number));
   const declining = measured.filter((p) => (p.trend.pct as number) < 0).sort((a, b) => (a.trend.pct as number) - (b.trend.pct as number));
-  const emerging = pool
-    .filter((p) => daysBetween(p.firstDetected, asOf) <= 75)
-    .sort((a, b) => b.firstDetected.localeCompare(a.firstDetected));
 
-  const n = RANGE_DAYS[range as keyof typeof RANGE_DAYS];
-  const curStart = addDays(asOf, -(n - 1));
-  const prevStart = addDays(curStart, -n);
+  const n = RANGE_DAYS[range];
+  const w = windows(range, asOf);
+  const { curStart, prevStart } = w;
+  const prevEnd = addDays(curStart, -1);
+  // New products honour the selected window (not a fixed look-back).
+  const emerging = pool.filter((p) => p.firstDetected >= curStart && p.firstDetected <= asOf).sort((a, b) => b.firstDetected.localeCompare(a.firstDetected));
+  const coverage = coverageStart(d.observations);
+  const covered = historyCovers(coverage, w);
+  const poolIds = new Set(pool.map((p) => p.id));
+  const poolAds = d.ads.filter((a) => a.productId && poolIds.has(a.productId) && a.firstSeen <= asOf);
 
   const cats = (categories.length ? categories : [...CATEGORIES]).map((category) => {
     const ps = pool.filter((p) => p.category === category);
@@ -332,21 +380,24 @@ export function trendReport(range: TimeRange, categories: Category[] = [], count
       newAdv += c.reduce((s, o) => s + o.newAdvertisers, 0);
       if (pr.length < n && p.firstDetected < prevStart) fullHistory = false;
     }
+    // Growth compares active-ad days; the evidence is the distinct ads (and their products) behind each window.
+    // The previous window must also lie inside the dataset's observed history (`covered`).
+    const catAds = poolAds.filter((a) => a.category === category);
+    const sample = { current: sampleOf(catAds, curStart, asOf), previous: sampleOf(catAds, prevStart, prevEnd) };
+    const growth: Growth = ps.length
+      ? evidenceGrowth(cur, prev, { historyOk: fullHistory && covered, previousSample: sample.previous, currentSample: sample.current })
+      : { growth: null, status: "no_activity" };
     const last = ps.reduce((s, p) => s + (p.metrics.adsActive ?? 0), 0);
-    return {
-      category,
-      growth: fullHistory && prev > 0 ? Math.round(((cur - prev) / prev) * 1000) / 10 : null,
-      adsActive: last,
-      products: ps.length,
-      newAdvertisers: newAdv,
-    };
+    return { category, ...growth, sample, adsActive: last, products: ps.length, newAdvertisers: newAdv };
   });
 
   const cn = (countries.length ? countries : [...COUNTRIES]).map((country) => {
-    const ads = d.ads.filter((a) => a.country === country && (!categories.length || categories.includes(a.category)));
-    const inRange = ads.filter((a) => a.firstSeen <= asOf && a.lastSeen >= curStart).length;
-    const previous = ads.filter((a) => a.firstSeen < curStart && a.lastSeen >= prevStart).length;
-    return { country, adsInRange: inRange, previous, growth: previous > 0 ? Math.round(((inRange - previous) / previous) * 1000) / 10 : null };
+    const ads = d.ads.filter((a) => a.country === country && (!categories.length || categories.includes(a.category)) && a.firstSeen <= asOf);
+    const sample = { current: sampleOf(ads, curStart, asOf), previous: sampleOf(ads, prevStart, prevEnd) };
+    const inRange = sample.current.ads;
+    const previous = sample.previous.ads;
+    // Same rule as categories: covered history and a minimum sample (MIN_AGGREGATE) behind the previous window.
+    return { country, adsInRange: inRange, previous, sample, ...evidenceGrowth(inRange, previous, { historyOk: covered, previousSample: sample.previous, currentSample: sample.current }) };
   });
 
   // Daily active ads per category over the selected window (min 14 days for readability).
@@ -367,6 +418,7 @@ export function trendReport(range: TimeRange, categories: Category[] = [], count
   return {
     range,
     asOf,
+    coverageStart: coverage,
     trending: trending.slice(0, 12),
     declining: declining.slice(0, 8),
     emerging: emerging.slice(0, 8),
@@ -374,6 +426,67 @@ export function trendReport(range: TimeRange, categories: Category[] = [], count
     countries: cn.sort((a, b) => b.adsInRange - a.adsInRange),
     series,
     insufficient: withTrend.length - measured.length,
+  };
+}
+
+/** Status of every trend signal, from the connector configuration and the records present. */
+export function signalCoverageReport(): SignalCoverage[] {
+  return signalCoverage(ds(), connectorStatus());
+}
+
+/**
+ * Trends page view: `trendReport` plus, for every entry, the connectors and
+ * last observation date behind it, search interest where a source supplies it,
+ * niche emergence and the weekly discovery frequency.
+ */
+export function trendInsights(range: TimeRange, categories: Category[] = [], countries: Country[] = []): TrendInsights {
+  const d = ds();
+  const asOf = d.snapshot;
+  const base = trendReport(range, categories, countries);
+  const w = windows(range, asOf);
+  const pool = allProducts().filter(
+    (p) => (!categories.length || categories.includes(p.category)) && (!countries.length || p.countries.some((c) => countries.includes(c))),
+  );
+  const adsByProduct = new Map<string, Advertisement[]>();
+  for (const a of d.ads) if (a.productId) (adsByProduct.get(a.productId) ?? adsByProduct.set(a.productId, []).get(a.productId)!).push(a);
+  const sourced = <T extends ProductWithMetrics>(p: T) => ({ ...p, sources: productSources(p, d.observations[p.id] ?? [], adsByProduct.get(p.id) ?? [], asOf) });
+  const withSearch = <T extends ProductWithMetrics>(p: T) => ({ ...sourced(p), search: searchInterestTrend(d.observations[p.id] ?? [], w) });
+
+  const categoriesOut = base.categories.map((c) => {
+    const s = sourceCollector();
+    for (const p of pool.filter((x) => x.category === c.category)) {
+      s.merge(productSources(p, d.observations[p.id] ?? [], adsByProduct.get(p.id) ?? [], asOf));
+    }
+    return { ...c, sources: s.done() };
+  });
+  const countriesOut = base.countries.map((c) => {
+    const s = sourceCollector();
+    for (const a of d.ads)
+      if (a.country === c.country && (!categories.length || categories.includes(a.category)) && a.firstSeen <= asOf) s.add(a.source, a.lastSeen <= asOf ? a.lastSeen : asOf);
+    return { ...c, sources: s.done() };
+  });
+
+  const coverage = base.coverageStart;
+  const { niches, insufficient: nichesInsufficient } = nicheEmergence(pool, d.ads.filter((a) => !countries.length || countries.includes(a.country)), d.observations, w, historyCovers(coverage, w));
+  // Weekly buckets covering both comparison windows (at least 8 weeks, at most 26).
+  const weeks = Math.min(26, Math.max(8, Math.ceil((2 * w.n) / 7)));
+  const firstDetected = pool.map((p) => p.firstDetected).sort()[0] ?? null;
+  const discovery = discoverySeries(pool, asOf, weeks, coverage ?? firstDetected, categories);
+  const searchRows = pool.flatMap((p) => (d.observations[p.id] ?? []).filter((o) => o.searchInterest != null));
+  const searchProducts = new Set(searchRows.map((o) => o.productId)).size;
+
+  return {
+    ...base,
+    trending: base.trending.map(withSearch),
+    declining: base.declining.map(withSearch),
+    emerging: base.emerging.map(sourced),
+    categories: categoriesOut,
+    countries: countriesOut,
+    niches: niches.slice(0, 8),
+    nichesInsufficient,
+    discovery,
+    searchInterest: { products: searchProducts, connectors: [...new Set(searchRows.map((o) => o.source.connector))].sort() },
+    signals: signalCoverageReport(),
   };
 }
 

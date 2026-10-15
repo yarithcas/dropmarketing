@@ -331,7 +331,9 @@
       "new_activity": "Actividad nueva",
       "new_activityTip": "Sin actividad en el periodo anterior: un porcentaje de crecimiento no tendría sentido.",
       "no_activity": "Sin actividad",
-      "no_activityTip": "No se observó actividad en ninguno de los dos periodos."
+      "no_activityTip": "No se observó actividad en ninguno de los dos periodos.",
+      "insufficient_data": "Datos insuficientes",
+      "insufficient_dataTip": "Muestra demasiado pequeña para un porcentaje fiable: se necesitan al menos {{ads}} anuncios de {{products}} productos en la ventana comparada."
     }
   },
   "score": {
@@ -500,13 +502,13 @@
     },
     "problem": {
       "title": "Problema que aborda",
-      "detected": "Se enuncia explícitamente una frustración cotidiana relacionada con {{tag}}.",
-      "implicit": "El problema relacionado con {{tag}} se sugiere más que se enuncia."
+      "quoted": "Expresado en el texto: «{{quote}}»",
+      "notStated": "El texto no expresa explícitamente ningún problema."
     },
     "benefit": {
       "title": "Beneficio del producto",
-      "detected": "Se mencionan beneficios de comodidad / mejora (facilidad, resultados, ahorro de tiempo).",
-      "unclear": "El beneficio concreto no se expresa con claridad."
+      "unclear": "El beneficio concreto no se expresa con claridad.",
+      "quoted": "Expresado en el anuncio: «{{quote}}»"
     },
     "audience": {
       "title": "Hipótesis de público objetivo",
@@ -514,7 +516,13 @@
     },
     "value": {
       "title": "Propuesta de valor",
-      "summary": "{{name}} posicionado como una mejora sencilla del día a día, sin compromiso."
+      "promiseWithTerms": "Promesa expresada: «{{promise}}», respaldada por {{terms}}.",
+      "promise": "Promesa expresada: «{{promise}}». No se indica ninguna oferta ni condición de uso.",
+      "termsOnly": "Sin promesa explícita; el texto se apoya en {{terms}}.",
+      "problemOnly": "El texto menciona un problema («{{problem}}») pero no expresa ninguna promesa explícita ni oferta.",
+      "appealsOnly": "No se expresa ninguna promesa explícita; la redacción apela a: {{triggers}}.",
+      "notDeterminable": "No determinable a partir del texto.",
+      "evidence": "Frases citadas del anuncio"
     },
     "cta": {
       "title": "Llamada a la acción",
@@ -549,7 +557,7 @@
     "strengths": {
       "shortHook": "Gancho corto y fácil de escanear.",
       "problemFirst": "Empieza por el problema, lo que cualifica a la audiencia.",
-      "objection": "Se anticipa a una objeción (instalación, suscripción).",
+      "objection": "Anticipa una objeción con condiciones expresadas (oferta, facilidad de uso).",
       "videoDemo": "El formato vídeo permite demostrar el producto."
     },
     "weaknesses": {
@@ -569,7 +577,25 @@
       "founder": "Historia del fundador a cámara: por qué rediseñamos la experiencia de {{tag}}."
     },
     "related": "Otras creatividades de este producto",
-    "disclaimer": "Análisis asistido por IA para inspirarte. No reproduzcas contenido publicitario de terceros; crea conceptos originales."
+    "disclaimer": "Análisis asistido por IA para inspirarte. No reproduzcas contenido publicitario de terceros; crea conceptos originales.",
+    "cues": {
+      "benefit": "Promesa",
+      "offer": "Oferta",
+      "ease": "Facilidad",
+      "problem": "Problema",
+      "proof": "Prueba"
+    },
+    "formatInfo": {
+      "title": "Formato de la creatividad",
+      "recorded": "{{format}} (según el registro de la fuente).",
+      "unknown": "Desconocido: la fuente no indica el formato de este anuncio."
+    },
+    "noCopy": {
+      "banner": "Este anuncio no tiene texto registrado, así que no hay texto que analizar. Solo se describen el titular, la llamada a la acción y el formato registrados.",
+      "hook": "No hay texto que analizar: el registro no contiene texto del anuncio.",
+      "field": "No hay texto que analizar."
+    },
+    "notDeterminable": "No determinable a partir del texto."
   },
   "trends": {
     "title": "Productos en tendencia",
@@ -579,11 +605,10 @@
     "trending": "Productos en tendencia",
     "trendingDesc": "Crecimiento de anuncios activos en {{range}} frente a los {{range}} anteriores",
     "categories": "Categorías de rápido crecimiento",
-    "categoriesDesc": "Crecimiento total de anuncios activos por categoría",
-    "categoriesInsufficient": "Historial insuficiente para: {{list}}",
+    "categoriesDesc": "Crecimiento de anuncios activos por categoría vs la ventana anterior, mostrado si esta tiene al menos {{ads}} anuncios de {{products}} productos",
     "newAdvertisers": "{{n}} nuevos anunc.",
-    "emerging": "Nichos emergentes y productos nuevos",
-    "emergingDesc": "Detectados por primera vez en los últimos 75 días",
+    "emerging": "Nichos emergentes",
+    "emergingDesc": "Categorías y etiquetas que ganan nuevos productos, anunciantes y anuncios activos en {{range}} vs los {{range}} anteriores.",
     "declining": "Tendencias a la baja",
     "decliningDesc": "Mayores caídas de anuncios activos",
     "geo": "Diferencias geográficas",
@@ -594,7 +619,80 @@
     "noneInRange": "Nada que mostrar en esta ventana.",
     "sourcesTitle": "Fuentes de datos y actualidad",
     "sourcesText": "Fuentes: {{sources}}. Última actualización: {{date}}.",
-    "insufficientNote": "{{n}} productos quedan excluidos de las comparaciones porque su historial es demasiado corto para esta ventana."
+    "insufficientNote": "{{n}} productos quedan excluidos de las comparaciones porque su historial es demasiado corto para esta ventana.",
+    "categoriesWithheld": "Crecimiento no calculado",
+    "categoriesNoneMeasured": "Ninguna categoría tiene suficientes observaciones para una comparación fiable en esta ventana.",
+    "previousSample": "Ventana anterior: {{ads}} anuncios de {{products}} productos",
+    "emergingRule": "Regla: al menos {{entrants}} nuevos productos o anunciantes (más que en la ventana anterior), anuncios activos +{{growth}} % o más, y al menos {{ads}} anuncios activos de {{products}} productos ahora.",
+    "nicheKinds": {
+      "category": "Categoría",
+      "tag": "Etiqueta"
+    },
+    "nicheStats": "Nuevos productos {{prevProducts}} → {{products}} · nuevos anunciantes {{prevAdvertisers}} → {{advertisers}}",
+    "nicheAds": "{{previous}} → {{current}} anuncios activos",
+    "nichesNone": "Ningún nicho cumple la regla de emergencia en esta ventana.",
+    "nichesInsufficient": "{{n}} nichos tienen nuevos participantes pero menos de {{ads}} anuncios activos de {{products}} productos, o poco historial: no se muestran.",
+    "newProducts": "Nuevos productos",
+    "newProductsDesc": "Detectados por primera vez en la ventana de {{range}}",
+    "discoveryTitle": "Frecuencia de descubrimiento de productos",
+    "discoveryDesc": "Nuevos productos detectados por semana, en total y en las categorías principales.",
+    "discoveryTotal": "Todas las categorías",
+    "discoveryByCategory": "Nuevos productos en el periodo por categoría: {{list}}",
+    "discoveryGap": "El historial de observación empieza el {{date}}: las semanas anteriores no se observan (sin valor) y los productos ya anunciados entonces se cuentan en la semana en que empezó la recogida.",
+    "discoveryNone": "Ningún producto nuevo detectado en este periodo.",
+    "geoRule": "Solo se muestra un cambio con al menos {{ads}} anuncios de {{products}} productos en la ventana anterior.",
+    "entrySources": "{{sources}} · última observación el {{date}}",
+    "entrySourcesTip": "Conectores que aportaron los registros de esta entrada y su fecha de última observación. Tipo de datos: {{kinds}}.",
+    "noSourceRecords": "Sin registros de origen",
+    "sourcesCol": "Fuentes",
+    "statusCol": "Estado",
+    "signalCol": "Señal",
+    "lastObservedCol": "Última observación",
+    "searchTip": "Cambio del índice de interés de búsqueda en {{range}} vs los {{range}} anteriores. Último índice: {{latest}}/100.",
+    "searchLegend": "El interés de búsqueda (icono de lupa) es el cambio del índice de interés de búsqueda en las mismas ventanas. Fuente: {{sources}}.",
+    "searchConfigured": "Hay una fuente de interés de búsqueda configurada, pero aún no ha aportado datos.",
+    "searchNotConnected": "No hay ninguna fuente de interés de búsqueda conectada, por lo que no se muestra el interés de búsqueda.",
+    "signalsTitle": "Cobertura de señales",
+    "signalsDesc": "Qué señales puede usar esta página, según los conectores configurados y los registros presentes. Una señal sin fuente conectada no se muestra ni se estima.",
+    "signalProviders": "Disponible mediante: {{list}}",
+    "signalNoConnector": "Ningún conector disponible",
+    "signalStatus": {
+      "connected": "Conectado",
+      "configured": "Configurado, sin datos aún",
+      "demo": "Demo",
+      "not_connected": "No conectado"
+    },
+    "signals": {
+      "advertising_activity": {
+        "name": "Actividad publicitaria",
+        "desc": "Anuncios activos por día, de bibliotecas de anuncios o de un conjunto de datos con licencia."
+      },
+      "new_advertisers": {
+        "name": "Nuevos anunciantes",
+        "desc": "Anunciantes vistos por primera vez promocionando un producto."
+      },
+      "stores_observed": {
+        "name": "Tiendas observadas",
+        "desc": "Tiendas públicas que listan el producto."
+      },
+      "search_interest": {
+        "name": "Interés de búsqueda",
+        "desc": "Índice de interés de búsqueda (0–100) de una fuente de tendencias de búsqueda."
+      },
+      "social_engagement": {
+        "name": "Interacción social",
+        "desc": "Me gusta, comentarios y compartidos en publicaciones sociales. Ningún conector aporta aún esta señal."
+      },
+      "source_popularity": {
+        "name": "Popularidad en la fuente",
+        "desc": "Popularidad en el marketplace de origen (pedidos, rankings). Ningún conector aporta aún esta señal."
+      },
+      "discovery_frequency": {
+        "name": "Frecuencia de descubrimiento de productos",
+        "desc": "Cuántos productos nuevos se detectan por semana."
+      }
+    },
+    "aggregateNote": "El crecimiento de categorías, países y nichos solo se muestra si la ventana anterior está dentro del historial observado (desde el {{date}}) y tiene al menos {{ads}} anuncios de {{products}} productos. En esta ventana, {{categories}} categorías y {{countries}} países muestran «Datos insuficientes» o «Historial insuficiente» en lugar de un porcentaje."
   },
   "stores": {
     "title": "Inteligencia de tiendas Shopify",
@@ -856,7 +954,9 @@
       "compareInsufficient": "Los productos seleccionados no tienen datos suficientes para una comparación fiable.",
       "angles": "Ángulos publicitarios originales para {{n}} producto(s). Adáptalos; no copies anuncios de la competencia.",
       "risks": "Principales riesgos a revisar antes del lanzamiento.",
-      "checklist": "Una checklist práctica de lanzamiento para una tienda Shopify."
+      "checklist": "Una checklist práctica de lanzamiento para una tienda Shopify.",
+      "compareNeedsProducts": "Para comparar productos, selecciona primero entre {{min}} y {{max}}. No se ha hecho ninguna comparación.",
+      "compareNeedsMore": "Una comparación necesita entre {{min}} y {{max}} productos y solo está seleccionado {{name}}. No se ha hecho ninguna comparación."
     },
     "rules": {
       "noStrongSignal": "Sin señales positivas fuertes — considéralo un candidato exploratorio."
@@ -893,7 +993,18 @@
       "adPolicy": "Políticas de las plataformas publicitarias (declaraciones de salud, antes/después, categorías restringidas).",
       "returns": "Tasa de devoluciones y coste de los reembolsos para este tipo de producto.",
       "saturation": "Saturación del mercado: muchos vendedores pueden competir en precio.",
-      "compliance": "Seguridad del producto, marcado CE/UKCA, etiquetado y normativa de consumo en los países objetivo."
+      "compliance": "Seguridad del producto, marcado CE/UKCA, etiquetado y normativa de consumo en los países objetivo.",
+      "fallback": {
+        "none": "No se ha detectado ninguna señal de riesgo específica en los datos disponibles: valida proveedor, envío y costes publicitarios antes de probar.",
+        "confidenceLow": "Confianza baja en los datos: pocas observaciones o anuncios, o faltan datos clave.",
+        "confidenceMedium": "Confianza media en los datos: historial, muestra de anuncios o actualidad por debajo del nivel de confianza alta.",
+        "shippingUnverified": "Plazos de envío y aprovisionamiento no verificados.",
+        "marginEstimate": "El margen bruto del {{pct}} % es una estimación (precio y coste de proveedor estimados), no un presupuesto del proveedor.",
+        "shortHistory": "Historial corto: solo {{n}} observaciones diarias.",
+        "fewAds": "Muestra de anuncios pequeña: {{n}} anuncios observados.",
+        "trendUnknown": "La tendencia a 30 días aún no es medible.",
+        "demo": "Registro de demostración: datos sintéticos que no describen el mercado real."
+      }
     },
     "checklist": {
       "title": "Checklist de lanzamiento",
@@ -908,6 +1019,29 @@
       "testBudget": "Fija un presupuesto de prueba limitado y una duración por ángulo.",
       "kpis": "Define KPI y criterios de corte (CPA vs CPA de equilibrio, CTR, añadir al carrito).",
       "support": "Prepara plantillas de atención al cliente y tiempos de respuesta."
+    },
+    "needsProducts": {
+      "title": "Selecciona entre {{min}} y {{max}} productos para comparar",
+      "textNone": "No hay ningún producto seleccionado. El analista solo compara los productos que eliges: añádelos en el panel Contexto de producto o parte de los candidatos de abajo.",
+      "textSome_one": "Solo hay {{count}} producto seleccionado. Añade al menos otro en el panel Contexto de producto.",
+      "textSome_other": "Solo hay {{count}} productos seleccionados. Añade más en el panel Contexto de producto.",
+      "choose": "Elegir productos",
+      "suggestionsTitle": "Candidatos que puedes añadir",
+      "suggestionsNote": "Sugeridos porque tienen las puntuaciones de oportunidad más altas (con un extra por una tendencia positiva a 30 días) entre los productos puntuados que encajan con tu pregunta. Aún no es una comparación.",
+      "added": "Añadido",
+      "compareSuggested_one": "Comparar este {{count}} candidato",
+      "compareSuggested_other": "Comparar estos {{count}} candidatos",
+      "compareWith_one": "Añadir {{count}} candidato y comparar",
+      "compareWith_other": "Añadir {{count}} candidatos y comparar"
+    },
+    "suggest": {
+      "reason": "Puntuación {{score}}/100, entre los productos mejor puntuados",
+      "reasonCategory": "Puntuación {{score}}/100, entre los productos mejor puntuados de {{category}}"
+    },
+    "context": {
+      "autoPicked": "Ningún producto seleccionado: esta respuesta usa {{names}}, elegido(s) por la mayor puntuación de oportunidad (con preferencia por una tendencia reciente positiva). Añade productos en el panel Contexto de producto para elegir tú.",
+      "autoPickedCategory": "Ningún producto seleccionado: esta respuesta usa {{names}}, elegido(s) por la mayor puntuación de oportunidad en {{categories}} (con preferencia por una tendencia reciente positiva). Añade productos en el panel Contexto de producto para elegir tú.",
+      "candidatesAi": "Ningún producto seleccionado: la IA respondió con los mejores candidatos de TrendHunter para esta pregunta (mayores puntuaciones de oportunidad, tendencias recientes). Los registros usados se indican abajo."
     }
   },
   "calculator": {
@@ -1127,7 +1261,16 @@
     "source": "Fuente",
     "dataKind": "Tipo de datos",
     "collected": "Periodo de recopilación",
-    "disclaimer": "Generado automáticamente a partir de observaciones almacenadas en TrendHunter. No es asesoramiento de inversión. Las puntuaciones y estimaciones no son garantías."
+    "disclaimer": "Generado automáticamente a partir de observaciones almacenadas en TrendHunter. No es asesoramiento de inversión. Las puntuaciones y estimaciones no son garantías.",
+    "records": "Registros usados",
+    "recordTypes": {
+      "products": "Productos: {{n}}",
+      "ads": "Anuncios: {{n}}",
+      "observations": "Observaciones diarias: {{n}}",
+      "stores": "Tiendas: {{n}}"
+    },
+    "noSources": "Ningún registro respalda este informe.",
+    "sourcesNote": "Calculado a partir de los registros usados en este informe: cada fuente muestra su propio tipo de datos y las fechas de primera y última observación de sus registros."
   },
   "billing": {
     "currentPlan": "Plan actual",

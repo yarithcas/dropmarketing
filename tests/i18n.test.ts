@@ -8,6 +8,7 @@ import de from "@/locales/de.json";
 import it_ from "@/locales/it.json";
 import { CATEGORIES, COUNTRIES, PLATFORMS } from "@/lib/types";
 import { ERROR_CODES } from "@/lib/client/errors";
+import { ORG_ROLES } from "@/lib/team";
 
 type Tree = { [k: string]: string | Tree | Tree[] };
 
@@ -62,6 +63,9 @@ describe("i18n", () => {
       ...["insufficient_history", "new_activity", "no_activity"].flatMap((k) => [`trend.status.${k}`, `trend.status.${k}Tip`]),
       ...["measured", "estimate", "ai", "demo"].flatMap((k) => [`provenance.${k}`, `provenance.${k}Tip`]),
       ...ERROR_CODES.map((c) => `errors.codes.${c}`),
+      ...ORG_ROLES.map((r) => `team.roles.${r}`),
+      ...["plan_required", "role_required", "limit_workspaces"].map((r) => `workspaces.blocked.${r}`),
+      ...["expired", "accepted", "email_mismatch", "already_member"].map((s) => `invite.status.${s}`),
       ...["meta_ad_library", "tiktok_commercial_content", "pinterest_ads_repository", "search_trends", "public_storefronts", "licensed_dataset", "shopify_admin", "demo"].map((k) => `connectors.names.${k}`),
     ];
     expect(keys.filter((k) => !has(k))).toEqual([]);

@@ -75,7 +75,19 @@
       "delete_failed": "Das Löschen des Kontos ist fehlgeschlagen. Bitte kontaktiere den Support.",
       "interval_unavailable": "Jährliche Abrechnung ist in dieser Installation nicht verfügbar.",
       "support_not_configured": "Der Support ist in dieser Installation nicht konfiguriert.",
-      "database_error": "Ein Datenbankfehler ist aufgetreten. Bitte erneut versuchen."
+      "database_error": "Ein Datenbankfehler ist aufgetreten. Bitte erneut versuchen.",
+      "no_workspace": "Für dieses Konto ist kein Workspace verfügbar.",
+      "role_required": "Deine Rolle in diesem Workspace erlaubt diese Aktion nicht.",
+      "owner_required": "Nur ein Inhaber kann das tun.",
+      "last_owner": "Ein Workspace behält immer mindestens einen Inhaber. Mache zuerst jemand anderen zum Inhaber.",
+      "last_workspace": "Du kannst deinen einzigen Workspace nicht verlassen.",
+      "seats_exhausted": "Alle in deinem Plan enthaltenen Plätze sind belegt.",
+      "already_member": "Diese Person ist bereits Mitglied des Workspace.",
+      "limit_workspaces": "Du hast das Workspace-Limit deines Plans erreicht.",
+      "invite_invalid": "Dieser Einladungslink ist ungültig oder wurde widerrufen.",
+      "invite_expired": "Diese Einladung ist abgelaufen.",
+      "invite_email_mismatch": "Diese Einladung wurde an eine andere E-Mail-Adresse gesendet.",
+      "email_unconfirmed": "Bestätige deine E-Mail-Adresse, bevor du eine Einladung annimmst."
     }
   },
   "search": {
@@ -870,7 +882,16 @@
     "compareTitle": "Gespeicherte Produkte vergleichen",
     "selectCompare": "Für den Vergleich auswählen",
     "exportNote": "Exporte enthalten deine Notizen, Tags, Links und TrendHunter-Kennzahlen. Fremde Werbe-Creatives werden per Link referenziert, nicht kopiert.",
-    "tagsPlaceholder": "test, Q4, fitness"
+    "tagsPlaceholder": "test, Q4, fitness",
+    "sharedTitle": "Vom Team geteilt",
+    "sharedBy": "Geteilt von {{name}}",
+    "sharedByUnknown": "Von einem Teammitglied geteilt",
+    "sharedBadge": "Mit dem Team geteilt",
+    "shareWithTeam": "Mit dem Team teilen",
+    "stopSharing": "Nicht mehr teilen",
+    "sharedOn": "Sammlung mit dem Team geteilt",
+    "sharedOff": "Sammlung ist wieder privat",
+    "readOnly": "Nur lesen: Nur die Person, die sie erstellt hat, kann sie bearbeiten"
   },
   "watchlist": {
     "watch": "Beobachten",
@@ -896,7 +917,8 @@
       "plan_required": "Diese Funktion erfordert einen höheren Plan.",
       "unauthenticated": "Bitte melde dich erneut an.",
       "rate_limited": "Zu viele Anfragen. Bitte warte einen Moment.",
-      "limit_reached": "Tageslimit deines Plans erreicht."
+      "limit_reached": "Tageslimit deines Plans erreicht.",
+      "no_workspace": "Kein aktiver Workspace. Lade die Seite neu."
     }
   },
   "analyst": {
@@ -1311,7 +1333,8 @@
       "incomplete": "Unvollständig",
       "incomplete_expired": "Abgelaufen",
       "paused": "Pausiert"
-    }
+    },
+    "roleRequired": "Nur Inhaber und Admins des Workspace mit dem Abo können den Plan ändern oder die Abrechnung öffnen."
   },
   "plans": {
     "free": {
@@ -1478,10 +1501,45 @@
   "team": {
     "title": "Team und Workspaces",
     "desc": "Dein Plan umfasst {{workspaces}} Workspace(s) und {{seats}} Platz/Plätze.",
-    "owner": "Inhaber",
     "businessOnly": "Teamzusammenarbeit und mehrere Workspaces sind im Business-Plan verfügbar.",
-    "demoInvite": "Demo-Modus: Team-Einladungen erfordern eine konfigurierte Authentifizierung.",
-    "inviteSoon": "Lade Teammitglieder per E-Mail in den Einstellungen deiner Organisation ein."
+    "demoText": "Demo-Modus: Teammitglieder, Einladungen und mehrere Workspaces benötigen eine konfigurierte Datenbank (Supabase) und echte Konten. Dein Demo-Workspace bleibt in diesem Browser, und du bist sein einziges Mitglied.",
+    "membersTitle": "Mitglieder von {{workspace}}",
+    "membersDesc": "Mitglieder teilen den Plan des Workspace und können die mit dem Team geteilten Sammlungen ansehen.",
+    "seats": "{{used}} / {{limit}} Plätze",
+    "seatsHint": "Gezählt werden die verschiedenen Mitglieder aller Workspaces, die über dieses Abo abgerechnet werden, plus offene Einladungen.",
+    "seatsFull": "Alle Plätze sind belegt. Entferne ein Mitglied oder widerrufe eine Einladung, um jemand anderen einzuladen.",
+    "you": "Du",
+    "unnamed": "Kein Name hinterlegt",
+    "joined": "dabei seit {{date}}",
+    "roleLabel": "Rolle",
+    "roles": {
+      "owner": "Inhaber",
+      "admin": "Admin",
+      "member": "Mitglied"
+    },
+    "roleChanged": "Rolle aktualisiert",
+    "leave": "Verlassen",
+    "confirmRemove": "{{name}} aus {{workspace}} entfernen? Private Daten bleiben bei dieser Person; von ihr geteilte Sammlungen bleiben für das Team sichtbar.",
+    "confirmLeave": "{{workspace}} verlassen? Du verlierst den Zugriff auf die geteilten Sammlungen.",
+    "removed": "Mitglied entfernt",
+    "left": "Du hast den Workspace verlassen",
+    "managersOnly": "Nur Inhaber und Admins können Mitglieder einladen oder verwalten.",
+    "inviteEmail": "E-Mail-Adresse für die Einladung",
+    "inviteBtn": "Einladen",
+    "inviteSent": "Einladung für {{email}} erstellt",
+    "inviteEmailed": "Eine E-Mail mit dem Link wurde an {{email}} gesendet. Du kannst den Link auch selbst weitergeben.",
+    "inviteNotEmailed": "Der E-Mail-Versand ist nicht konfiguriert: Kopiere den Link unten und schicke ihn selbst an dein Teammitglied.",
+    "inviteLinkLabel": "Einladungslink (einmalig nutzbar, {{days}} Tage gültig)",
+    "inviteLinkHint": "Von jedem Link wird nur ein Fingerabdruck gespeichert, daher kann er später nicht erneut angezeigt werden. Du kannst jederzeit einen neuen Link erzeugen.",
+    "pendingTitle": "Offene Einladungen",
+    "pendingEmpty": "Keine offenen Einladungen.",
+    "expires": "Läuft ab am {{date}}",
+    "expired": "Abgelaufen",
+    "newLink": "Neuen Link kopieren",
+    "newLinkDone": "Neuer Link für {{email}}: Der bisherige Link funktioniert nicht mehr.",
+    "revoke": "Widerrufen",
+    "revoked": "Einladung widerrufen",
+    "confirmRevoke": "Die an {{email}} gesendete Einladung widerrufen?"
   },
   "privacy": {
     "exportTitle": "Meine Daten exportieren",
@@ -1709,7 +1767,11 @@
     "subject": "TrendHunter · {{rule}}",
     "intro": "Neue Ergebnisse für deine Benachrichtigung „{{rule}}“:",
     "manage": "Benachrichtigungen verwalten: {{url}}",
-    "footer": "Geschätzte oder KI-generierte Werte sind keine gemessenen Fakten. Du erhältst diese E-Mail, weil E-Mail-Benachrichtigungen für diese Regel aktiviert sind."
+    "footer": "Geschätzte oder KI-generierte Werte sind keine gemessenen Fakten. Du erhältst diese E-Mail, weil E-Mail-Benachrichtigungen für diese Regel aktiviert sind.",
+    "inviteSubject": "{{inviter}} hat dich zu {{workspace}} auf TrendHunter eingeladen",
+    "inviteIntro": "{{inviter}} hat dich eingeladen, dem Workspace „{{workspace}}“ auf TrendHunter als {{role}} beizutreten.",
+    "inviteSteps": "Melde dich mit {{email}} an oder erstelle ein Konto und öffne dann diesen Link, um die Einladung anzunehmen:",
+    "inviteExpiry": "Der Link funktioniert nur einmal und läuft in {{days}} Tagen ab. Wenn du diese Einladung nicht erwartet hast, kannst du diese E-Mail ignorieren."
   },
   "support": {
     "title": "Hilfe & Support",
@@ -1729,5 +1791,47 @@
       "data": "Daten",
       "other": "Sonstiges"
     }
+  },
+  "workspaces": {
+    "title": "Workspaces",
+    "desc": "Jeder Workspace hat eigene Sammlungen, eine eigene Beobachtungsliste und eigene Alerts. Wechsle jederzeit über die Seitenleiste.",
+    "members_one": "{{count}} Mitglied",
+    "members_other": "{{count}} Mitglieder",
+    "active": "Aktiv",
+    "switch": "Wechseln",
+    "switched": "Du arbeitest jetzt in {{name}}",
+    "switcherLabel": "Aktiver Workspace",
+    "rename": "Workspace umbenennen",
+    "renamed": "Workspace umbenannt",
+    "name": "Name des Workspace",
+    "createTitle": "Neuer Workspace",
+    "created": "Workspace „{{name}}“ erstellt",
+    "usage": "{{used}} / {{limit}} Workspaces",
+    "billedHint": "Der neue Workspace wird über das Abo des aktiven Workspace abgerechnet, und du wirst sein Inhaber.",
+    "blocked": {
+      "plan_required": "Mehrere Workspaces sind im Business-Plan verfügbar.",
+      "role_required": "Nur Inhaber und Admins des Workspace mit dem Abo können Workspaces hinzufügen.",
+      "limit_workspaces": "Du hast das Workspace-Limit deines Plans erreicht."
+    }
+  },
+  "invite": {
+    "title": "Einladung",
+    "cardTitle": "Einem Workspace beitreten",
+    "invited": "{{inviter}} hat dich eingeladen, {{workspace}} als {{role}} beizutreten.",
+    "invitedAnon": "Du wurdest eingeladen, {{workspace}} als {{role}} beizutreten.",
+    "expiresOn": "Diese Einladung läuft am {{date}} ab.",
+    "accept": "Annehmen und beitreten",
+    "welcome": "Willkommen in {{workspace}}",
+    "invalid": "Dieser Einladungslink ist ungültig oder wurde widerrufen. Bitte die Person, die dich eingeladen hat, um einen neuen Link.",
+    "status": {
+      "expired": "Diese Einladung ist abgelaufen. Bitte einen Inhaber oder Admin des Workspace um einen neuen Link.",
+      "accepted": "Diese Einladung wurde bereits verwendet.",
+      "email_mismatch": "Diese Einladung wurde an {{email}} gesendet, du bist aber als {{current}} angemeldet. Melde dich mit der eingeladenen Adresse an, um sie anzunehmen.",
+      "already_member": "Du bist bereits Mitglied dieses Workspace."
+    },
+    "switchAccount": "Mit einem anderen Konto anmelden",
+    "open": "Workspace öffnen",
+    "demo": "Einladungen benötigen eine konfigurierte Datenbank (Supabase) und echte Konten und sind daher im Demo-Modus nicht verfügbar.",
+    "backToApp": "Zurück zur App"
   }
 }

@@ -17,7 +17,7 @@ Next.js route handlers ── guard(): rate limit · auth (live) · plan meterin
    ├─ server/shopify.ts                  merchant OAuth, HMAC, encrypted tokens, sync
    └─ server/stripe.ts + billing routes  checkout, portal, verified webhook
    ▼
-Supabase Postgres (supabase/migrations/0001_init.sql) — RLS on every table
+Supabase Postgres (supabase/migrations/*.sql) — RLS on every table
 ```
 
 ## Modes
@@ -43,12 +43,42 @@ re-normalized. The score is **withheld** (“Insufficient data”) with < 14 day
 ≥ 2 missing components. A confidence level, positive/negative signals and next steps are derived from the
 same inputs. The UI shows the formula on every product page.
 
+## Workspaces, teams and roles (live mode)
+
+- **Organization = workspace.** A user can belong to several (`organization_members`, roles `owner` · `admin` ·
+  `member`). Sign-up still creates a personal workspace. The active one comes from the httpOnly `th_org` cookie,
+  re-validated on every request against `my_workspaces()`; fallback = the oldest owned membership
+  (`lib/team.ts#pickActiveWorkspace`). `getSession()` exposes `organizationId`, `role`, `billingOrganizationId`
+  and all memberships.
+- **Billing.** Workspaces created by a Business owner/admin are billed under the active workspace's billing
+  organization (`organizations.billing_organization_id`, one level). The plan of a workspace is the active
+  subscription of `coalesce(billing_organization_id, id)` (`public.org_plan()`). Checkout and portal act on that
+  billing organization and require owner/admin there (`lib/server/roles.ts`, 403 `role_required`).
+- **Limits.** `entitlements.workspaces` counts the billing organization plus the workspaces it pays for;
+  `entitlements.seats` counts distinct members across them plus open, unexpired invitations
+  (`lib/team.ts#seatUsage`). Invitations require a plan with more than one seat (Business).
+- **Invitations.** `organization_invitations` stores the normalized email, role (`admin`/`member`), a SHA-256 hash
+  of a 32-byte token (the raw token only exists in the link), inviter and a 7-day expiry. The link is always
+  returned to the inviter and also emailed when `RESEND_API_KEY` is set. `/app/invite?token=…` lets the signed-in
+  user whose confirmed email matches accept it; a lost link is replaced, never shown again.
+- **Routes.** `/api/team` (members, invitations, seats, `canManage`), `/api/team/invitations[/:id[/link]]`,
+  `/api/team/invitations/{lookup,accept}`, `/api/team/members/:userId` (role change, removal, leave — never the
+  last owner), `/api/workspaces[/:id]` (list, create, rename) and `/api/workspaces/switch`. Membership,
+  invitation and workspace writes use the service role after role, plan and seat checks; clients have no
+  write policy on those tables.
+- **Data scoping.** `collections`, `watchlists`, `alerts` and `notifications` carry `organization_id` (backfilled
+  from each user's first organization; inserts without one default to it). `loadWorkspace`/`applyOpDb` work on
+  the active workspace only; each member gets a lazily created swipe file per workspace. Collections are
+  `private` or `team`: members read team collections and their items (RLS), only the creator edits them.
+- SQL checks for these policies: `supabase/tests/0004_team_workspaces.test.sql` (two organizations, three users).
+
 ## Security
 
 - Secrets only in server env (`lib/server/env.ts`, `import "server-only"`); `/api/session` exposes booleans.
 - Zod validation on every query/body; same-origin check on state-changing routes; per-IP rate limiting.
-- Postgres RLS: research tables read-only for authenticated users; user tables owner-only; integration
-  tokens readable only by the service role (column grants revoked).
+- Postgres RLS: research tables read-only for authenticated users; user tables owner-only (team collections
+  readable by workspace members); integration tokens and invitation token hashes readable only by the
+  service role (column grants revoked).
 - Shopify: OAuth `state` cookie + HMAC verification, read-only scopes, AES-256-GCM token encryption.
 - Stripe: plan changes only via signature-verified webhook.
 - CSV exports neutralize spreadsheet formula injection. Security headers set in `next.config.ts`.

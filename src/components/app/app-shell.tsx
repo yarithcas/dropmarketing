@@ -17,6 +17,7 @@ import { cn } from "@/lib/cn";
 import { GlobalSearch } from "./global-search";
 import { LanguageSelect } from "./language-select";
 import { NAV, type NavItem } from "./nav";
+import { WorkspaceSwitcher } from "./workspace-switcher";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -65,6 +66,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         ))}
       </nav>
       <div className="space-y-2 border-t border-border p-3">
+        <WorkspaceSwitcher />
         <LanguageSelect className="w-full sm:hidden [&_select]:w-full" testId="sidebar-language-select" />
         <Link href="/app/settings?tab=billing" onClick={onNavigate} className="focus-ring block rounded-lg border border-border bg-surface-2 p-3 hover:bg-surface-3">
           <div className="flex items-center justify-between">

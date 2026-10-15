@@ -2,7 +2,7 @@
 
 import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
-import { Columns3, Download, FolderHeart, Megaphone, Package, Pencil, Plus, Store as StoreIcon, Trash2, X } from "lucide-react";
+import { Columns3, Download, FolderHeart, Lock, Megaphone, Package, Pencil, Plus, Store as StoreIcon, Trash2, Users, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CompetitionBadge, PageHeader, ScoreBadge, Thumb, TrendPill } from "@/components/app/bits";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,7 @@ function download(name: string, mime: string, content: string) {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-function ItemRow({ c, item }: { c: Collection; item: CollectionItem }) {
+function ItemRow({ c, item, readOnly = false }: { c: Collection; item: CollectionItem; readOnly?: boolean }) {
   const { t } = useTranslation();
   const f = useFormat();
   const { dispatch } = useWorkspace();
@@ -82,14 +82,16 @@ function ItemRow({ c, item }: { c: Collection; item: CollectionItem }) {
             </div>
           )}
         </div>
-        <div className="flex shrink-0 gap-1">
-          <Button size="icon-sm" variant="ghost" onClick={() => setEditing((e) => !e)} aria-label={t("collections.editNote")}>
-            <Pencil />
-          </Button>
-          <Button size="icon-sm" variant="ghost" onClick={() => dispatch({ op: "item.remove", collectionId: c.id, id: item.id }, t("collections.removed"))} aria-label={t("common.remove")} data-testid="remove-item">
-            <Trash2 />
-          </Button>
-        </div>
+        {!readOnly && (
+          <div className="flex shrink-0 gap-1">
+            <Button size="icon-sm" variant="ghost" onClick={() => setEditing((e) => !e)} aria-label={t("collections.editNote")}>
+              <Pencil />
+            </Button>
+            <Button size="icon-sm" variant="ghost" onClick={() => dispatch({ op: "item.remove", collectionId: c.id, id: item.id }, t("collections.removed"))} aria-label={t("common.remove")} data-testid="remove-item">
+              <Trash2 />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -167,8 +169,14 @@ function CollectionsInner() {
   const [typeFilter, setTypeFilter] = useState<"all" | "product" | "ad" | "store">("all");
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [comparing, setComparing] = useState(false);
+  const shared = workspace.sharedCollections ?? [];
   const selectedId = url.get("c") || workspace.collections[0]?.id;
-  const c = workspace.collections.find((x) => x.id === selectedId);
+  const c = workspace.collections.find((x) => x.id === selectedId) ?? shared.find((x) => x.id === selectedId);
+  // Teammates' shared collections are read-only; only their creator edits them.
+  const readOnly = Boolean(c?.sharedBy);
+  // Sharing is offered once the active workspace has teammates (live mode only).
+  const canShare = persistence === "server" && (session?.workspace?.members ?? 1) > 1;
+  const sharedByLabel = (col: Collection) => (col.sharedBy?.name ? t("collections.sharedBy", { name: col.sharedBy.name }) : t("collections.sharedByUnknown"));
   const items = useMemo(() => (c ? c.items.filter((i) => typeFilter === "all" || i.type === typeFilter) : []), [c, typeFilter]);
   const productIds = (c?.items ?? []).filter((i) => i.type === "product").map((i) => i.refId);
   const canExport = session?.entitlements.exports ?? false;
@@ -237,20 +245,59 @@ function CollectionsInner() {
                   onClick={() => url.set({ c: col.id })}
                   className={cn("flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2")}
                 >
-                  <span className="truncate">{col.kind === "swipe" ? t("collections.swipeFile") : col.name}</span>
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate">{col.kind === "swipe" ? t("collections.swipeFile") : col.name}</span>
+                    {col.visibility === "team" && <Users className="size-3 shrink-0 text-accent" aria-label={t("collections.sharedBadge")} />}
+                  </span>
                   <span className="text-xs text-subtle">{col.items.length}</span>
                 </button>
               </li>
             ))}
           </ul>
+          {shared.length > 0 && (
+            <div className="border-t border-border/70 p-1.5" data-testid="shared-collections">
+              <p className="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wide text-subtle">{t("collections.sharedTitle")}</p>
+              <ul>
+                {shared.map((col) => (
+                  <li key={col.id}>
+                    <button
+                      onClick={() => url.set({ c: col.id })}
+                      className={cn("flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2")}
+                    >
+                      <span className="min-w-0">
+                        <span className="block truncate">{col.kind === "swipe" ? t("collections.swipeFile") : col.name}</span>
+                        <span className="block truncate text-[11px] text-subtle">{sharedByLabel(col)}</span>
+                      </span>
+                      <span className="text-xs text-subtle">{col.items.length}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Card>
         {!c ? (
           <EmptyState icon={<FolderHeart />} title={t("collections.emptyTitle")} description={t("collections.emptyText")} />
         ) : (
           <Card>
             <CardHeader
-              title={c.kind === "swipe" ? t("collections.swipeFile") : c.name}
-              description={c.description || (c.kind === "swipe" ? t("collections.swipeDesc") : undefined)}
+              title={
+                <span className="flex flex-wrap items-center gap-1.5">
+                  {c.kind === "swipe" ? t("collections.swipeFile") : c.name}
+                  {readOnly ? (
+                    <Badge tone="accent" data-testid="shared-by">
+                      <Users /> {sharedByLabel(c)}
+                    </Badge>
+                  ) : (
+                    c.visibility === "team" && (
+                      <Badge tone="accent">
+                        <Users /> {t("collections.sharedBadge")}
+                      </Badge>
+                    )
+                  )}
+                </span>
+              }
+              description={readOnly ? [c.description, t("collections.readOnly")].filter(Boolean).join(" · ") : c.description || (c.kind === "swipe" ? t("collections.swipeDesc") : undefined)}
               action={
                 <div className="flex flex-wrap gap-1.5">
                   <Button size="sm" variant="secondary" disabled={compareIds.length < 2} onClick={() => setComparing(true)} data-testid="compare-products-btn">
@@ -267,7 +314,22 @@ function CollectionsInner() {
                   >
                     <Download /> JSON
                   </Button>
-                  {c.kind !== "swipe" && (
+                  {!readOnly && canShare && (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() =>
+                        dispatch(
+                          { op: "collection.update", id: c.id, visibility: c.visibility === "team" ? "private" : "team" },
+                          c.visibility === "team" ? t("collections.sharedOff") : t("collections.sharedOn"),
+                        )
+                      }
+                      data-testid="share-collection"
+                    >
+                      {c.visibility === "team" ? <Lock /> : <Users />} {c.visibility === "team" ? t("collections.stopSharing") : t("collections.shareWithTeam")}
+                    </Button>
+                  )}
+                  {!readOnly && c.kind !== "swipe" && (
                     <Button
                       size="icon-sm"
                       variant="ghost"
@@ -281,14 +343,16 @@ function CollectionsInner() {
                       <Pencil />
                     </Button>
                   )}
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    aria-label={t("collections.delete")}
-                    onClick={() => confirm(t("collections.confirmDelete", { name: c.name })) && dispatch({ op: "collection.delete", id: c.id }, t("collections.deleted"))}
-                  >
-                    <Trash2 />
-                  </Button>
+                  {!readOnly && (
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={t("collections.delete")}
+                      onClick={() => confirm(t("collections.confirmDelete", { name: c.name })) && dispatch({ op: "collection.delete", id: c.id }, t("collections.deleted"))}
+                    >
+                      <Trash2 />
+                    </Button>
+                  )}
                 </div>
               }
             />
@@ -323,7 +387,7 @@ function CollectionsInner() {
                       <span className="w-[29px]" />
                     )}
                     <div className="min-w-0 flex-1">
-                      <ItemRow c={c} item={item} />
+                      <ItemRow c={c} item={item} readOnly={readOnly} />
                     </div>
                   </li>
                 ))}

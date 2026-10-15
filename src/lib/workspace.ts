@@ -24,7 +24,14 @@ export interface Collection {
   kind: "standard" | "swipe";
   items: CollectionItem[];
   createdAt: string;
+  /** Live mode: "team" collections can be read by every member of the workspace. */
+  visibility?: CollectionVisibility;
+  /** Set on a teammate's shared collection (read-only for the viewer). */
+  sharedBy?: { name: string | null };
 }
+
+export const COLLECTION_VISIBILITY = ["private", "team"] as const;
+export type CollectionVisibility = (typeof COLLECTION_VISIBILITY)[number];
 
 export interface WatchItem {
   id: string;
@@ -73,7 +80,10 @@ export interface AlertRun {
 }
 
 export interface Workspace {
+  /** The user's own collections in the active workspace. */
   collections: Collection[];
+  /** Collections teammates shared with the active workspace (live mode, read-only). */
+  sharedCollections?: Collection[];
   watchlist: WatchItem[];
   alertRules: AlertRule[];
   notifications: NotificationItem[];
@@ -99,7 +109,7 @@ const ruleInput = z.object({
 /** Every workspace mutation is one of these validated operations (shared by client and server). */
 export const workspaceOpSchema = z.discriminatedUnion("op", [
   z.object({ op: z.literal("collection.create"), name: label, description: z.string().max(500).default(""), kind: z.enum(["standard", "swipe"]).default("standard") }),
-  z.object({ op: z.literal("collection.update"), id, name: label.optional(), description: z.string().max(500).optional() }),
+  z.object({ op: z.literal("collection.update"), id, name: label.optional(), description: z.string().max(500).optional(), visibility: z.enum(COLLECTION_VISIBILITY).optional() }),
   z.object({ op: z.literal("collection.delete"), id }),
   z.object({ op: z.literal("item.add"), collectionId: id, type: z.enum(ITEM_TYPES), refId: id, label, note: note.default(""), tags: tags.default([]) }),
   z.object({ op: z.literal("item.update"), collectionId: id, id, note: note.optional(), tags: tags.optional() }),
@@ -143,11 +153,15 @@ export function applyOp(ws: Workspace, op: WorkspaceOp, limits: Limits, now = ne
   const totalItems = ws.collections.reduce((s, c) => s + c.items.length, 0);
   switch (op.op) {
     case "collection.create":
-      if (ws.collections.length >= limits.collections) throw new WorkspaceError("limit_collections");
+      // The swipe file is built in and does not count towards the collection limit.
+      if (op.kind === "standard" && ws.collections.filter((c) => c.kind === "standard").length >= limits.collections) throw new WorkspaceError("limit_collections");
       return { ...ws, collections: [...ws.collections, { id: uid("col"), name: op.name, description: op.description, kind: op.kind, items: [], createdAt: now }] };
     case "collection.update":
       findCol(op.id);
-      return { ...ws, collections: ws.collections.map((c) => (c.id === op.id ? { ...c, name: op.name ?? c.name, description: op.description ?? c.description } : c)) };
+      return {
+        ...ws,
+        collections: ws.collections.map((c) => (c.id === op.id ? { ...c, name: op.name ?? c.name, description: op.description ?? c.description, ...(op.visibility ? { visibility: op.visibility } : {}) } : c)),
+      };
     case "collection.delete":
       findCol(op.id);
       return { ...ws, collections: ws.collections.filter((c) => c.id !== op.id) };

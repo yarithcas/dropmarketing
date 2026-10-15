@@ -75,7 +75,19 @@
       "delete_failed": "Account deletion failed. Please contact support.",
       "interval_unavailable": "Yearly billing is not available on this deployment.",
       "support_not_configured": "Support is not configured on this deployment.",
-      "database_error": "A database error occurred. Please try again."
+      "database_error": "A database error occurred. Please try again.",
+      "no_workspace": "No workspace is available for this account.",
+      "role_required": "Your role in this workspace does not allow this action.",
+      "owner_required": "Only an owner can do this.",
+      "last_owner": "A workspace always keeps at least one owner. Make someone else owner first.",
+      "last_workspace": "You cannot leave your only workspace.",
+      "seats_exhausted": "All seats included in your plan are in use.",
+      "already_member": "This person is already a member of the workspace.",
+      "limit_workspaces": "You have reached your plan's workspace limit.",
+      "invite_invalid": "This invitation link is invalid or has been revoked.",
+      "invite_expired": "This invitation has expired.",
+      "invite_email_mismatch": "This invitation was sent to a different email address.",
+      "email_unconfirmed": "Confirm your email address before accepting an invitation."
     }
   },
   "search": {
@@ -870,7 +882,16 @@
     "compareTitle": "Compare saved products",
     "selectCompare": "Select for comparison",
     "exportNote": "Exports include your notes, tags, links and TrendHunter metrics. Third-party ad creatives are referenced by link, not copied.",
-    "tagsPlaceholder": "test, Q4, fitness"
+    "tagsPlaceholder": "test, Q4, fitness",
+    "sharedTitle": "Shared by teammates",
+    "sharedBy": "Shared by {{name}}",
+    "sharedByUnknown": "Shared by a teammate",
+    "sharedBadge": "Shared with the team",
+    "shareWithTeam": "Share with the team",
+    "stopSharing": "Stop sharing",
+    "sharedOn": "Collection shared with the team",
+    "sharedOff": "Collection is private again",
+    "readOnly": "Read-only: only its creator can edit it"
   },
   "watchlist": {
     "watch": "Watch",
@@ -896,7 +917,8 @@
       "plan_required": "This feature requires a higher plan.",
       "unauthenticated": "Please log in again.",
       "rate_limited": "Too many requests. Please wait a moment.",
-      "limit_reached": "Daily limit reached for your plan."
+      "limit_reached": "Daily limit reached for your plan.",
+      "no_workspace": "No active workspace. Reload the page."
     }
   },
   "analyst": {
@@ -1311,7 +1333,8 @@
       "incomplete": "Incomplete",
       "incomplete_expired": "Expired",
       "paused": "Paused"
-    }
+    },
+    "roleRequired": "Only owners and admins of the workspace that holds the subscription can change the plan or open billing."
   },
   "plans": {
     "free": {
@@ -1478,10 +1501,45 @@
   "team": {
     "title": "Team & workspaces",
     "desc": "Your plan includes {{workspaces}} workspace(s) and {{seats}} seat(s).",
-    "owner": "Owner",
     "businessOnly": "Team collaboration and multiple workspaces are available on the Business plan.",
-    "demoInvite": "Demo mode: team invitations require authentication to be configured.",
-    "inviteSoon": "Invite teammates by email from your organization settings."
+    "demoText": "Demo mode: teammates, invitations and multiple workspaces need a configured database (Supabase) and real accounts. Your demo workspace stays in this browser and you are its only member.",
+    "membersTitle": "Members of {{workspace}}",
+    "membersDesc": "Members share the workspace's plan and can read the collections shared with the team.",
+    "seats": "{{used}} / {{limit}} seats",
+    "seatsHint": "Seats count the distinct members of every workspace billed under this subscription, plus pending invitations.",
+    "seatsFull": "All seats are in use. Remove a member or revoke an invitation to invite someone else.",
+    "you": "You",
+    "unnamed": "No name set",
+    "joined": "joined {{date}}",
+    "roleLabel": "Role",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member"
+    },
+    "roleChanged": "Role updated",
+    "leave": "Leave",
+    "confirmRemove": "Remove {{name}} from {{workspace}}? Their private data stays theirs; collections they shared remain visible to the team.",
+    "confirmLeave": "Leave {{workspace}}? You will lose access to its shared collections.",
+    "removed": "Member removed",
+    "left": "You left the workspace",
+    "managersOnly": "Only owners and admins can invite or manage members.",
+    "inviteEmail": "Email address to invite",
+    "inviteBtn": "Invite",
+    "inviteSent": "Invitation created for {{email}}",
+    "inviteEmailed": "An email with the link was sent to {{email}}. You can also share the link yourself.",
+    "inviteNotEmailed": "Email delivery is not configured: copy the link below and send it to your teammate yourself.",
+    "inviteLinkLabel": "Invitation link (single use, valid {{days}} days)",
+    "inviteLinkHint": "Only a fingerprint of each link is stored, so it cannot be displayed again later. You can issue a new link at any time.",
+    "pendingTitle": "Pending invitations",
+    "pendingEmpty": "No pending invitation.",
+    "expires": "Expires {{date}}",
+    "expired": "Expired",
+    "newLink": "Copy a new link",
+    "newLinkDone": "New link for {{email}}: the previous link no longer works.",
+    "revoke": "Revoke",
+    "revoked": "Invitation revoked",
+    "confirmRevoke": "Revoke the invitation sent to {{email}}?"
   },
   "privacy": {
     "exportTitle": "Export my data",
@@ -1709,7 +1767,11 @@
     "subject": "TrendHunter · {{rule}}",
     "intro": "New results for your alert “{{rule}}”:",
     "manage": "Manage your alerts: {{url}}",
-    "footer": "Estimated or AI-generated values are not measured facts. You receive this email because email notifications are enabled for this alert."
+    "footer": "Estimated or AI-generated values are not measured facts. You receive this email because email notifications are enabled for this alert.",
+    "inviteSubject": "{{inviter}} invited you to {{workspace}} on TrendHunter",
+    "inviteIntro": "{{inviter}} invited you to join the workspace “{{workspace}}” on TrendHunter as {{role}}.",
+    "inviteSteps": "Sign in or create an account with {{email}}, then open this link to accept:",
+    "inviteExpiry": "The link works once and expires in {{days}} days. If you were not expecting this invitation, you can ignore this email."
   },
   "support": {
     "title": "Help & support",
@@ -1729,5 +1791,47 @@
       "data": "Data",
       "other": "Other"
     }
+  },
+  "workspaces": {
+    "title": "Workspaces",
+    "desc": "Each workspace has its own collections, watchlist and alerts. Switch at any time from the sidebar.",
+    "members_one": "{{count}} member",
+    "members_other": "{{count}} members",
+    "active": "Active",
+    "switch": "Switch",
+    "switched": "You are now working in {{name}}",
+    "switcherLabel": "Active workspace",
+    "rename": "Rename workspace",
+    "renamed": "Workspace renamed",
+    "name": "Workspace name",
+    "createTitle": "New workspace",
+    "created": "Workspace “{{name}}” created",
+    "usage": "{{used}} / {{limit}} workspaces",
+    "billedHint": "The new workspace is billed under the subscription of the active workspace, and you become its owner.",
+    "blocked": {
+      "plan_required": "Multiple workspaces are available on the Business plan.",
+      "role_required": "Only owners and admins of the workspace that holds the subscription can add workspaces.",
+      "limit_workspaces": "You have reached your plan's workspace limit."
+    }
+  },
+  "invite": {
+    "title": "Invitation",
+    "cardTitle": "Join a workspace",
+    "invited": "{{inviter}} invited you to join {{workspace}} as {{role}}.",
+    "invitedAnon": "You have been invited to join {{workspace}} as {{role}}.",
+    "expiresOn": "This invitation expires on {{date}}.",
+    "accept": "Accept and join",
+    "welcome": "Welcome to {{workspace}}",
+    "invalid": "This invitation link is invalid or has been revoked. Ask the person who invited you for a new link.",
+    "status": {
+      "expired": "This invitation has expired. Ask an owner or admin of the workspace for a new link.",
+      "accepted": "This invitation has already been used.",
+      "email_mismatch": "This invitation was sent to {{email}}, but you are signed in as {{current}}. Sign in with the invited address to accept it.",
+      "already_member": "You are already a member of this workspace."
+    },
+    "switchAccount": "Sign in with another account",
+    "open": "Open the workspace",
+    "demo": "Invitations need a configured database (Supabase) and real accounts, so they are not available in demo mode.",
+    "backToApp": "Back to the app"
   }
 }

@@ -59,17 +59,21 @@ begin
   if owner is null then
     return new;
   end if;
+  -- The swipe file is created automatically and never counts toward the collection limit.
+  if tg_table_name = 'collections' and new.kind = 'swipe' then
+    return new;
+  end if;
   -- Serialize concurrent writes of the same user so two inserts cannot both pass a count.
   perform pg_advisory_xact_lock(hashtext('plan_limits:' || owner::text));
   lim := public.limits_for(owner, org);
 
   if tg_table_name = 'collections' then
-    select count(*) into n from public.collections where user_id = owner;
+    select count(*) into n from public.collections where user_id = owner and kind = 'standard' and organization_id is not distinct from org;
     if n >= lim.collections then
       raise exception 'limit_collections' using errcode = 'check_violation';
     end if;
   elsif tg_table_name = 'collection_items' then
-    select count(*) into n from public.collection_items i join public.collections c on c.id = i.collection_id where c.user_id = owner;
+    select count(*) into n from public.collection_items i join public.collections c on c.id = i.collection_id where c.user_id = owner and c.organization_id is not distinct from org;
     if n >= lim.saved_items then
       raise exception 'limit_items' using errcode = 'check_violation';
     end if;
@@ -77,7 +81,7 @@ begin
     if not lim.watchlists then
       raise exception 'plan_required' using errcode = 'check_violation';
     end if;
-    select count(*) into n from public.watchlists where user_id = owner;
+    select count(*) into n from public.watchlists where user_id = owner and organization_id is not distinct from org;
     if n >= lim.saved_items then
       raise exception 'limit_items' using errcode = 'check_violation';
     end if;
@@ -92,7 +96,7 @@ begin
     if not lim.alerts then
       raise exception 'plan_required' using errcode = 'check_violation';
     end if;
-    select count(*) into n from public.alerts where user_id = owner;
+    select count(*) into n from public.alerts where user_id = owner and organization_id is not distinct from org;
     if n >= lim.alert_rules then
       raise exception 'limit_rules' using errcode = 'check_violation';
     end if;

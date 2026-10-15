@@ -75,7 +75,19 @@
       "delete_failed": "La suppression du compte a échoué. Contactez le support.",
       "interval_unavailable": "La facturation annuelle n'est pas disponible sur ce déploiement.",
       "support_not_configured": "Le support n'est pas configuré sur ce déploiement.",
-      "database_error": "Une erreur de base de données est survenue. Réessayez."
+      "database_error": "Une erreur de base de données est survenue. Réessayez.",
+      "no_workspace": "Aucun espace de travail n'est disponible pour ce compte.",
+      "role_required": "Votre rôle dans cet espace ne permet pas cette action.",
+      "owner_required": "Seul un propriétaire peut effectuer cette action.",
+      "last_owner": "Un espace garde toujours au moins un propriétaire. Nommez d'abord quelqu'un d'autre propriétaire.",
+      "last_workspace": "Vous ne pouvez pas quitter votre seul espace de travail.",
+      "seats_exhausted": "Tous les sièges inclus dans votre offre sont occupés.",
+      "already_member": "Cette personne est déjà membre de l'espace.",
+      "limit_workspaces": "Vous avez atteint la limite d'espaces de travail de votre offre.",
+      "invite_invalid": "Ce lien d'invitation n'est pas valide ou a été révoqué.",
+      "invite_expired": "Cette invitation a expiré.",
+      "invite_email_mismatch": "Cette invitation a été envoyée à une autre adresse e-mail.",
+      "email_unconfirmed": "Confirmez votre adresse e-mail avant d'accepter une invitation."
     }
   },
   "search": {
@@ -870,7 +882,16 @@
     "compareTitle": "Comparer les produits enregistrés",
     "selectCompare": "Sélectionner pour comparer",
     "exportNote": "Les exports contiennent vos notes, tags, liens et indicateurs TrendHunter. Les créatives publicitaires tierces sont référencées par lien, pas copiées.",
-    "tagsPlaceholder": "test, T4, fitness"
+    "tagsPlaceholder": "test, T4, fitness",
+    "sharedTitle": "Partagées par l'équipe",
+    "sharedBy": "Partagée par {{name}}",
+    "sharedByUnknown": "Partagée par un membre de l'équipe",
+    "sharedBadge": "Partagée avec l'équipe",
+    "shareWithTeam": "Partager avec l'équipe",
+    "stopSharing": "Ne plus partager",
+    "sharedOn": "Collection partagée avec l'équipe",
+    "sharedOff": "La collection est de nouveau privée",
+    "readOnly": "Lecture seule : seul son créateur peut la modifier"
   },
   "watchlist": {
     "watch": "Suivre",
@@ -896,7 +917,8 @@
       "plan_required": "Cette fonctionnalité nécessite une offre supérieure.",
       "unauthenticated": "Veuillez vous reconnecter.",
       "rate_limited": "Trop de requêtes. Patientez un instant.",
-      "limit_reached": "Limite quotidienne de votre offre atteinte."
+      "limit_reached": "Limite quotidienne de votre offre atteinte.",
+      "no_workspace": "Aucun espace de travail actif. Rechargez la page."
     }
   },
   "analyst": {
@@ -1311,7 +1333,8 @@
       "incomplete": "Incomplet",
       "incomplete_expired": "Expiré",
       "paused": "En pause"
-    }
+    },
+    "roleRequired": "Seuls les propriétaires et les administrateurs de l'espace qui porte l'abonnement peuvent changer d'offre ou accéder à la facturation."
   },
   "plans": {
     "free": {
@@ -1478,10 +1501,45 @@
   "team": {
     "title": "Équipe et espaces de travail",
     "desc": "Votre offre inclut {{workspaces}} espace(s) de travail et {{seats}} siège(s).",
-    "owner": "Propriétaire",
     "businessOnly": "La collaboration en équipe et les espaces multiples sont disponibles avec l'offre Business.",
-    "demoInvite": "Mode démo : les invitations d'équipe nécessitent que l'authentification soit configurée.",
-    "inviteSoon": "Invitez vos collègues par e-mail depuis les paramètres de votre organisation."
+    "demoText": "Mode démo : les membres d'équipe, les invitations et les espaces multiples nécessitent une base de données configurée (Supabase) et de vrais comptes. Votre espace démo reste dans ce navigateur et vous en êtes le seul membre.",
+    "membersTitle": "Membres de {{workspace}}",
+    "membersDesc": "Les membres partagent l'offre de l'espace et peuvent consulter les collections partagées avec l'équipe.",
+    "seats": "{{used}} / {{limit}} sièges",
+    "seatsHint": "Les sièges comptent les membres distincts de tous les espaces facturés sur cet abonnement, plus les invitations en attente.",
+    "seatsFull": "Tous les sièges sont occupés. Retirez un membre ou révoquez une invitation pour inviter quelqu'un d'autre.",
+    "you": "Vous",
+    "unnamed": "Aucun nom renseigné",
+    "joined": "arrivé le {{date}}",
+    "roleLabel": "Rôle",
+    "roles": {
+      "owner": "Propriétaire",
+      "admin": "Administrateur",
+      "member": "Membre"
+    },
+    "roleChanged": "Rôle mis à jour",
+    "leave": "Quitter",
+    "confirmRemove": "Retirer {{name}} de {{workspace}} ? Ses données privées lui restent ; les collections qu'il a partagées restent visibles par l'équipe.",
+    "confirmLeave": "Quitter {{workspace}} ? Vous n'aurez plus accès à ses collections partagées.",
+    "removed": "Membre retiré",
+    "left": "Vous avez quitté l'espace de travail",
+    "managersOnly": "Seuls les propriétaires et les administrateurs peuvent inviter ou gérer les membres.",
+    "inviteEmail": "Adresse e-mail à inviter",
+    "inviteBtn": "Inviter",
+    "inviteSent": "Invitation créée pour {{email}}",
+    "inviteEmailed": "Un e-mail contenant le lien a été envoyé à {{email}}. Vous pouvez aussi partager le lien vous-même.",
+    "inviteNotEmailed": "L'envoi d'e-mails n'est pas configuré : copiez le lien ci-dessous et transmettez-le vous-même à votre collègue.",
+    "inviteLinkLabel": "Lien d'invitation (usage unique, valable {{days}} jours)",
+    "inviteLinkHint": "Seule une empreinte de chaque lien est conservée : il ne pourra plus être affiché ensuite. Vous pouvez générer un nouveau lien à tout moment.",
+    "pendingTitle": "Invitations en attente",
+    "pendingEmpty": "Aucune invitation en attente.",
+    "expires": "Expire le {{date}}",
+    "expired": "Expirée",
+    "newLink": "Copier un nouveau lien",
+    "newLinkDone": "Nouveau lien pour {{email}} : l'ancien lien ne fonctionne plus.",
+    "revoke": "Révoquer",
+    "revoked": "Invitation révoquée",
+    "confirmRevoke": "Révoquer l'invitation envoyée à {{email}} ?"
   },
   "privacy": {
     "exportTitle": "Exporter mes données",
@@ -1709,7 +1767,11 @@
     "subject": "TrendHunter · {{rule}}",
     "intro": "Nouveaux résultats pour votre alerte « {{rule}} » :",
     "manage": "Gérer vos alertes : {{url}}",
-    "footer": "Les valeurs estimées ou générées par l'IA ne sont pas des faits mesurés. Vous recevez cet e-mail car les notifications e-mail sont activées pour cette alerte."
+    "footer": "Les valeurs estimées ou générées par l'IA ne sont pas des faits mesurés. Vous recevez cet e-mail car les notifications e-mail sont activées pour cette alerte.",
+    "inviteSubject": "{{inviter}} vous invite dans {{workspace}} sur TrendHunter",
+    "inviteIntro": "{{inviter}} vous invite à rejoindre l'espace de travail « {{workspace}} » sur TrendHunter en tant que {{role}}.",
+    "inviteSteps": "Connectez-vous ou créez un compte avec {{email}}, puis ouvrez ce lien pour accepter :",
+    "inviteExpiry": "Le lien n'est utilisable qu'une fois et expire dans {{days}} jours. Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet e-mail."
   },
   "support": {
     "title": "Aide et support",
@@ -1729,5 +1791,47 @@
       "data": "Données",
       "other": "Autre"
     }
+  },
+  "workspaces": {
+    "title": "Espaces de travail",
+    "desc": "Chaque espace a ses propres collections, sa liste de suivi et ses alertes. Changez d'espace à tout moment depuis la barre latérale.",
+    "members_one": "{{count}} membre",
+    "members_other": "{{count}} membres",
+    "active": "Actif",
+    "switch": "Ouvrir",
+    "switched": "Vous travaillez maintenant dans {{name}}",
+    "switcherLabel": "Espace de travail actif",
+    "rename": "Renommer l'espace",
+    "renamed": "Espace renommé",
+    "name": "Nom de l'espace",
+    "createTitle": "Nouvel espace de travail",
+    "created": "Espace « {{name}} » créé",
+    "usage": "{{used}} / {{limit}} espaces",
+    "billedHint": "Le nouvel espace est facturé sur l'abonnement de l'espace actif, et vous en devenez propriétaire.",
+    "blocked": {
+      "plan_required": "Les espaces de travail multiples sont disponibles avec l'offre Business.",
+      "role_required": "Seuls les propriétaires et les administrateurs de l'espace qui porte l'abonnement peuvent ajouter des espaces.",
+      "limit_workspaces": "Vous avez atteint la limite d'espaces de travail de votre offre."
+    }
+  },
+  "invite": {
+    "title": "Invitation",
+    "cardTitle": "Rejoindre un espace de travail",
+    "invited": "{{inviter}} vous invite à rejoindre {{workspace}} en tant que {{role}}.",
+    "invitedAnon": "Vous êtes invité à rejoindre {{workspace}} en tant que {{role}}.",
+    "expiresOn": "Cette invitation expire le {{date}}.",
+    "accept": "Accepter et rejoindre",
+    "welcome": "Bienvenue dans {{workspace}}",
+    "invalid": "Ce lien d'invitation n'est pas valide ou a été révoqué. Demandez un nouveau lien à la personne qui vous a invité.",
+    "status": {
+      "expired": "Cette invitation a expiré. Demandez un nouveau lien à un propriétaire ou administrateur de l'espace.",
+      "accepted": "Cette invitation a déjà été utilisée.",
+      "email_mismatch": "Cette invitation a été envoyée à {{email}}, mais vous êtes connecté en tant que {{current}}. Connectez-vous avec l'adresse invitée pour l'accepter.",
+      "already_member": "Vous êtes déjà membre de cet espace de travail."
+    },
+    "switchAccount": "Se connecter avec un autre compte",
+    "open": "Ouvrir l'espace",
+    "demo": "Les invitations nécessitent une base de données configurée (Supabase) et de vrais comptes : elles ne sont pas disponibles en mode démo.",
+    "backToApp": "Retour à l'application"
   }
 }

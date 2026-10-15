@@ -25,6 +25,19 @@ export const ERROR_CODES = [
   "interval_unavailable",
   "support_not_configured",
   "database_error",
+  // Teams and workspaces
+  "no_workspace",
+  "role_required",
+  "owner_required",
+  "last_owner",
+  "last_workspace",
+  "seats_exhausted",
+  "already_member",
+  "limit_workspaces",
+  "invite_invalid",
+  "invite_expired",
+  "invite_email_mismatch",
+  "email_unconfirmed",
 ] as const;
 
 const KNOWN = new Set<string>(ERROR_CODES);

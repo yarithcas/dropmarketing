@@ -2,7 +2,16 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Entitlements, PlanId } from "@/lib/plans";
+import type { OrgRole } from "@/lib/team";
 import { apiFetch } from "./use-api";
+
+export interface WorkspaceInfo {
+  id: string;
+  name: string;
+  role: OrgRole;
+  plan: PlanId;
+  members: number;
+}
 
 export interface SessionInfo {
   mode: "demo" | "live";
@@ -11,6 +20,12 @@ export interface SessionInfo {
   plan: PlanId;
   entitlements: Entitlements;
   usage: Record<string, { used: number; limit: number; allowed: boolean }>;
+  /** Active workspace (live mode only). */
+  workspace: WorkspaceInfo | null;
+  /** Every workspace the user belongs to (live mode only; empty in demo mode). */
+  workspaces: WorkspaceInfo[];
+  /** Owner or admin of the organization that pays for the active workspace. */
+  canManageBilling: boolean;
   features: { supabase: boolean; ai: boolean; stripe: boolean; shopify: boolean; email: boolean; cron: boolean };
   data: { mode: "demo" | "live"; asOf: string; sources: string[] };
 }

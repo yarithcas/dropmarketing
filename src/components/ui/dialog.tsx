@@ -57,7 +57,7 @@ export function Dialog({
             <h2 className="text-base font-semibold">{title}</h2>
             {description ? <p className="mt-0.5 text-sm text-subtle">{description}</p> : null}
           </div>
-          <button onClick={onClose} className="focus-ring rounded-md p-1 text-subtle hover:bg-surface-2 hover:text-fg" aria-label={t("common.close")}>
+          <button type="button" onClick={onClose} className="focus-ring tap rounded-md p-1 text-subtle transition-[color,background-color,transform] duration-150 hover:bg-surface-2 hover:text-fg active:scale-90 motion-reduce:active:scale-100" aria-label={t("common.close")} title={t("common.close")}>
             <X className="size-4" />
           </button>
         </div>

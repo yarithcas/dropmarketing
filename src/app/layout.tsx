@@ -5,6 +5,7 @@ import "./globals.css";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { DEFAULT_LOCALE, isLocale, LOCALE_COOKIE } from "@/lib/i18n/config";
 import { ToastProvider } from "@/components/ui/toast";
+import { NavigationProgress } from "@/components/ui/navigation-progress";
 import { serverT } from "@/lib/server/messages";
 
 async function requestLocale() {
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           // Applies the stored theme before paint to avoid a flash.
           dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('th_theme');if(t==='light')document.documentElement.dataset.theme='light'}catch(e){}` }}
         />
+        <NavigationProgress />
         <I18nProvider initialLocale={locale}>
           <ToastProvider>{children}</ToastProvider>
         </I18nProvider>

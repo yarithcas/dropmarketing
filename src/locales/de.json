@@ -22,7 +22,12 @@
     "tableView": "Tabellenansicht",
     "viewAll": "Alle anzeigen",
     "info": "Informationen",
-    "unknown": "Unbekannt"
+    "unknown": "Unbekannt",
+    "copyFailed": "Kopieren nicht möglich: Ihr Browser hat den Zugriff auf die Zwischenablage blockiert",
+    "analysisReady": "Analyse fertig",
+    "firstPage": "Sie sind auf der ersten Seite",
+    "lastPage": "Sie sind auf der letzten Seite",
+    "exported": "{{file}}-Export heruntergeladen"
   },
   "nav": {
     "main": "Hauptnavigation",
@@ -115,7 +120,8 @@
     "title": "Benachrichtigungen",
     "empty": "Noch keine Benachrichtigungen.",
     "markAllRead": "Alle als gelesen markieren",
-    "manage": "Alerts und Watchlists verwalten"
+    "manage": "Alerts und Watchlists verwalten",
+    "markedRead": "Alle Benachrichtigungen als gelesen markiert"
   },
   "auth": {
     "account": "Konto",
@@ -781,7 +787,9 @@
     "trackedProduct": "Beobachtetes Produkt",
     "associatedAds": "Zugehörige Anzeigen ({{n}})",
     "lastObserved": "Zuletzt beobachtet",
-    "socialDemo": "Demo-Link, kein echtes Profil"
+    "socialDemo": "Demo-Link, kein echtes Profil",
+    "compareHint": "Wählen Sie mindestens 2 Shops zum Vergleichen aus",
+    "compareMax": "Sie können bis zu 5 Shops gleichzeitig vergleichen"
   },
   "competitors": {
     "title": "Wettbewerbsanalyse",
@@ -887,7 +895,9 @@
     "matchAuto": "Automatisch (Schätzung)",
     "matchNone": "Kein Treffer",
     "matchSaved": "Zuordnung gespeichert",
-    "matchNote": "Marktzuordnungen sind Schätzungen auf Basis der Produktnamen, sofern du sie nicht manuell festlegst."
+    "matchNote": "Marktzuordnungen sind Schätzungen auf Basis der Produktnamen, sofern du sie nicht manuell festlegst.",
+    "disconnected": "Shop getrennt",
+    "enterDomain": "Geben Sie zuerst Ihre Shop-Domain ein (z. B. my-store.myshopify.com)"
   },
   "collections": {
     "title": "Produktsammlungen",
@@ -940,7 +950,8 @@
     "stopSharing": "Nicht mehr teilen",
     "sharedOn": "Sammlung mit dem Team geteilt",
     "sharedOff": "Sammlung ist wieder privat",
-    "readOnly": "Nur lesen: Nur die Person, die sie erstellt hat, kann sie bearbeiten"
+    "readOnly": "Nur lesen: Nur die Person, die sie erstellt hat, kann sie bearbeiten",
+    "nameRequired": "Geben Sie der Sammlung zuerst einen Namen"
   },
   "watchlist": {
     "watch": "Beobachten",
@@ -1113,7 +1124,10 @@
       "autoPicked": "Kein Produkt ausgewählt: Diese Antwort nutzt {{names}}, gewählt nach dem höchsten Opportunity-Score (positiver aktueller Trend bevorzugt). Füge im Bereich Produktkontext Produkte hinzu, um selbst zu wählen.",
       "autoPickedCategory": "Kein Produkt ausgewählt: Diese Antwort nutzt {{names}}, gewählt nach dem höchsten Opportunity-Score in {{categories}} (positiver aktueller Trend bevorzugt). Füge im Bereich Produktkontext Produkte hinzu, um selbst zu wählen.",
       "candidatesAi": "Kein Produkt ausgewählt: Die KI hat mit den besten Kandidaten von TrendHunter für diese Frage geantwortet (höchste Opportunity-Scores, aktuelle Trends). Die genutzten Datensätze sind unten aufgeführt."
-    }
+    },
+    "typeQuestion": "Geben Sie zuerst eine Frage ein",
+    "alreadyAdded": "Bereits hinzugefügt",
+    "contextFull": "Bis zu {{n}} Einträge: Entfernen Sie einen, um einen anderen hinzuzufügen"
   },
   "calculator": {
     "title": "Rentabilitätsrechner",
@@ -1178,7 +1192,8 @@
     "price": "Preis",
     "note1": "Der Deckungsbeitrag ist kein Nettogewinn. Vom Nettogewinn werden zusätzlich Steuern, Gehälter, Finanzierung und einmalige Kosten abgezogen.",
     "note2": "Geschätzte Produktmargen in Research-Datensätzen sind weder verifizierte Lieferantenangebote noch tatsächliche Betriebsergebnisse.",
-    "note3": "Ein Wechsel der Oberflächensprache ändert nur die Zahlenformatierung, nie die Berechnungen."
+    "note3": "Ein Wechsel der Oberflächensprache ändert nur die Zahlenformatierung, nie die Berechnungen.",
+    "resetDone": "Annahmen auf die Standardwerte zurückgesetzt"
   },
   "alerts": {
     "title": "Alerts und Watchlists",
@@ -1298,7 +1313,9 @@
       "demo_daily": "Demodaten, täglich neu generiert (Stand: {{date}}). Nächste Generierung: {{next}}. Das sind keine echten Marktbeobachtungen.",
       "cron_daily": "Täglicher Hintergrundjob um 05:15 UTC: Konnektor-Import, Neubewertung, Alarmprüfung und Bereinigung. Datenstand {{date}} · nächster Lauf: {{next}}.",
       "none": "Keine automatische Aktualisierung: Der tägliche Hintergrundjob (05:15 UTC) ist nicht konfiguriert (CRON_SECRET). Datenstand {{date}}."
-    }
+    },
+    "ruleIncomplete": "Geben Sie einen Namen und das erforderliche Ziel ein, um die Regel zu erstellen",
+    "cleared": "Benachrichtigungsverlauf gelöscht"
   },
   "reports": {
     "title": "Marktberichte",
@@ -1467,7 +1484,8 @@
       "a2": "Nein. Private Analysen, Umsätze, Conversion-Raten und Werbeausgaben sind nicht öffentlich. Wir stellen sie nie als bekannte Fakten dar.",
       "q3": "Kann ich jederzeit kündigen?",
       "a3": "Ja. Abos werden über das Stripe-Kundenportal verwaltet und können jederzeit gekündigt werden."
-    }
+    },
+    "currentReason": "Das ist Ihr aktueller Tarif"
   },
   "settings": {
     "title": "Einstellungen und Abo",
@@ -1623,7 +1641,8 @@
     "newLinkDone": "Neuer Link für {{email}}: Der bisherige Link funktioniert nicht mehr.",
     "revoke": "Widerrufen",
     "revoked": "Einladung widerrufen",
-    "confirmRevoke": "Die an {{email}} gesendete Einladung widerrufen?"
+    "confirmRevoke": "Die an {{email}} gesendete Einladung widerrufen?",
+    "inviteEmailFirst": "Geben Sie eine E-Mail-Adresse ein, um eine Einladung zu senden"
   },
   "privacy": {
     "exportTitle": "Meine Daten exportieren",
@@ -1638,7 +1657,9 @@
     "infoTitle": "Wie wir mit Daten umgehen",
     "info1": "Wir erfassen nur, was jede Funktion benötigt: Kontodaten, deine gespeicherte Recherche und Nutzungszähler für Plan-Limits.",
     "info2": "Research-Daten stammen aus offiziellen APIs, von lizenzierten Anbietern oder aus öffentlich zugänglichen Seiten – mit Quelle und Datum für jede wichtige Kennzahl.",
-    "info3": "Integrationstoken werden serverseitig verschlüsselt. Wir greifen nie auf private Daten anderer Händler zu und umgehen keine technischen Beschränkungen."
+    "info3": "Integrationstoken werden serverseitig verschlüsselt. Wir greifen nie auf private Daten anderer Händler zu und umgehen keine technischen Beschränkungen.",
+    "exported": "Ihr Datenexport wurde heruntergeladen",
+    "typeDeleteReason": "Geben Sie DELETE in das Feld oben ein, um zu bestätigen"
   },
   "landing": {
     "nav": {
@@ -1896,7 +1917,8 @@
       "plan_required": "Mehrere Workspaces sind im Business-Plan verfügbar.",
       "role_required": "Nur Inhaber und Admins des Workspace mit dem Abo können Workspaces hinzufügen.",
       "limit_workspaces": "Du hast das Workspace-Limit deines Plans erreicht."
-    }
+    },
+    "nameRequired": "Geben Sie zuerst einen Namen für den Arbeitsbereich ein"
   },
   "invite": {
     "title": "Einladung",

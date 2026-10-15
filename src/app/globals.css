@@ -62,7 +62,62 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * Interaction baseline for every clickable element, including raw <button>/<a>/<summary> that do not use
+ * the Button primitive. Everything sits inside :where() (zero specificity) so component classes always win.
+ */
+@layer base {
+  :where(button, [role="button"], [role="tab"], summary, label[for], select):where(:not(:disabled, [aria-disabled="true"])) {
+    cursor: pointer;
+  }
+  :where(button, [role="button"], [role="tab"], input, select, textarea):where(:disabled, [aria-disabled="true"]) {
+    cursor: not-allowed;
+  }
+  :where([aria-busy="true"]) {
+    cursor: progress;
+  }
+  /* Keyboard focus is always visible; elements with .focus-ring draw a ring instead. */
+  :where(a[href], button, [role="button"], [role="tab"], [role="checkbox"], [role="switch"], summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid rgb(var(--accent) / 0.7);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  /* Tactile press feedback. */
+  :where(button, [role="button"], [role="tab"], summary):where(:not(:disabled, [aria-disabled="true"])):active {
+    transform: translateY(1px);
+  }
+  :where(button, [role="button"], [role="tab"], summary, a[href]) {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  summary:hover {
+    color: rgb(var(--fg));
+  }
+}
+
 @layer components {
+  /*
+   * Touch targets: on coarse pointers, an invisible ::after grows the hit area to at least 40x40px without
+   * changing layout (percentages resolve against the element itself).
+   */
+  .tap {
+    position: relative;
+  }
+  @media (pointer: coarse) {
+    .tap::after {
+      content: "";
+      position: absolute;
+      top: min(0px, calc(50% - 20px));
+      bottom: min(0px, calc(50% - 20px));
+      left: min(0px, calc(50% - 20px));
+      right: min(0px, calc(50% - 20px));
+    }
+  }
+  /* Elevation for clickable cards. */
+  .card-interactive {
+    @apply cursor-pointer transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-accent/40 hover:shadow-[0_14px_36px_-18px_rgb(var(--accent)/0.55)] active:border-accent/60 active:shadow-[0_6px_18px_-12px_rgb(var(--accent)/0.5)];
+  }
   .card {
     @apply rounded-xl border border-border bg-surface;
   }

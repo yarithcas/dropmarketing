@@ -67,6 +67,7 @@ function Viewer({ adId }: { adId: string }) {
     setBusy(true);
     try {
       setAnalysis(await apiFetch<CreativeAnalysis>("/api/ai/creative", { method: "POST", body: JSON.stringify({ adId: ad.id, locale }) }));
+      toast(t("common.analysisReady"));
     } catch (e) {
       toast(t(errorKey(e)), "error");
     } finally {
@@ -108,10 +109,13 @@ function Viewer({ adId }: { adId: string }) {
               <div className="label mb-1 flex items-center gap-2">
                 {t("creative.copy")}
                 <button
-                  className="text-subtle hover:text-fg"
+                  type="button"
+                  className="focus-ring tap rounded p-0.5 text-subtle transition-colors hover:bg-surface-3 hover:text-fg active:scale-90"
                   aria-label={t("common.copy")}
+                  title={t("common.copy")}
                   onClick={() => {
-                    navigator.clipboard?.writeText(ad.copy).then(() => toast(t("common.copied")), () => {});
+                    if (!navigator.clipboard) return toast(t("common.copyFailed"), "error");
+                    navigator.clipboard.writeText(ad.copy).then(() => toast(t("common.copied")), () => toast(t("common.copyFailed"), "error"));
                   }}
                 >
                   <Copy className="size-3" />
@@ -139,7 +143,7 @@ function Viewer({ adId }: { adId: string }) {
             </dl>
             {product && (
               <div className="flex items-center gap-2">
-                <Link href={`/app/products/${product.id}`} className="flex items-center gap-2 text-xs text-accent hover:underline">
+                <Link href={`/app/products/${product.id}`} className="focus-ring tap flex items-center gap-2 rounded text-xs text-accent underline-offset-4 hover:underline">
                   {t("ads.product")}: {product.name} <ScoreBadge score={product.score.overall} />
                 </Link>
                 <MatchEstimateTag ad={ad} />
@@ -165,7 +169,7 @@ function Viewer({ adId }: { adId: string }) {
             }
             description={t("creative.analysisDesc")}
             action={
-              <Button size="sm" onClick={run} disabled={busy || !hasText} data-testid="run-creative-analysis">
+              <Button size="sm" onClick={run} loading={busy} disabled={!hasText} disabledReason={t("ads.noCopy")} data-testid="run-creative-analysis">
                 <Sparkles /> {busy ? t("common.loading") : analysis ? t("product.aiRegenerate") : t("creative.analyze")}
               </Button>
             }
@@ -332,8 +336,10 @@ function CreativesInner() {
               {list.map((it) => (
                 <li key={it.id}>
                   <button
+                    type="button"
                     onClick={() => url.set({ ad: it.id }, { resetPage: false })}
-                    className={cn("block w-full px-4 py-3 text-left hover:bg-surface-2", adId === it.id && "bg-surface-2 shadow-[inset_2px_0_0_rgb(var(--accent))]")}
+                    aria-current={adId === it.id ? "true" : undefined}
+                    className={cn("focus-ring block w-full px-4 py-3 text-left transition-colors hover:bg-surface-2 active:bg-surface-3", adId === it.id && "bg-surface-2 shadow-[inset_2px_0_0_rgb(var(--accent))]")}
                   >
                     <div className="truncate text-sm font-medium">{it.title}</div>
                     {it.subtitle ? <div className="mt-0.5 truncate text-xs text-subtle">{it.subtitle}</div> : null}

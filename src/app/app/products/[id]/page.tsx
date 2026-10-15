@@ -27,6 +27,7 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/toast";
 import { apiFetch, useApi } from "@/lib/client/use-api";
 import { errorKey } from "@/lib/client/errors";
 import { useFormat } from "@/lib/format";
@@ -70,6 +71,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const { t } = useTranslation();
   const f = useFormat();
   const { locale } = useLocale();
+  const toast = useToast();
   const { data, error, loading, reload } = useApi<Detail>(`/api/products/${id}`);
   const [range, setRange] = useState<TimeRange>("90d");
   const [showMethod, setShowMethod] = useState(false);
@@ -101,8 +103,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     setAnalysisError(null);
     try {
       setAnalysis(await apiFetch<AnalystResponse>("/api/ai/analyst", { method: "POST", body: JSON.stringify({ question: t("product.aiQuestion", { name: p.name }), productIds: [p.id], locale }) }));
+      toast(t("common.analysisReady"));
     } catch (e) {
       setAnalysisError(t(errorKey(e)));
+      toast(t(errorKey(e)), "error");
     } finally {
       setAnalyzing(false);
     }
@@ -110,8 +114,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="space-y-6">
-      <Link href="/app/products" className="inline-flex items-center gap-1 text-sm text-subtle hover:text-fg">
-        <ArrowLeft className="size-4" /> {t("product.back")}
+      <Link href="/app/products" className="focus-ring tap group/back inline-flex items-center gap-1 rounded text-sm text-subtle transition-colors hover:text-fg">
+        <ArrowLeft className="size-4 transition-transform group-hover/back:-translate-x-0.5" /> {t("product.back")}
       </Link>
       <PageHeader
         eyebrow={
@@ -183,7 +187,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </li>
               ))}
             </ul>
-            <button className="flex w-full items-center justify-between text-xs text-accent" onClick={() => setShowMethod((v) => !v)} aria-expanded={showMethod}>
+            <button type="button" className="focus-ring tap flex w-full items-center justify-between rounded text-xs text-accent transition-colors hover:text-accent/80" onClick={() => setShowMethod((v) => !v)} aria-expanded={showMethod}>
               {t("score.methodology")}
               <ChevronDown className={cn("size-4 transition-transform", showMethod && "rotate-180")} />
             </button>
@@ -324,7 +328,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           }
           description={t("product.aiDesc")}
           action={
-            <Button size="sm" onClick={analyze} disabled={analyzing} data-testid="product-ai">
+            <Button size="sm" onClick={analyze} loading={analyzing} data-testid="product-ai">
               <Sparkles /> {analyzing ? t("common.loading") : analysis ? t("product.aiRegenerate") : t("product.aiGenerate")}
             </Button>
           }
@@ -350,7 +354,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
       <div className="grid gap-4 xl:grid-cols-2">
         <Card>
-          <CardHeader title={t("product.relatedAds", { n: data.ads.length })} action={<Link href={`/app/ads?productId=${p.id}`} className="text-xs text-accent hover:underline">{t("common.viewAll")}</Link>} />
+          <CardHeader title={t("product.relatedAds", { n: data.ads.length })} action={<Link href={`/app/ads?productId=${p.id}`} className="focus-ring tap rounded text-xs text-accent underline-offset-4 hover:underline">{t("common.viewAll")}</Link>} />
           {data.ads.length === 0 ? (
             <CardBody>
               <EmptyState title={t("ads.emptyTitle")} />
@@ -359,7 +363,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <ul className="divide-y divide-border/70">
               {data.ads.slice(0, 6).map((a) => (
                 <li key={a.id}>
-                  <Link href={`/app/creatives?ad=${a.id}`} className="flex gap-3 px-4 py-3 hover:bg-surface-2">
+                  <Link href={`/app/creatives?ad=${a.id}`} className="focus-ring flex gap-3 px-4 py-3 transition-colors hover:bg-surface-2 active:bg-surface-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-sm font-medium">
                         <span className="truncate">{a.advertiser}</span>
@@ -421,7 +425,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <ul className="grid divide-y divide-border/70 sm:grid-cols-2 sm:divide-y-0 xl:grid-cols-4">
             {data.similar.map((sp) => (
               <li key={sp.id}>
-                <Link href={`/app/products/${sp.id}`} className="flex items-center gap-3 p-4 hover:bg-surface-2">
+                <Link href={`/app/products/${sp.id}`} className="focus-ring flex items-center gap-3 p-4 transition-colors hover:bg-surface-2 active:bg-surface-3">
                   <Thumb category={sp.category} hue={sp.hue} className="size-10 shrink-0" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm">{sp.name}</div>

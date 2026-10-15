@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { AlertTriangle, CheckCircle2, Link2, Pencil, PlugZap, RefreshCw, Search, Unplug } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Link2, Loader2, Pencil, PlugZap, RefreshCw, Search, Unplug } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,8 +66,10 @@ interface ShopifyStatus {
 
 const DEFAULT_SCOPES = ["read_products", "read_orders", "read_inventory"];
 
+/** Leaves for the Shopify OAuth screen. The returned promise never settles, so the clicked button keeps its loading state until the page unloads. */
 function startInstall(shop: string) {
   window.location.href = `/api/integrations/shopify/install?shop=${encodeURIComponent(shop.trim())}`;
+  return new Promise<void>(() => {});
 }
 
 export function MyStorePanel() {
@@ -83,6 +85,7 @@ export function MyStorePanel() {
   const { data, error, reload } = useApi<ShopifyStatus>(`/api/integrations/shopify${selected ? `?id=${encodeURIComponent(selected)}` : ""}`);
   const [shop, setShop] = useState("");
   const [busy, setBusy] = useState(false);
+  const [installing, setInstalling] = useState(false);
   const [matchFor, setMatchFor] = useState<PerformanceRow | null>(null);
   // After connecting a store, show that store.
   const pickedConnected = useRef(false);
@@ -125,6 +128,7 @@ export function MyStorePanel() {
     try {
       await apiFetch("/api/integrations/shopify/disconnect", { method: "POST", body: JSON.stringify({ id }) });
       if (selected === id) setSelected(null);
+      toast(t("shopify.disconnected"));
     } catch (e) {
       toast(t(errorKey(e)), "error");
     }
@@ -241,7 +245,7 @@ export function MyStorePanel() {
               <div role="alert" className="space-y-2 rounded-md border border-critical/30 bg-critical/5 p-3 text-xs text-critical" data-testid="shopify-revoked">
                 <p>{t("shopify.revokedText", { shop: conn.shop })}</p>
                 {!conn.overLimit && (
-                  <Button size="sm" onClick={() => startInstall(conn.shop)}>
+                  <Button size="sm" onClick={() => startInstall(conn.shop)} data-testid="shopify-reconnect">
                     <Link2 /> {t("shopify.reconnect")}
                   </Button>
                 )}
@@ -261,8 +265,15 @@ export function MyStorePanel() {
             ) : (
               conn && (
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="secondary" onClick={() => sync(conn.id)} disabled={busy || conn.status === "revoked" || conn.overLimit}>
-                    <RefreshCw className={busy ? "animate-spin" : ""} /> {t("shopify.syncNow")}
+                  <Button
+                    variant="secondary"
+                    onClick={() => sync(conn.id)}
+                    loading={busy}
+                    disabled={conn.status === "revoked" || conn.overLimit}
+                    disabledReason={conn.status === "revoked" ? t("shopify.revokedText", { shop: conn.shop }) : t("shopify.overLimitText", { max: data.storeLimit })}
+                    data-testid="shopify-sync"
+                  >
+                    <RefreshCw /> {t("shopify.syncNow")}
                   </Button>
                   <Button variant="ghost" onClick={() => disconnect(conn.id)}>
                     <Unplug /> {t("shopify.disconnect")}
@@ -275,7 +286,9 @@ export function MyStorePanel() {
                 className="space-y-2"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (shop.trim()) startInstall(shop);
+                  if (!shop.trim()) return;
+                  setInstalling(true);
+                  startInstall(shop);
                 }}
               >
                 <label className="text-xs text-muted" htmlFor="shop">
@@ -283,7 +296,7 @@ export function MyStorePanel() {
                 </label>
                 <div className="flex gap-2">
                   <Input id="shop" value={shop} onChange={(e) => setShop(e.target.value)} placeholder="my-store.myshopify.com" />
-                  <Button type="submit" disabled={!shop.trim()}>
+                  <Button type="submit" disabled={!shop.trim()} loading={installing} disabledReason={t("shopify.enterDomain")}>
                     <Link2 /> {t("shopify.connect")}
                   </Button>
                 </div>
@@ -408,7 +421,7 @@ function MarketCell({ row, available, onEdit }: { row: PerformanceRow; available
   return (
     <div className="flex items-center gap-1.5">
       {row.market ? (
-        <Link href={`/app/products/${row.market.productId}`} className="flex min-w-0 items-center gap-2 text-xs hover:text-accent">
+        <Link href={`/app/products/${row.market.productId}`} className="focus-ring tap flex min-w-0 items-center gap-2 rounded text-xs transition-colors hover:text-accent">
           <ScoreBadge score={row.market.score} /> <TrendPill pct={row.market.trendGrowth} />
           <span className="max-w-[140px] truncate text-muted">{row.market.name}</span>
         </Link>
@@ -435,7 +448,7 @@ function MatchDialog({ row, connectionId, onClose, onSaved }: { row: Performance
   const toast = useToast();
   const [q, setQ] = useState("");
   const [debounced, setDebounced] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState<string | null>(null);
   useEffect(() => {
     const id = setTimeout(() => setDebounced(q.trim()), 250);
     return () => clearTimeout(id);
@@ -444,7 +457,8 @@ function MatchDialog({ row, connectionId, onClose, onSaved }: { row: Performance
   const query = (debounced || row.title).slice(0, 120);
   const { data, loading } = useApi<{ items: { id: string; name: string; category: string }[] }>(`/api/integrations/shopify/match?q=${encodeURIComponent(query)}`);
   const save = async (match: "auto" | "none" | { productId: string }) => {
-    setSaving(true);
+    if (saving) return;
+    setSaving(typeof match === "string" ? match : match.productId);
     try {
       await apiFetch("/api/integrations/shopify/match", { method: "POST", body: JSON.stringify({ id: connectionId, externalId: row.externalId, match }) });
       toast(t("shopify.matchSaved"));
@@ -452,7 +466,7 @@ function MatchDialog({ row, connectionId, onClose, onSaved }: { row: Performance
     } catch (e) {
       toast(t(errorKey(e)), "error");
     } finally {
-      setSaving(false);
+      setSaving(null);
     }
   };
   return (
@@ -463,10 +477,10 @@ function MatchDialog({ row, connectionId, onClose, onSaved }: { row: Performance
       description={t("shopify.matchDesc", { title: row.title })}
       footer={
         <>
-          <Button variant="ghost" onClick={() => save("auto")} disabled={saving || row.matchSource === "auto"}>
+          <Button variant="ghost" onClick={() => save("auto")} loading={saving === "auto"} disabled={Boolean(saving && saving !== "auto") || row.matchSource === "auto"} disabledReason={row.matchSource === "auto" ? t("shopify.matchEstimate") : undefined}>
             {t("shopify.matchAuto")}
           </Button>
-          <Button variant="secondary" onClick={() => save("none")} disabled={saving}>
+          <Button variant="secondary" onClick={() => save("none")} loading={saving === "none"} disabled={Boolean(saving && saving !== "none")}>
             {t("shopify.matchNone")}
           </Button>
         </>
@@ -489,14 +503,15 @@ function MatchDialog({ row, connectionId, onClose, onSaved }: { row: Performance
               <li key={p.id}>
                 <button
                   type="button"
-                  disabled={saving}
+                  disabled={Boolean(saving)}
+                  aria-busy={saving === p.id || undefined}
                   onClick={() => save({ productId: p.id })}
-                  className="focus-ring flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-surface-2 disabled:opacity-50"
+                  className="focus-ring flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-surface-2 active:bg-surface-3 disabled:opacity-50"
                 >
                   <span className="truncate">{p.name}</span>
                   <span className="flex shrink-0 items-center gap-2 text-xs text-subtle">
                     {t(`categories.${p.category}`)}
-                    {row.market?.productId === p.id && <CheckCircle2 className="size-4 text-good" />}
+                    {saving === p.id ? <Loader2 className="size-4 animate-spin" /> : row.market?.productId === p.id && <CheckCircle2 className="size-4 text-good" />}
                   </span>
                 </button>
               </li>

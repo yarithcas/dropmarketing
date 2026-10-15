@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CheckCircle2, FlaskConical, Loader2, MailWarning, UserPlus } from "lucide-react";
+import { CheckCircle2, FlaskConical, MailWarning, UserPlus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { PageHeader } from "@/components/app/bits";
 import { useSwitchWorkspace } from "@/components/app/workspace-switcher";
@@ -100,8 +100,8 @@ function InviteInner() {
         {invite.status === "valid" ? (
           <>
             <p className="text-xs text-subtle">{t("invite.expiresOn", { date: f.dateTime(invite.expiresAt) })}</p>
-            <Button onClick={accept} disabled={busy} data-testid="invite-accept">
-              {busy ? <Loader2 className="animate-spin" /> : <UserPlus />} {t("invite.accept")}
+            <Button onClick={accept} loading={busy} data-testid="invite-accept">
+              <UserPlus /> {t("invite.accept")}
             </Button>
           </>
         ) : invite.status === "email_mismatch" ? (

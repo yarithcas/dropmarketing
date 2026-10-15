@@ -13,6 +13,7 @@ import { PlatformBadge, ProvenanceBadge, SourceLine } from "./bits";
 import { SaveButton } from "./save";
 import { isWatchable, WatchAdButton } from "./ad-player";
 import { cn } from "@/lib/cn";
+import { useCardNavigation } from "./card-link";
 
 const FORMAT_ICON = { video: PlayCircle, image: ImageIcon, carousel: Images, unknown: FileQuestion };
 
@@ -64,8 +65,10 @@ export function AdCard({ ad, productName }: { ad: Advertisement; productName?: s
   const f = useFormat();
   const days = daysBetween(ad.firstSeen, ad.lastSeen) + 1;
   const watchable = isWatchable(ad);
+  // Whole card opens the creative viewer; nested links, buttons and media keep their own behaviour.
+  const cardLink = useCardNavigation();
   return (
-    <article className="card flex flex-col overflow-hidden" data-testid="ad-card">
+    <article className="card card-interactive flex flex-col overflow-hidden" data-testid="ad-card" {...cardLink(`/app/creatives?ad=${ad.id}`)}>
       <div className="relative">
         <CreativePreview ad={ad} className="h-40 rounded-none" hideIcon={watchable} />
         {watchable ? <WatchAdButton ad={ad} productName={productName} /> : null}
@@ -105,7 +108,7 @@ export function AdCard({ ad, productName }: { ad: Advertisement; productName?: s
         </dl>
         {productName && ad.productId ? (
           <div className="mt-3 flex min-w-0 items-center gap-1.5">
-            <Link href={`/app/products/${ad.productId}`} className="truncate text-xs text-accent hover:underline">
+            <Link href={`/app/products/${ad.productId}`} className="focus-ring truncate rounded text-xs text-accent underline-offset-4 hover:underline coarse:-my-3 coarse:py-3">
               {t("ads.product")}: {productName}
             </Link>
             <MatchEstimateTag ad={ad} />

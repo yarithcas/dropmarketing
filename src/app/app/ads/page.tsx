@@ -74,7 +74,7 @@ function AdsInner() {
           <Input type="date" value={url.get("lastTo")} onChange={(e) => set({ lastTo: e.target.value })} aria-label={t("filters.to")} />
         </div>
       </FilterGroup>
-      <label className={cn("flex items-center gap-2 text-sm text-muted", locked && "opacity-40")} title={locked ? t("billing.advancedFilterLocked") : undefined}>
+      <label className={cn("flex items-center gap-2 text-sm text-muted", locked ? "cursor-not-allowed opacity-40" : "cursor-pointer hover:text-fg")} title={locked ? t("billing.advancedFilterLocked") : undefined}>
         <input type="checkbox" className="accent-[rgb(var(--accent))]" disabled={locked} checked={url.get("activeOnly") === "true"} onChange={(e) => set({ activeOnly: e.target.checked ? "true" : null })} />
         {t("filters.activeOnly")}
       </label>
@@ -114,14 +114,14 @@ function AdsInner() {
               ))}
             </Select>
           </div>
-          <Button variant="secondary" className="mb-4 lg:hidden" onClick={() => setShowFilters((s) => !s)}>
+          <Button variant="secondary" className="mb-4 lg:hidden" onClick={() => setShowFilters((s) => !s)} aria-expanded={showFilters}>
             <SlidersHorizontal /> {t("filters.title")} {active ? `(${active})` : ""}
           </Button>
           {showFilters && <Card className="mb-4 p-4 lg:hidden">{filters}</Card>}
           {url.get("productId") && (
             <div className="mb-3 text-xs text-muted">
               {t("ads.filteredByProduct")}{" "}
-              <button className="text-accent hover:underline" onClick={() => set({ productId: null })}>
+              <button type="button" className="focus-ring tap rounded text-accent underline-offset-4 hover:underline active:text-accent/80" onClick={() => set({ productId: null })}>
                 {t("filters.clear")}
               </button>
             </div>

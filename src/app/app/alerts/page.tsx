@@ -102,7 +102,7 @@ function RuleDialog({ onClose, preset }: { onClose: () => void; preset?: Partial
           <Button variant="ghost" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={save} disabled={!valid} data-testid="save-rule">
+          <Button onClick={save} disabled={!valid} disabledReason={t("alerts.ruleIncomplete")} data-testid="save-rule">
             {t("common.create")}
           </Button>
         </>
@@ -267,8 +267,8 @@ function AlertsInner() {
             </div>
           </div>
           <div className="flex items-center justify-start gap-2 xl:justify-end">
-            <Button variant="secondary" onClick={runNow} disabled={checking || !session?.entitlements.alerts} data-testid="run-check">
-              <Radar className={checking ? "animate-spin" : ""} /> {demo ? t("alerts.runDemoCheck") : t("alerts.runCheck")}
+            <Button variant="secondary" onClick={runNow} loading={checking} disabled={!session?.entitlements.alerts} disabledReason={t("billing.gateTitle", { feature: t("alerts.title") })} data-testid="run-check">
+              <Radar /> {demo ? t("alerts.runDemoCheck") : t("alerts.runCheck")}
             </Button>
           </div>
           {status?.failures.length ? (
@@ -351,7 +351,7 @@ function AlertsInner() {
                   <Badge>{t(`watchlist.types.${w.type}`)}</Badge>
                   <Link
                     href={w.type === "product" ? `/app/products/${w.refId}` : w.type === "store" ? `/app/stores/${w.refId}` : `/app/products?category=${w.refId}`}
-                    className="min-w-0 flex-1 truncate text-sm hover:text-accent"
+                    className="focus-ring min-w-[10rem] flex-1 truncate rounded text-sm transition-colors hover:text-accent coarse:-my-2.5 coarse:py-2.5"
                   >
                     {w.label}
                   </Link>
@@ -388,7 +388,7 @@ function AlertsInner() {
               title={t("alerts.notificationHistory")}
               action={
                 workspace.notifications.length ? (
-                  <Button size="sm" variant="ghost" onClick={() => dispatch({ op: "notifications.clear" })}>
+                  <Button size="sm" variant="ghost" onClick={() => dispatch({ op: "notifications.clear" }, t("alerts.cleared"))}>
                     {t("alerts.clear")}
                   </Button>
                 ) : null
@@ -402,9 +402,14 @@ function AlertsInner() {
               <ul className="divide-y divide-border/60">
                 {workspace.notifications.map((n) => (
                   <li key={n.id} className="px-4 py-3">
-                    <Link href={n.link ?? "#"} className="text-sm hover:text-accent">
-                      {t(n.key, notificationParams(n.params, f, (c) => t(`categories.${c}`)))}
-                    </Link>
+                    {/* Notifications without a target are plain text, never a dead "#" link. */}
+                    {n.link ? (
+                      <Link href={n.link} className="focus-ring rounded text-sm transition-colors hover:text-accent">
+                        {t(n.key, notificationParams(n.params, f, (c) => t(`categories.${c}`)))}
+                      </Link>
+                    ) : (
+                      <span className="text-sm">{t(n.key, notificationParams(n.params, f, (c) => t(`categories.${c}`)))}</span>
+                    )}
                     <div className="mt-0.5 flex items-center gap-2 text-[11px] text-subtle">
                       {f.dateTime(n.createdAt)} <Badge tone={n.origin === "demo" ? "demo" : "neutral"}>{t(`alerts.origins.${n.origin}`)}</Badge>
                     </div>

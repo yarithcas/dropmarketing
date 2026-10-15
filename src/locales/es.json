@@ -22,7 +22,12 @@
     "tableView": "Vista de tabla",
     "viewAll": "Ver todo",
     "info": "Información",
-    "unknown": "Desconocido"
+    "unknown": "Desconocido",
+    "copyFailed": "No se pudo copiar: tu navegador bloqueó el acceso al portapapeles",
+    "analysisReady": "Análisis listo",
+    "firstPage": "Estás en la primera página",
+    "lastPage": "Estás en la última página",
+    "exported": "Exportación {{file}} descargada"
   },
   "nav": {
     "main": "Navegación principal",
@@ -115,7 +120,8 @@
     "title": "Notificaciones",
     "empty": "Aún no hay notificaciones.",
     "markAllRead": "Marcar todo como leído",
-    "manage": "Gestionar alertas y listas de seguimiento"
+    "manage": "Gestionar alertas y listas de seguimiento",
+    "markedRead": "Todas las notificaciones marcadas como leídas"
   },
   "auth": {
     "account": "Cuenta",
@@ -781,7 +787,9 @@
     "trackedProduct": "Producto seguido",
     "associatedAds": "Anuncios asociados ({{n}})",
     "lastObserved": "Última observación",
-    "socialDemo": "Enlace de demostración, no es un perfil real"
+    "socialDemo": "Enlace de demostración, no es un perfil real",
+    "compareHint": "Marca al menos 2 tiendas para compararlas",
+    "compareMax": "Puedes comparar hasta 5 tiendas a la vez"
   },
   "competitors": {
     "title": "Análisis de la competencia",
@@ -887,7 +895,9 @@
     "matchAuto": "Automática (estimación)",
     "matchNone": "Sin coincidencia",
     "matchSaved": "Coincidencia guardada",
-    "matchNote": "Las coincidencias de mercado son estimaciones basadas en los nombres de producto, salvo que las definas manualmente."
+    "matchNote": "Las coincidencias de mercado son estimaciones basadas en los nombres de producto, salvo que las definas manualmente.",
+    "disconnected": "Tienda desconectada",
+    "enterDomain": "Introduce primero el dominio de tu tienda (p. ej. my-store.myshopify.com)"
   },
   "collections": {
     "title": "Colecciones de productos",
@@ -940,7 +950,8 @@
     "stopSharing": "Dejar de compartir",
     "sharedOn": "Colección compartida con el equipo",
     "sharedOff": "La colección vuelve a ser privada",
-    "readOnly": "Solo lectura: solo su creador puede editarla"
+    "readOnly": "Solo lectura: solo su creador puede editarla",
+    "nameRequired": "Primero ponle un nombre a la colección"
   },
   "watchlist": {
     "watch": "Seguir",
@@ -1113,7 +1124,10 @@
       "autoPicked": "Ningún producto seleccionado: esta respuesta usa {{names}}, elegido(s) por la mayor puntuación de oportunidad (con preferencia por una tendencia reciente positiva). Añade productos en el panel Contexto de producto para elegir tú.",
       "autoPickedCategory": "Ningún producto seleccionado: esta respuesta usa {{names}}, elegido(s) por la mayor puntuación de oportunidad en {{categories}} (con preferencia por una tendencia reciente positiva). Añade productos en el panel Contexto de producto para elegir tú.",
       "candidatesAi": "Ningún producto seleccionado: la IA respondió con los mejores candidatos de TrendHunter para esta pregunta (mayores puntuaciones de oportunidad, tendencias recientes). Los registros usados se indican abajo."
-    }
+    },
+    "typeQuestion": "Escribe primero una pregunta",
+    "alreadyAdded": "Ya añadido",
+    "contextFull": "Hasta {{n}} elementos: quita uno para añadir otro"
   },
   "calculator": {
     "title": "Calculadora de rentabilidad",
@@ -1178,7 +1192,8 @@
     "price": "Precio",
     "note1": "El margen de contribución no es el beneficio neto. El beneficio neto también descuenta impuestos, salarios, financiación y costes puntuales.",
     "note2": "Los márgenes estimados de las fichas de investigación no son presupuestos verificados de proveedores ni resultados operativos reales.",
-    "note3": "Cambiar el idioma de la interfaz solo cambia el formato de los números, nunca los cálculos."
+    "note3": "Cambiar el idioma de la interfaz solo cambia el formato de los números, nunca los cálculos.",
+    "resetDone": "Supuestos restablecidos a los valores predeterminados"
   },
   "alerts": {
     "title": "Alertas y listas de seguimiento",
@@ -1298,7 +1313,9 @@
       "demo_daily": "Datos de demostración, regenerados cada día (instantánea del {{date}}). Próxima regeneración: {{next}}. No son observaciones reales del mercado.",
       "cron_daily": "Tarea en segundo plano diaria a las 05:15 UTC: ingesta de conectores, recálculo de puntuaciones, evaluación de alertas y purga. Datos del {{date}} · próxima ejecución: {{next}}.",
       "none": "Sin actualización automática: la tarea diaria en segundo plano (05:15 UTC) no está configurada (CRON_SECRET). Datos del {{date}}."
-    }
+    },
+    "ruleIncomplete": "Indica un nombre y el objetivo necesario para crear la regla",
+    "cleared": "Historial de notificaciones borrado"
   },
   "reports": {
     "title": "Informes de mercado",
@@ -1467,7 +1484,8 @@
       "a2": "No. Las analíticas privadas, ventas, tasas de conversión e inversión publicitaria no son públicas. Nunca las presentamos como hechos conocidos.",
       "q3": "¿Puedo cancelar en cualquier momento?",
       "a3": "Sí. Las suscripciones se gestionan desde el portal de clientes de Stripe y se pueden cancelar en cualquier momento."
-    }
+    },
+    "currentReason": "Este es tu plan actual"
   },
   "settings": {
     "title": "Ajustes y suscripción",
@@ -1623,7 +1641,8 @@
     "newLinkDone": "Nuevo enlace para {{email}}: el enlace anterior ya no funciona.",
     "revoke": "Revocar",
     "revoked": "Invitación revocada",
-    "confirmRevoke": "¿Revocar la invitación enviada a {{email}}?"
+    "confirmRevoke": "¿Revocar la invitación enviada a {{email}}?",
+    "inviteEmailFirst": "Introduce un correo electrónico para enviar una invitación"
   },
   "privacy": {
     "exportTitle": "Exportar mis datos",
@@ -1638,7 +1657,9 @@
     "infoTitle": "Cómo tratamos los datos",
     "info1": "Solo recopilamos lo que cada función necesita: datos de la cuenta, tu investigación guardada y contadores de uso para los límites del plan.",
     "info2": "Los datos de investigación proceden de API oficiales, proveedores con licencia o páginas de acceso público, con la fuente y la fecha guardadas para cada métrica importante.",
-    "info3": "Los tokens de integración se cifran en el servidor. Nunca accedemos a datos privados de otros comerciantes ni eludimos restricciones técnicas."
+    "info3": "Los tokens de integración se cifran en el servidor. Nunca accedemos a datos privados de otros comerciantes ni eludimos restricciones técnicas.",
+    "exported": "Se ha descargado la exportación de tus datos",
+    "typeDeleteReason": "Escribe DELETE en el campo de arriba para confirmar"
   },
   "landing": {
     "nav": {
@@ -1896,7 +1917,8 @@
       "plan_required": "Los espacios de trabajo múltiples están disponibles en el plan Business.",
       "role_required": "Solo los propietarios y administradores del espacio que tiene la suscripción pueden añadir espacios.",
       "limit_workspaces": "Has alcanzado el límite de espacios de trabajo de tu plan."
-    }
+    },
+    "nameRequired": "Introduce primero un nombre de espacio de trabajo"
   },
   "invite": {
     "title": "Invitación",

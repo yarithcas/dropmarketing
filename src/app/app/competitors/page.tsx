@@ -52,8 +52,10 @@ function StorePicker({ selected, onAdd }: { selected: string[]; onAdd: (id: stri
               <span className="text-xs text-subtle">{s.domain}</span>
             </span>
             <button
-              className="focus-ring inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted hover:text-fg disabled:opacity-40"
+              type="button"
+              className="focus-ring tap inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted transition-[color,background-color,border-color,transform] duration-150 hover:border-muted/40 hover:bg-surface-2 hover:text-fg active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:active:scale-100"
               disabled={selected.includes(s.id) || selected.length >= 5}
+              title={selected.includes(s.id) ? t("analyst.alreadyAdded") : selected.length >= 5 ? t("stores.compareMax") : undefined}
               onClick={() => onAdd(s.id)}
               data-testid="add-store"
             >
@@ -153,7 +155,7 @@ function CompetitorsInner() {
                 {ids.map((id) => (
                   <span key={id} className="inline-flex items-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-xs">
                     {data?.stores.find((s) => s.store.id === id)?.store.name ?? id}
-                    <button onClick={() => setIds(ids.filter((x) => x !== id))} aria-label={t("common.remove")} className="text-subtle hover:text-fg">
+                    <button type="button" onClick={() => setIds(ids.filter((x) => x !== id))} aria-label={t("common.remove")} title={t("common.remove")} className="focus-ring tap rounded-full text-subtle transition-colors hover:text-fg active:scale-90">
                       <X className="size-3" />
                     </button>
                   </span>

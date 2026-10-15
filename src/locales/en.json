@@ -22,7 +22,12 @@
     "tableView": "Table view",
     "viewAll": "View all",
     "info": "Information",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "copyFailed": "Could not copy: your browser blocked clipboard access",
+    "analysisReady": "Analysis ready",
+    "firstPage": "You are on the first page",
+    "lastPage": "You are on the last page",
+    "exported": "{{file}} export downloaded"
   },
   "nav": {
     "main": "Main navigation",
@@ -115,7 +120,8 @@
     "title": "Notifications",
     "empty": "No notifications yet.",
     "markAllRead": "Mark all as read",
-    "manage": "Manage alerts and watchlists"
+    "manage": "Manage alerts and watchlists",
+    "markedRead": "All notifications marked as read"
   },
   "auth": {
     "account": "Account",
@@ -781,7 +787,9 @@
     "trackedProduct": "Tracked product",
     "associatedAds": "Associated advertisements ({{n}})",
     "lastObserved": "Last observed",
-    "socialDemo": "Demo link, not a real profile"
+    "socialDemo": "Demo link, not a real profile",
+    "compareHint": "Tick at least 2 stores to compare them",
+    "compareMax": "You can compare up to 5 stores at once"
   },
   "competitors": {
     "title": "Competitor Research",
@@ -887,7 +895,9 @@
     "matchAuto": "Automatic (estimate)",
     "matchNone": "No match",
     "matchSaved": "Market match saved",
-    "matchNote": "Market matches are estimates based on product names unless you set them manually."
+    "matchNote": "Market matches are estimates based on product names unless you set them manually.",
+    "disconnected": "Store disconnected",
+    "enterDomain": "Enter your shop domain first (e.g. my-store.myshopify.com)"
   },
   "collections": {
     "title": "Product Collections",
@@ -940,7 +950,8 @@
     "stopSharing": "Stop sharing",
     "sharedOn": "Collection shared with the team",
     "sharedOff": "Collection is private again",
-    "readOnly": "Read-only: only its creator can edit it"
+    "readOnly": "Read-only: only its creator can edit it",
+    "nameRequired": "Give the collection a name first"
   },
   "watchlist": {
     "watch": "Watch",
@@ -1113,7 +1124,10 @@
       "autoPicked": "No product selected: this answer uses {{names}}, picked as the highest opportunity score (with a positive recent trend preferred). Add products in the Product context panel to choose yourself.",
       "autoPickedCategory": "No product selected: this answer uses {{names}}, picked as the highest opportunity score in {{categories}} (with a positive recent trend preferred). Add products in the Product context panel to choose yourself.",
       "candidatesAi": "No product selected: the AI answered from TrendHunter's top candidates for this question (highest opportunity scores, recent trends). The records it used are listed below."
-    }
+    },
+    "typeQuestion": "Type a question first",
+    "alreadyAdded": "Already added",
+    "contextFull": "Up to {{n}} items: remove one to add another"
   },
   "calculator": {
     "title": "Profit Calculator",
@@ -1178,7 +1192,8 @@
     "price": "Price",
     "note1": "Contribution margin is not net profit. Net profit also deducts taxes, salaries, financing and one-off costs.",
     "note2": "Estimated product margins in research records are not verified supplier quotations or actual operating results.",
-    "note3": "Changing the interface language only changes number formatting, never the calculations."
+    "note3": "Changing the interface language only changes number formatting, never the calculations.",
+    "resetDone": "Assumptions reset to the defaults"
   },
   "alerts": {
     "title": "Alerts & Watchlists",
@@ -1298,7 +1313,9 @@
       "demo_daily": "Demo data, regenerated every day (snapshot of {{date}}). Next regeneration: {{next}}. These are not real market observations.",
       "cron_daily": "Daily background job at 05:15 UTC: connector ingestion, rescoring, alert evaluation and purge. Data as of {{date}} · next run: {{next}}.",
       "none": "No automatic refresh: the daily background job (05:15 UTC) is not configured (CRON_SECRET). Data as of {{date}}."
-    }
+    },
+    "ruleIncomplete": "Fill in a name and the required target to create the rule",
+    "cleared": "Notification history cleared"
   },
   "reports": {
     "title": "Market Reports",
@@ -1467,7 +1484,8 @@
       "a2": "No. Private analytics, sales, conversion rates and ad spend are not public. We never present them as known facts.",
       "q3": "Can I cancel anytime?",
       "a3": "Yes. Subscriptions are managed through Stripe's customer portal and can be cancelled at any time."
-    }
+    },
+    "currentReason": "This is your current plan"
   },
   "settings": {
     "title": "Settings & Subscription",
@@ -1623,7 +1641,8 @@
     "newLinkDone": "New link for {{email}}: the previous link no longer works.",
     "revoke": "Revoke",
     "revoked": "Invitation revoked",
-    "confirmRevoke": "Revoke the invitation sent to {{email}}?"
+    "confirmRevoke": "Revoke the invitation sent to {{email}}?",
+    "inviteEmailFirst": "Enter an email address to send an invitation"
   },
   "privacy": {
     "exportTitle": "Export my data",
@@ -1638,7 +1657,9 @@
     "infoTitle": "How we handle data",
     "info1": "We collect only what each feature needs: account details, your saved research and usage counters for plan limits.",
     "info2": "Research data comes from official APIs, licensed providers or publicly accessible pages, with source and date stored for every important metric.",
-    "info3": "Integration tokens are encrypted server-side. We never access other merchants' private data or bypass technical restrictions."
+    "info3": "Integration tokens are encrypted server-side. We never access other merchants' private data or bypass technical restrictions.",
+    "exported": "Your data export has been downloaded",
+    "typeDeleteReason": "Type DELETE in the field above to confirm"
   },
   "landing": {
     "nav": {
@@ -1896,7 +1917,8 @@
       "plan_required": "Multiple workspaces are available on the Business plan.",
       "role_required": "Only owners and admins of the workspace that holds the subscription can add workspaces.",
       "limit_workspaces": "You have reached your plan's workspace limit."
-    }
+    },
+    "nameRequired": "Enter a workspace name first"
   },
   "invite": {
     "title": "Invitation",

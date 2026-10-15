@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { json, parseQuery } from "@/lib/server/api";
+import { apiError, json, parseQuery } from "@/lib/server/api";
 import { guard } from "@/lib/server/guard";
 import { productQuerySchema } from "@/lib/queries";
 import { isLiveDb, listProducts, meta } from "@/lib/server/repository";
@@ -18,6 +18,12 @@ export async function GET(req: NextRequest) {
   // Free plan: advanced filters are not applied server-side (and reported back).
   const { query, ignored } = PLANS[g.session.plan].entitlements.advancedFilters ? { query: q.data, ignored: [] as string[] } : stripFilters(q.data, ADVANCED_PRODUCT_FILTERS);
   // Live mode: filtering, sorting and pagination happen in Postgres.
-  const page = isLiveDb() ? await listProductsDb(supabaseAdmin()!, query) : listProducts(query);
+  let page;
+  try {
+    page = isLiveDb() ? await listProductsDb(supabaseAdmin()!, query) : listProducts(query);
+  } catch (e) {
+    console.error("listProducts failed", (e as { code?: string })?.code ?? e);
+    return apiError(500, "database_error");
+  }
   return json({ ...page, meta: meta(), ignoredFilters: ignored });
 }

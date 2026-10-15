@@ -8,8 +8,10 @@ export function makeFormatters(intlLocale: string) {
     return cache.get(key)!;
   };
   return {
-    currency(n: number | null | undefined, currency = "EUR", dp = 2) {
+    /** `currency` null = not known: the amount is shown without a currency rather than with a guessed one. */
+    currency(n: number | null | undefined, currency: string | null = "EUR", dp = 2) {
       if (n == null || !Number.isFinite(n)) return "—";
+      if (currency == null) return nf(`n-${dp}`, { minimumFractionDigits: dp, maximumFractionDigits: dp }).format(n);
       return nf(`c-${currency}-${dp}`, { style: "currency", currency, minimumFractionDigits: dp, maximumFractionDigits: dp }).format(n);
     },
     number(n: number | null | undefined, dp = 0) {

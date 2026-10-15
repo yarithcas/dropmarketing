@@ -4,7 +4,7 @@ import type { DemoDataset } from "../demo/generate";
 import type { AdQuery, ProductQuery } from "../queries";
 import { normalizeDomain } from "../queries";
 import { addDays } from "../dates";
-import type { Advertisement, OpportunityScore, ProductMetrics, Product, ProductObservation, ProductWithMetrics, Store, StoreProduct, StoreSnapshot } from "../types";
+import type { Advertisement, OpportunityScore, ProductMetrics, Product, ProductObservation, ProductWithMetrics, SourceRef, Store, StoreProduct, StoreSnapshot } from "../types";
 import type { Page } from "./repository";
 
 /**
@@ -57,21 +57,30 @@ function rowToMetrics(m: Row): { metrics: ProductMetrics; score: OpportunityScor
   };
 }
 
+const https = (v: unknown) => (typeof v === "string" && v.startsWith("https://") ? v : null);
+
 export function rowToAd(r: Row): Advertisement {
+  const productId = (r.product_id as string) ?? null;
+  const category = (r.category as Advertisement["category"]) ?? null;
   return {
     id: r.id as string,
-    productId: (r.product_id as string) ?? null,
+    productId,
+    // A basis left over after the product was deleted (FK set null) is meaningless.
+    productMatchBasis: productId ? ((r.product_match_basis as Advertisement["productMatchBasis"]) ?? null) : null,
     advertiser: r.advertiser as string,
     platform: r.platform as Advertisement["platform"],
     country: r.country as Advertisement["country"],
-    language: r.language as Advertisement["language"],
-    format: r.format as Advertisement["format"],
+    language: (r.language as string) ?? null,
+    format: ((r.format as Advertisement["format"]) ?? "unknown"),
     headline: (r.headline as string) ?? "",
     copy: (r.copy as string) ?? "",
-    cta: r.cta as Advertisement["cta"],
+    cta: ((r.cta as Advertisement["cta"]) ?? "unknown"),
     landingDomain: (r.landing_domain as string) ?? null,
     landingUrl: (r.landing_url as string) ?? null,
-    category: r.category as Advertisement["category"],
+    category,
+    categoryBasis: category ? ((r.category_basis as Advertisement["categoryBasis"]) ?? null) : null,
+    snapshotUrl: https(r.snapshot_url),
+    placements: (r.placements as string[]) ?? [],
     firstSeen: r.first_seen as string,
     lastSeen: r.last_seen as string,
     source: { connector: r.connector as string, kind: r.is_demo ? "demo" : (r.source_kind as Advertisement["source"]["kind"]), observedAt: r.observed_at as string },
@@ -86,22 +95,58 @@ function rowToStore(r: Row): Store {
     domain: r.domain as string,
     description: (r.description as string) ?? "",
     categories: (r.categories as Store["categories"]) ?? [],
-    currency: r.currency as string,
+    currency: (r.currency as string) ?? null,
     productCount: num(r.product_count),
     socials: (r.socials as Store["socials"]) ?? [],
     technology: (r.technology as Store["technology"]) ?? { platform: "unknown", verified: false },
-    country: r.country as Store["country"],
+    country: (r.country as Store["country"]) ?? null,
     firstSeen: r.first_seen as string,
     source: { connector: r.source_connector as string, kind: r.is_demo ? "demo" : (r.source_kind as Store["source"]["kind"]), observedAt: r.observed_at as string },
     hue: Number(r.hue ?? 0),
   };
 }
 
-const escapeLike = (s: string) => s.replace(/[%_\\,()]/g, (c) => `\\${c}`);
+export function rowToStoreProduct(r: Row): StoreProduct {
+  return {
+    storeId: r.store_id as string,
+    productId: (r.product_id as string) ?? null,
+    title: r.title as string,
+    price: Number(r.price),
+    currency: (r.currency as string) ?? null,
+    firstSeen: r.first_seen as string,
+    ...(r.source_connector
+      ? { source: { connector: r.source_connector as string, kind: (r.source_kind as SourceRef["kind"]) ?? "measured", observedAt: (r.observed_at as string) ?? `${r.last_seen as string}T00:00:00Z` } }
+      : {}),
+  };
+}
+
+/*
+ * Search filters. User input never reaches PostgREST filter syntax unquoted:
+ * - likeLiteral escapes the LIKE metacharacters (% _ and the escape character \),
+ * - pgrstQuote double-quotes a value inside a logic tree such as or=(...), where
+ *   PostgREST honours reserved characters (, . : ( ) { }) only outside quotes and
+ *   unescapes \x to x inside them (so \ and " are escaped).
+ * Without quoting, q = "x,id.neq.zz" would add an OR condition matching every
+ * row, and ")" or "}" would make PostgREST reject the request.
+ */
+export const likeLiteral = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
+export const pgrstQuote = (v: string) => `"${v.replace(/[\\"]/g, (c) => `\\${c}`)}"`;
+const clean = (q: string) => q.replace(/[\u0000-\u001f\u007f]/g, " ");
+
+/** or() filter: `q` as a literal substring (ILIKE) of any of the columns. */
+export function ilikeAny(columns: string[], q: string): string {
+  const pattern = pgrstQuote(`%${likeLiteral(clean(q))}%`);
+  return columns.map((c) => `${c}.ilike.${pattern}`).join(",");
+}
+
+/** or() condition: array column contains `value` as one element ({"value"} array literal, quoted for PostgREST). */
+export function arrayContains(column: string, value: string): string {
+  return `${column}.cs.${pgrstQuote(`{${pgrstQuote(clean(value))}}`)}`;
+}
 
 export async function listProductsDb(db: SupabaseClient, q: ProductQuery): Promise<Page<ProductWithMetrics>> {
   let query = db.from("products").select("*, product_metrics!inner(*)", { count: "exact" });
-  if (q.q) query = query.or(`name.ilike.%${escapeLike(q.q)}%,description.ilike.%${escapeLike(q.q)}%,tags.cs.{${escapeLike(q.q.toLowerCase())}}`);
+  if (q.q) query = query.or(`${ilikeAny(["name", "description"], q.q)},${arrayContains("tags", q.q.toLowerCase())}`);
   if (q.category.length) query = query.in("category", q.category);
   if (q.country.length) query = query.overlaps("countries", q.country);
   if (q.platform.length) query = query.overlaps("channels", q.platform);
@@ -139,9 +184,10 @@ export async function listProductsDb(db: SupabaseClient, q: ProductQuery): Promi
 
 export async function listAdsDb(db: SupabaseClient, q: AdQuery, asOf: string): Promise<Page<Advertisement & { productName: string | null }>> {
   let query = db.from("advertisements").select("*, products(name)", { count: "exact" });
-  if (q.q) query = query.or(`copy.ilike.%${escapeLike(q.q)}%,headline.ilike.%${escapeLike(q.q)}%,advertiser.ilike.%${escapeLike(q.q)}%`);
-  if (q.advertiser) query = query.ilike("advertiser", `%${escapeLike(q.advertiser)}%`);
-  if (q.domain) query = query.ilike("landing_domain", `%${escapeLike(normalizeDomain(q.domain))}%`);
+  if (q.q) query = query.or(ilikeAny(["copy", "headline", "advertiser"], q.q));
+  // Single-column filters are not parsed as a logic tree: only the LIKE metacharacters need escaping.
+  if (q.advertiser) query = query.ilike("advertiser", `%${likeLiteral(q.advertiser)}%`);
+  if (q.domain) query = query.ilike("landing_domain", `%${likeLiteral(normalizeDomain(q.domain))}%`);
   if (q.productId) query = query.eq("product_id", q.productId);
   if (q.platform.length) query = query.in("platform", q.platform);
   if (q.country.length) query = query.in("country", q.country);
@@ -207,8 +253,8 @@ export async function loadLiveDataset(db: SupabaseClient): Promise<DemoDataset> 
     (storeSnapshots[s.store_id as string] ??= []).push({
       date: s.date as string,
       productCount: Number(s.product_count),
-      minPrice: Number(s.min_price ?? 0),
-      maxPrice: Number(s.max_price ?? 0),
+      minPrice: num(s.min_price),
+      maxPrice: num(s.max_price),
       source: { connector: s.connector as string, kind: "measured", observedAt: s.observed_at as string },
     });
   const productRows = products.map(rowToProduct);
@@ -220,9 +266,7 @@ export async function loadLiveDataset(db: SupabaseClient): Promise<DemoDataset> 
     products: productRows,
     ads: ads.map(rowToAd),
     stores: stores.map(rowToStore),
-    storeProducts: sps.map(
-      (r): StoreProduct => ({ storeId: r.store_id as string, productId: (r.product_id as string) ?? null, title: r.title as string, price: Number(r.price), currency: r.currency as string, firstSeen: r.first_seen as string }),
-    ),
+    storeProducts: sps.map(rowToStoreProduct),
     storeSnapshots,
     observations,
   };

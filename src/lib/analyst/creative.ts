@@ -135,7 +135,7 @@ function sentences(text: string): string[] {
  */
 export function extractCopyCues(ad: Pick<Advertisement, "headline" | "copy" | "language">): CopyCue[] {
   const text = [ad.headline, ad.copy].filter(Boolean).join("\n");
-  const langs = [ad.language, ...LANGUAGES.filter((l) => l !== ad.language)].filter((l): l is AdLanguage => l in CUES);
+  const langs = [ad.language, ...LANGUAGES.filter((l) => l !== ad.language)].filter((l): l is AdLanguage => l != null && l in CUES);
   const out: CopyCue[] = [];
   const seen = new Set<string>();
   const push = (kind: CopyCue["kind"], quote: string) => {
@@ -220,8 +220,9 @@ export function classifyHook(hook: string): HookType {
 
 export function rulesCreativeAnalysis(ad: Advertisement, product: ProductWithMetrics | null): CreativeAnalysis {
   const copy = (ad.copy ?? "").trim();
-  const tag = product?.tags[0] ?? ad.category;
-  const name = product?.name ?? ad.headline;
+  // Category may be unknown for live ads; fall back to what the ad itself names.
+  const tag = product?.tags[0] ?? ad.category ?? (ad.headline || ad.advertiser);
+  const name = product?.name ?? (ad.headline || ad.advertiser);
   const format = recordedFormat(ad);
   const variations: Text[] = [
       { key: "creative.variations.ugcProblem", params: { tag } },

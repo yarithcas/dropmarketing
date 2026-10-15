@@ -21,7 +21,8 @@
     "saved": "Guardado",
     "tableView": "Vista de tabla",
     "viewAll": "Ver todo",
-    "info": "Información"
+    "info": "Información",
+    "unknown": "Desconocido"
   },
   "nav": {
     "main": "Navegación principal",
@@ -292,14 +293,16 @@
   "formats": {
     "video": "Vídeo",
     "image": "Imagen",
-    "carousel": "Carrusel"
+    "carousel": "Carrusel",
+    "unknown": "Formato desconocido"
   },
   "cta": {
     "shop_now": "Comprar ahora",
     "learn_more": "Más información",
     "sign_up": "Registrarse",
     "get_offer": "Obtener oferta",
-    "order_now": "Pedir ahora"
+    "order_now": "Pedir ahora",
+    "unknown": "CTA desconocida"
   },
   "productTypes": {
     "physical": "Físico",
@@ -486,7 +489,14 @@
     "landingDemo": "{{domain}} (dominio demo, no es un sitio real)",
     "analyze": "Analizar",
     "previewLabel": "Vista previa de la creatividad de {{advertiser}}",
-    "generatedPreview": "Vista previa generada"
+    "generatedPreview": "Vista previa generada",
+    "languageUnknown": "Idioma desconocido",
+    "noCopy": "La fuente no indica ningún texto del anuncio.",
+    "viewInLibrary": "Ver en la biblioteca de anuncios de {{platform}}",
+    "matchBasis": {
+      "search_term": "Término de búsqueda: la plataforma devolvió el anuncio al buscar el nombre de este producto. Estimación de TrendHunter, no un vínculo indicado por la plataforma.",
+      "token_overlap": "Asociado por TrendHunter por palabras comunes entre el texto del anuncio y el nombre/etiquetas del producto. Estimación, no un vínculo indicado por la plataforma."
+    }
   },
   "creative": {
     "title": "Analizador de creatividades",
@@ -546,7 +556,8 @@
       "learn_more": "«Más información» — CTA suave, adecuado para audiencias frías.",
       "sign_up": "«Registrarse» — captación de leads.",
       "get_offer": "«Obtener oferta» — basado en promoción.",
-      "order_now": "«Pedir ahora» — urgente, intención de compra."
+      "order_now": "«Pedir ahora» — urgente, intención de compra.",
+      "unknown": "La fuente no indica la llamada a la acción."
     },
     "triggers": "Disparadores emocionales",
     "triggerNames": {
@@ -611,7 +622,8 @@
       "hook": "No hay texto que analizar: el registro no contiene texto del anuncio.",
       "field": "No hay texto que analizar."
     },
-    "notDeterminable": "No determinable a partir del texto."
+    "notDeterminable": "No determinable a partir del texto.",
+    "noCopyToAnalyze": "Esta fuente no indica titular ni texto para este anuncio, así que no hay nada que analizar. Ábrelo en la biblioteca de anuncios para revisar la creatividad."
   },
   "trends": {
     "title": "Productos en tendencia",
@@ -731,7 +743,7 @@
     "adsObserved": "Anuncios observados",
     "firstSeen": "Primera observación",
     "techUnknown": "Desconocida",
-    "techVerifiedTip": "Tecnología del escaparate verificada a partir de señales públicas de la página.",
+    "techVerifiedTip": "Tecnología verificada: el endpoint público de la plataforma (Shopify /products.json o WooCommerce Store API) devolvió una respuesta válida.",
     "techUnverifiedTip": "Tecnología probable, sin verificar.",
     "unverified": "sin verificar",
     "platforms": {
@@ -767,7 +779,9 @@
     "displayedPrice": "Precio mostrado",
     "listedSince": "Observado desde",
     "trackedProduct": "Producto seguido",
-    "associatedAds": "Anuncios asociados ({{n}})"
+    "associatedAds": "Anuncios asociados ({{n}})",
+    "lastObserved": "Última observación",
+    "socialDemo": "Enlace de demostración, no es un perfil real"
   },
   "competitors": {
     "title": "Análisis de la competencia",
@@ -1255,7 +1269,8 @@
       "success": "Correcta",
       "failed": "Fallida",
       "skipped": "Omitida",
-      "running": "En curso"
+      "running": "En curso",
+      "partial": "Parcial"
     },
     "runReasons": {
       "no_live_data": "no hay datos de investigación reales (la base de datos está vacía o solo contiene datos demo)",
@@ -1534,7 +1549,8 @@
     "fields": "Campos",
     "setup": "Variables necesarias",
     "docs": "Docs",
-    "shopifyHint": "Conecta tu propia tienda Shopify desde"
+    "shopifyHint": "Conecta tu propia tienda Shopify desde",
+    "notAvailable": "Aún no disponible"
   },
   "connectors": {
     "names": {
@@ -1552,9 +1568,9 @@
     "permitted": {
       "meta": "API oficial de Ad Library. Datos publicitarios tal como los divulga Meta; sujetos a las condiciones de la plataforma de Meta y a la verificación de identidad.",
       "tiktok": "API TikTok Commercial Content para investigadores aprobados; metadatos de anuncios tal como los divulga TikTok.",
-      "pinterest": "Reservado para un flujo autorizado de transparencia publicitaria de Pinterest; solo se activa con condiciones confirmadas.",
-      "trends": "Índices de interés de búsqueda de un proveedor autorizado (p. ej., una API oficial de tendencias).",
-      "storefronts": "Solo productos de acceso público, respetando robots.txt, las condiciones de los sitios y un límite de 1 solicitud por segundo.",
+      "pinterest": "Aún no disponible: no hay integración de transparencia publicitaria de Pinterest implementada; configurar un token no tiene efecto.",
+      "trends": "Aún no disponible: no hay integración con un proveedor de tendencias de búsqueda implementada; configurar una clave API no tiene efecto.",
+      "storefronts": "Solo fichas de acceso público (Shopify products.json/meta.json, WooCommerce Store API), respetando robots.txt, las condiciones de los sitios y un límite de 1 solicitud por segundo.",
       "licensed": "Conjunto de datos de terceros con licencia contractual; campos acordados con el proveedor.",
       "shopify": "Solo tu propia tienda, mediante OAuth con permisos de solo lectura que tú apruebas.",
       "demo": "Datos sintéticos de ejemplo para la demostración. Nunca se presentan como observaciones reales."
@@ -1895,5 +1911,14 @@
     "open": "Abrir el espacio",
     "demo": "Las invitaciones requieren una base de datos configurada (Supabase) y cuentas reales, por lo que no están disponibles en modo demo.",
     "backToApp": "Volver a la aplicación"
+  },
+  "placements": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "messenger": "Messenger",
+    "audience_network": "Audience Network",
+    "whatsapp": "WhatsApp",
+    "threads": "Threads",
+    "oculus": "Oculus"
   }
 }

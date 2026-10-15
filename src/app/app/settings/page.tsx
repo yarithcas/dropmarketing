@@ -233,6 +233,8 @@ interface IntegrationsResponse {
   connectors: {
     id: string;
     category: string;
+    /** False: no provider mapping yet ("not available yet"), never shown as configured. */
+    available?: boolean;
     auth: string;
     envVars: string[];
     permittedKey: string;
@@ -276,7 +278,7 @@ function IntegrationsTab() {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-semibold">{t(`connectors.names.${c.id}`)}</span>
                 <Badge>{t(`integrations.categories.${c.category}`)}</Badge>
-                <Badge tone={c.configured ? "good" : "neutral"}>{c.configured ? t("integrations.configured") : t("integrations.notConfigured")}</Badge>
+                <Badge tone={c.configured ? "good" : "neutral"}>{c.available === false ? t("integrations.notAvailable") : c.configured ? t("integrations.configured") : t("integrations.notConfigured")}</Badge>
                 {c.lastRun && (
                   <Badge tone={c.lastRun.status === "success" ? "good" : c.lastRun.status === "failed" ? "critical" : "neutral"}>
                     {t(`alerts.runStatus.${c.lastRun.status}`, { defaultValue: c.lastRun.status })} · {f.dateTime(c.lastRun.at)}
@@ -310,7 +312,7 @@ function IntegrationsTab() {
                   <dt className="inline text-subtle">{t("integrations.fields")}: </dt>
                   <dd className="inline font-mono text-[11px]">{c.fields.join(", ")}</dd>
                 </div>
-                {!c.configured && c.envVars.length > 0 && (
+                {!c.configured && c.available !== false && c.envVars.length > 0 && (
                   <div className="sm:col-span-2 xl:col-span-3">
                     <dt className="inline text-subtle">{t("integrations.setup")}: </dt>
                     <dd className="inline font-mono text-[11px]">{c.envVars.join(" · ")}</dd>

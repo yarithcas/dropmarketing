@@ -17,7 +17,7 @@ import { useSession } from "@/lib/client/session";
 import { useApi } from "@/lib/client/use-api";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { AD_SORTS } from "@/lib/queries";
-import { CATEGORIES, COUNTRIES, LANGUAGES, PLATFORMS, type Advertisement } from "@/lib/types";
+import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, LANGUAGES, PLATFORMS, type Advertisement } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
 interface AdsResponse {
@@ -48,7 +48,7 @@ function AdsInner() {
         <ChipSet values={PLATFORMS} active={url.getList("platform")} onToggle={(v) => url.toggle("platform", v)} render={(v) => t(`platforms.${v}`)} />
       </FilterGroup>
       <FilterGroup label={t("filters.format")} locked={locked}>
-        <ChipSet values={["video", "image", "carousel"]} active={url.getList("format")} onToggle={(v) => url.toggle("format", v)} render={(v) => t(`formats.${v}`)} />
+        <ChipSet values={CREATIVE_FORMATS} active={url.getList("format")} onToggle={(v) => url.toggle("format", v)} render={(v) => t(`formats.${v}`)} />
       </FilterGroup>
       <FilterGroup label={t("filters.country")} locked={locked}>
         <ChipSet values={COUNTRIES} active={url.getList("country")} onToggle={(v) => url.toggle("country", v)} render={(v) => t(`countries.${v}`)} />
@@ -60,7 +60,7 @@ function AdsInner() {
         <ChipSet values={CATEGORIES} active={url.getList("category")} onToggle={(v) => url.toggle("category", v)} render={(v) => t(`categories.${v}`)} />
       </FilterGroup>
       <FilterGroup label={t("filters.cta")} locked={locked}>
-        <ChipSet values={["shop_now", "learn_more", "sign_up", "get_offer", "order_now"]} active={url.getList("cta")} onToggle={(v) => url.toggle("cta", v)} render={(v) => t(`cta.${v}`)} />
+        <ChipSet values={CALLS_TO_ACTION} active={url.getList("cta")} onToggle={(v) => url.toggle("cta", v)} render={(v) => t(`cta.${v}`)} />
       </FilterGroup>
       <FilterGroup label={t("filters.firstObserved")} locked={locked}>
         <div className="grid grid-cols-2 gap-2">

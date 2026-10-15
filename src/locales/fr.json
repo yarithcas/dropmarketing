@@ -21,7 +21,8 @@
     "saved": "Enregistré",
     "tableView": "Vue tableau",
     "viewAll": "Tout voir",
-    "info": "Informations"
+    "info": "Informations",
+    "unknown": "Inconnu"
   },
   "nav": {
     "main": "Navigation principale",
@@ -292,14 +293,16 @@
   "formats": {
     "video": "Vidéo",
     "image": "Image",
-    "carousel": "Carrousel"
+    "carousel": "Carrousel",
+    "unknown": "Format inconnu"
   },
   "cta": {
     "shop_now": "Acheter",
     "learn_more": "En savoir plus",
     "sign_up": "S'inscrire",
     "get_offer": "Profiter de l'offre",
-    "order_now": "Commander"
+    "order_now": "Commander",
+    "unknown": "CTA inconnu"
   },
   "productTypes": {
     "physical": "Physique",
@@ -486,7 +489,14 @@
     "landingDemo": "{{domain}} (domaine de démo, pas un vrai site)",
     "analyze": "Analyser",
     "previewLabel": "Aperçu de la créative de {{advertiser}}",
-    "generatedPreview": "Aperçu généré"
+    "generatedPreview": "Aperçu généré",
+    "languageUnknown": "Langue inconnue",
+    "noCopy": "Aucun texte publicitaire communiqué par la source.",
+    "viewInLibrary": "Voir dans la bibliothèque publicitaire {{platform}}",
+    "matchBasis": {
+      "search_term": "Terme de recherche : la publicité a été renvoyée par la recherche de la plateforme sur le nom de ce produit. Estimation TrendHunter, pas un lien communiqué par la plateforme.",
+      "token_overlap": "Associé par TrendHunter à partir de mots communs au texte de la publicité et au nom/aux tags du produit. Estimation, pas un lien communiqué par la plateforme."
+    }
   },
   "creative": {
     "title": "Analyseur de créatives",
@@ -546,7 +556,8 @@
       "learn_more": "« En savoir plus » — CTA doux, adapté aux audiences froides.",
       "sign_up": "« S'inscrire » — génération de leads.",
       "get_offer": "« Profiter de l'offre » — axé sur la promotion.",
-      "order_now": "« Commander » — urgent, intention d'achat."
+      "order_now": "« Commander » — urgent, intention d'achat.",
+      "unknown": "La source ne communique pas l'appel à l'action."
     },
     "triggers": "Leviers émotionnels",
     "triggerNames": {
@@ -611,7 +622,8 @@
       "hook": "Aucun texte à analyser : la fiche ne contient pas de texte publicitaire.",
       "field": "Aucun texte à analyser."
     },
-    "notDeterminable": "Non déterminable à partir du texte."
+    "notDeterminable": "Non déterminable à partir du texte.",
+    "noCopyToAnalyze": "Cette source ne communique ni titre ni texte pour cette publicité : il n'y a rien à analyser. Ouvrez-la dans la bibliothèque publicitaire pour examiner la création."
   },
   "trends": {
     "title": "Produits tendance",
@@ -731,7 +743,7 @@
     "adsObserved": "Pubs observées",
     "firstSeen": "Première observation",
     "techUnknown": "Inconnue",
-    "techVerifiedTip": "Technologie de la vitrine vérifiée à partir de signaux publics de la page.",
+    "techVerifiedTip": "Technologie vérifiée : le point d'accès public de la plateforme (Shopify /products.json ou WooCommerce Store API) a renvoyé une réponse valide.",
     "techUnverifiedTip": "Technologie probable, non vérifiée.",
     "unverified": "non vérifiée",
     "platforms": {
@@ -767,7 +779,9 @@
     "displayedPrice": "Prix affiché",
     "listedSince": "Observé depuis",
     "trackedProduct": "Produit suivi",
-    "associatedAds": "Publicités associées ({{n}})"
+    "associatedAds": "Publicités associées ({{n}})",
+    "lastObserved": "Dernière observation",
+    "socialDemo": "Lien de démonstration, pas un vrai profil"
   },
   "competitors": {
     "title": "Analyse concurrentielle",
@@ -1255,7 +1269,8 @@
       "success": "Réussie",
       "failed": "Échec",
       "skipped": "Ignorée",
-      "running": "En cours"
+      "running": "En cours",
+      "partial": "Partiel"
     },
     "runReasons": {
       "no_live_data": "aucune donnée de recherche réelle (base vide ou contenant uniquement des données de démonstration)",
@@ -1534,7 +1549,8 @@
     "fields": "Champs",
     "setup": "Variables requises",
     "docs": "Docs",
-    "shopifyHint": "Connectez votre propre boutique Shopify depuis"
+    "shopifyHint": "Connectez votre propre boutique Shopify depuis",
+    "notAvailable": "Pas encore disponible"
   },
   "connectors": {
     "names": {
@@ -1552,9 +1568,9 @@
     "permitted": {
       "meta": "API officielle Ad Library. Données publicitaires telles que divulguées par Meta ; soumises aux conditions de la plateforme Meta et à la vérification d'identité.",
       "tiktok": "API TikTok Commercial Content pour chercheurs approuvés ; métadonnées publicitaires telles que divulguées par TikTok.",
-      "pinterest": "Réservé à un flux autorisé de transparence publicitaire Pinterest ; activé uniquement sous conditions confirmées.",
-      "trends": "Indices d'intérêt de recherche d'un fournisseur autorisé (ex. une API officielle de tendances).",
-      "storefronts": "Uniquement les produits publiquement accessibles, dans le respect de robots.txt, des conditions des sites et d'une limite d'1 requête/seconde.",
+      "pinterest": "Pas encore disponible : aucune intégration Pinterest de transparence publicitaire n'est implémentée ; définir un jeton n'a aucun effet.",
+      "trends": "Pas encore disponible : aucune intégration de fournisseur de tendances de recherche n'est implémentée ; définir une clé API n'a aucun effet.",
+      "storefronts": "Uniquement les fiches accessibles publiquement (Shopify products.json/meta.json, WooCommerce Store API), dans le respect de robots.txt, des conditions des sites et d'une limite d'une requête par seconde.",
       "licensed": "Jeu de données tiers sous licence contractuelle ; champs convenus avec le fournisseur.",
       "shopify": "Votre propre boutique uniquement, via OAuth avec des autorisations en lecture seule que vous approuvez.",
       "demo": "Données d'exemple synthétiques pour la démonstration. Jamais présentées comme des observations réelles."
@@ -1895,5 +1911,14 @@
     "open": "Ouvrir l'espace",
     "demo": "Les invitations nécessitent une base de données configurée (Supabase) et de vrais comptes : elles ne sont pas disponibles en mode démo.",
     "backToApp": "Retour à l'application"
+  },
+  "placements": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "messenger": "Messenger",
+    "audience_network": "Audience Network",
+    "whatsapp": "WhatsApp",
+    "threads": "Threads",
+    "oculus": "Oculus"
   }
 }

@@ -6,7 +6,7 @@ import fr from "@/locales/fr.json";
 import es from "@/locales/es.json";
 import de from "@/locales/de.json";
 import it_ from "@/locales/it.json";
-import { CATEGORIES, COUNTRIES, PLATFORMS } from "@/lib/types";
+import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, PLATFORMS } from "@/lib/types";
 import { ERROR_CODES } from "@/lib/client/errors";
 import { ORG_ROLES } from "@/lib/team";
 
@@ -59,6 +59,10 @@ describe("i18n", () => {
       ...CATEGORIES.map((c) => `categories.${c}`),
       ...COUNTRIES.map((c) => `countries.${c}`),
       ...PLATFORMS.map((c) => `platforms.${c}`),
+      ...CREATIVE_FORMATS.map((c) => `formats.${c}`),
+      ...CALLS_TO_ACTION.flatMap((c) => [`cta.${c}`, `creative.cta.${c}`]),
+      ...["search_term", "token_overlap"].map((b) => `ads.matchBasis.${b}`),
+      ...["running", "success", "partial", "failed", "skipped"].map((s) => `alerts.runStatus.${s}`),
       ...["trend", "ads", "margin", "competition", "differentiation", "freshness"].map((k) => `score.components.${k}`),
       ...["insufficient_history", "new_activity", "no_activity"].flatMap((k) => [`trend.status.${k}`, `trend.status.${k}Tip`]),
       ...["measured", "estimate", "ai", "demo"].flatMap((k) => [`provenance.${k}`, `provenance.${k}Tip`]),

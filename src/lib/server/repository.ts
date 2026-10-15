@@ -268,9 +268,9 @@ export function listAds(q: AdQuery): Page<Advertisement & { productName: string 
     if (q.productId && a.productId !== q.productId) return false;
     if (q.platform.length && !q.platform.includes(a.platform)) return false;
     if (q.country.length && !q.country.includes(a.country)) return false;
-    if (q.language.length && !q.language.includes(a.language)) return false;
+    if (q.language.length && !(a.language && (q.language as readonly string[]).includes(a.language))) return false;
     if (q.format.length && !q.format.includes(a.format)) return false;
-    if (q.category.length && !q.category.includes(a.category)) return false;
+    if (q.category.length && !(a.category && q.category.includes(a.category))) return false;
     if (q.cta.length && !q.cta.includes(a.cta)) return false;
     if (q.firstFrom && a.firstSeen < q.firstFrom) return false;
     if (q.firstTo && a.firstSeen > q.firstTo) return false;
@@ -295,7 +295,8 @@ export function getAd(id: string) {
   if (!ad) return null;
   const product = ad.productId ? allProducts().find((p) => p.id === ad.productId) ?? null : null;
   const store = d.stores.find((s) => s.domain === ad.landingDomain) ?? null;
-  const related = d.ads.filter((a) => a.productId === ad.productId && a.id !== ad.id).slice(0, 6);
+  // Ads without a product link are not "related" to each other.
+  const related = ad.productId ? d.ads.filter((a) => a.productId === ad.productId && a.id !== ad.id).slice(0, 6) : [];
   return { ad, product, store, related };
 }
 
@@ -315,7 +316,7 @@ export function listStores(q: StoreQuery): Page<Store & { adsCount: number; trac
         if (!hit) return false;
       }
       if (q.category.length && !s.categories.some((c) => q.category.includes(c))) return false;
-      if (q.country.length && !q.country.includes(s.country)) return false;
+      if (q.country.length && !(s.country && q.country.includes(s.country))) return false;
       if (q.platform.length && !q.platform.includes(s.technology.platform)) return false;
       return true;
     })
@@ -392,7 +393,7 @@ export function trendReport(range: TimeRange, categories: Category[] = [], count
   });
 
   const cn = (countries.length ? countries : [...COUNTRIES]).map((country) => {
-    const ads = d.ads.filter((a) => a.country === country && (!categories.length || categories.includes(a.category)) && a.firstSeen <= asOf);
+    const ads = d.ads.filter((a) => a.country === country && (!categories.length || (a.category != null && categories.includes(a.category))) && a.firstSeen <= asOf);
     const sample = { current: sampleOf(ads, curStart, asOf), previous: sampleOf(ads, prevStart, prevEnd) };
     const inRange = sample.current.ads;
     const previous = sample.previous.ads;
@@ -462,7 +463,7 @@ export function trendInsights(range: TimeRange, categories: Category[] = [], cou
   const countriesOut = base.countries.map((c) => {
     const s = sourceCollector();
     for (const a of d.ads)
-      if (a.country === c.country && (!categories.length || categories.includes(a.category)) && a.firstSeen <= asOf) s.add(a.source, a.lastSeen <= asOf ? a.lastSeen : asOf);
+      if (a.country === c.country && (!categories.length || (a.category != null && categories.includes(a.category))) && a.firstSeen <= asOf) s.add(a.source, a.lastSeen <= asOf ? a.lastSeen : asOf);
     return { ...c, sources: s.done() };
   });
 

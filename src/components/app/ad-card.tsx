@@ -1,18 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Image as ImageIcon, Images, PlayCircle, ScanSearch } from "lucide-react";
+import { ExternalLink, FileQuestion, Image as ImageIcon, Images, PlayCircle, ScanSearch } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Advertisement } from "@/lib/types";
 import { daysBetween } from "@/lib/dates";
 import { useFormat } from "@/lib/format";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip } from "@/components/ui/tooltip";
 import { PlatformBadge, ProvenanceBadge, SourceLine } from "./bits";
 import { SaveButton } from "./save";
 import { cn } from "@/lib/cn";
 
-const FORMAT_ICON = { video: PlayCircle, image: ImageIcon, carousel: Images };
+const FORMAT_ICON = { video: PlayCircle, image: ImageIcon, carousel: Images, unknown: FileQuestion };
+
+/** "Est." tag on a product link TrendHunter inferred (search term or token overlap), with how it was made. */
+export function MatchEstimateTag({ ad }: { ad: Advertisement }) {
+  const { t } = useTranslation();
+  if (!ad.productId || !ad.productMatchBasis || ad.productMatchBasis === "source") return null;
+  return (
+    <Tooltip content={t(`ads.matchBasis.${ad.productMatchBasis}`)}>
+      <span tabIndex={0} className="shrink-0 rounded bg-warn/10 px-1 py-px text-[9px] font-semibold uppercase tracking-wide text-warn">
+        {t("provenance.estimateShort")}
+      </span>
+    </Tooltip>
+  );
+}
+
+/** Link to the ad's page in the platform's public ad library (never embedded). Rendered only for HTTPS URLs. */
+export function AdLibraryLink({ ad, className }: { ad: Advertisement; className?: string }) {
+  const { t } = useTranslation();
+  if (!ad.snapshotUrl?.startsWith("https://")) return null;
+  return (
+    <a href={ad.snapshotUrl} target="_blank" rel="noopener noreferrer nofollow" className={cn("inline-flex items-center gap-1 text-xs text-accent hover:underline", className)} data-testid="ad-library-link">
+      <ExternalLink className="size-3" /> {t("ads.viewInLibrary", { platform: t(`platforms.${ad.platform}`) })}
+    </a>
+  );
+}
 
 /** Creative preview placeholder: authorized thumbnails are shown only when a connector supplies them. */
 export function CreativePreview({ ad, className }: { ad: Advertisement; className?: string }) {
@@ -50,12 +75,12 @@ export function AdCard({ ad, productName }: { ad: Advertisement; productName?: s
           <span className="truncate text-sm font-semibold">{ad.advertiser}</span>
           <PlatformBadge platform={ad.platform} />
         </div>
-        <p className="mt-1.5 line-clamp-3 text-[13px] leading-relaxed text-muted">{ad.copy}</p>
+        {ad.copy ? <p className="mt-1.5 line-clamp-3 text-[13px] leading-relaxed text-muted">{ad.copy}</p> : <p className="mt-1.5 text-xs text-subtle">{t("ads.noCopy")}</p>}
         <div className="mt-3 flex flex-wrap gap-1.5">
           <Badge>{t(`formats.${ad.format}`)}</Badge>
           <Badge>{t(`cta.${ad.cta}`)}</Badge>
           <Badge>{t(`countries.${ad.country}`)}</Badge>
-          <Badge>{ad.language.toUpperCase()}</Badge>
+          <Badge>{ad.language ? ad.language.toUpperCase() : t("ads.languageUnknown")}</Badge>
         </div>
         <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
           <div>
@@ -76,15 +101,19 @@ export function AdCard({ ad, productName }: { ad: Advertisement; productName?: s
           </div>
         </dl>
         {productName && ad.productId ? (
-          <Link href={`/app/products/${ad.productId}`} className="mt-3 truncate text-xs text-accent hover:underline">
-            {t("ads.product")}: {productName}
-          </Link>
+          <div className="mt-3 flex min-w-0 items-center gap-1.5">
+            <Link href={`/app/products/${ad.productId}`} className="truncate text-xs text-accent hover:underline">
+              {t("ads.product")}: {productName}
+            </Link>
+            <MatchEstimateTag ad={ad} />
+          </div>
         ) : null}
         <div className="mt-auto space-y-2.5 border-t border-border/70 pt-3">
           <div className="flex flex-wrap items-center gap-2">
             <ProvenanceBadge kind={ad.source.kind} />
             <SourceLine connector={ad.source.connector} observedAt={ad.source.observedAt} />
           </div>
+          <AdLibraryLink ad={ad} />
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0 truncate text-[11px] text-subtle">
               {ad.landingDomain ? (
@@ -93,7 +122,8 @@ export function AdCard({ ad, productName }: { ad: Advertisement; productName?: s
                     <ExternalLink className="size-3" /> {ad.landingDomain}
                   </a>
                 ) : (
-                  <span title={t("ads.landingDemo", { domain: ad.landingDomain })}>
+                  // Domain only (e.g. a Meta link caption): shown, not linked.
+                  <span title={ad.source.kind === "demo" ? t("ads.landingDemo", { domain: ad.landingDomain }) : undefined}>
                     {t("ads.landing")}: {ad.landingDomain}
                   </span>
                 )

@@ -498,6 +498,28 @@
       "token_overlap": "Von TrendHunter über gemeinsame Wörter in Anzeigentext und Produktname/-tags zugeordnet. Schätzung, keine von der Plattform angegebene Verknüpfung."
     }
   },
+  "activeAdvertisers": {
+    "badge": "Aktiver Werbetreibender",
+    "badgeTip_one": "{{count}} aktive Anzeige seit ≥ {{days}} Tagen",
+    "badgeTip_other": "{{count}} aktive Anzeigen seit ≥ {{days}} Tagen",
+    "badgeDetail": "{{active}} aktiv insgesamt · älteste zuerst gesehen am {{date}}",
+    "toggle": "Nur aktive Werbetreibende — ≥ {{ads}} aktive Anzeigen seit ≥ {{days}} Tagen",
+    "thresholds": "Schwellenwerte „aktiver Werbetreibender“",
+    "minAds": "Min. aktive Anzeigen",
+    "minDays": "Seit (Tagen)",
+    "resultCount_one": "{{count}} Anzeige aktiver Werbetreibender",
+    "resultCount_other": "{{count}} Anzeigen aktiver Werbetreibender",
+    "emptyTitle": "Kein aktiver Werbetreibender passt",
+    "emptyText": "Standardmäßig zeigt TrendHunter nur Anzeigen aktiver Werbetreibender: mindestens {{ads}} derzeit aktive Anzeigen, die seit mindestens {{days}} Tagen laufen. Anzeigen anderer Werbetreibender werden ausgeblendet, nicht gelöscht.",
+    "showAll": "Alle Anzeigen anzeigen",
+    "qualifyingOf": "{{qualifying}} von {{total}} Anzeigen stammen von aktiven Werbetreibenden",
+    "suggestionActive_one": "Aktiver Werbetreibender · {{count}} aktive Anzeige seit ≥ {{days}} Tagen",
+    "suggestionActive_other": "Aktiver Werbetreibender · {{count}} aktive Anzeigen seit ≥ {{days}} Tagen",
+    "suggestionInactive_one": "{{count}} Anzeige beobachtet",
+    "suggestionInactive_other": "{{count}} Anzeigen beobachtet",
+    "searchHidden_one": "{{count}} passende Anzeige eines anderen Werbetreibenden ist ausgeblendet (nur aktive Werbetreibende: ≥ {{ads}} aktive Anzeigen seit ≥ {{days}} Tagen).",
+    "searchHidden_other": "{{count}} passende Anzeigen anderer Werbetreibender sind ausgeblendet (nur aktive Werbetreibende: ≥ {{ads}} aktive Anzeigen seit ≥ {{days}} Tagen)."
+  },
   "creative": {
     "title": "Creative-Analyzer",
     "subtitle": "Öffne ein Creative, zerlege Hook und Überzeugungslogik und erstelle originelle Konzepte. Speichere die besten in deinem Swipe File.",

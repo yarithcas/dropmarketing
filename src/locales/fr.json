@@ -498,6 +498,28 @@
       "token_overlap": "Associé par TrendHunter à partir de mots communs au texte de la publicité et au nom/aux tags du produit. Estimation, pas un lien communiqué par la plateforme."
     }
   },
+  "activeAdvertisers": {
+    "badge": "Annonceur actif",
+    "badgeTip_one": "{{count}} pub active depuis ≥ {{days}} jours",
+    "badgeTip_other": "{{count}} pubs actives depuis ≥ {{days}} jours",
+    "badgeDetail": "{{active}} actives au total · la plus ancienne vue le {{date}}",
+    "toggle": "Annonceurs actifs uniquement — ≥ {{ads}} pubs actives depuis ≥ {{days}} jours",
+    "thresholds": "Seuils « annonceur actif »",
+    "minAds": "Pubs actives min.",
+    "minDays": "Depuis (jours)",
+    "resultCount_one": "{{count}} publicité d'annonceurs actifs",
+    "resultCount_other": "{{count}} publicités d'annonceurs actifs",
+    "emptyTitle": "Aucun annonceur actif ne correspond",
+    "emptyText": "Par défaut, TrendHunter n'affiche que les publicités des annonceurs actifs : au moins {{ads}} publicités actives depuis au moins {{days}} jours. Les publicités des autres annonceurs sont masquées, pas supprimées.",
+    "showAll": "Afficher toutes les pubs",
+    "qualifyingOf": "{{qualifying}} sur {{total}} publicités proviennent d'annonceurs actifs",
+    "suggestionActive_one": "Annonceur actif · {{count}} pub active depuis ≥ {{days}} jours",
+    "suggestionActive_other": "Annonceur actif · {{count}} pubs actives depuis ≥ {{days}} jours",
+    "suggestionInactive_one": "{{count}} publicité observée",
+    "suggestionInactive_other": "{{count}} publicités observées",
+    "searchHidden_one": "{{count}} publicité correspondante d'un autre annonceur est masquée (annonceurs actifs uniquement : ≥ {{ads}} pubs actives depuis ≥ {{days}} jours).",
+    "searchHidden_other": "{{count}} publicités correspondantes d'autres annonceurs sont masquées (annonceurs actifs uniquement : ≥ {{ads}} pubs actives depuis ≥ {{days}} jours)."
+  },
   "creative": {
     "title": "Analyseur de créatives",
     "subtitle": "Ouvrez une créative, décortiquez son accroche et sa persuasion, puis générez des concepts originaux. Gardez les meilleures dans votre swipe file.",

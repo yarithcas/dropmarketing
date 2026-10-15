@@ -498,6 +498,28 @@
       "token_overlap": "Associato da TrendHunter tramite parole in comune tra il testo dell'annuncio e il nome/i tag del prodotto. Stima, non un collegamento indicato dalla piattaforma."
     }
   },
+  "activeAdvertisers": {
+    "badge": "Inserzionista attivo",
+    "badgeTip_one": "{{count}} annuncio attivo da ≥ {{days}} giorni",
+    "badgeTip_other": "{{count}} annunci attivi da ≥ {{days}} giorni",
+    "badgeDetail": "{{active}} attivi in totale · il più vecchio visto il {{date}}",
+    "toggle": "Solo inserzionisti attivi — ≥ {{ads}} annunci attivi da ≥ {{days}} giorni",
+    "thresholds": "Soglie «inserzionista attivo»",
+    "minAds": "Annunci attivi min.",
+    "minDays": "Da (giorni)",
+    "resultCount_one": "{{count}} annuncio di inserzionisti attivi",
+    "resultCount_other": "{{count}} annunci di inserzionisti attivi",
+    "emptyTitle": "Nessun inserzionista attivo corrisponde",
+    "emptyText": "Per impostazione predefinita TrendHunter mostra solo gli annunci degli inserzionisti attivi: almeno {{ads}} annunci attivi da almeno {{days}} giorni. Gli annunci degli altri inserzionisti sono nascosti, non eliminati.",
+    "showAll": "Mostra tutti gli annunci",
+    "qualifyingOf": "{{qualifying}} annunci su {{total}} provengono da inserzionisti attivi",
+    "suggestionActive_one": "Inserzionista attivo · {{count}} annuncio attivo da ≥ {{days}} giorni",
+    "suggestionActive_other": "Inserzionista attivo · {{count}} annunci attivi da ≥ {{days}} giorni",
+    "suggestionInactive_one": "{{count}} annuncio osservato",
+    "suggestionInactive_other": "{{count}} annunci osservati",
+    "searchHidden_one": "{{count}} annuncio corrispondente di un altro inserzionista è nascosto (solo inserzionisti attivi: ≥ {{ads}} annunci attivi da ≥ {{days}} giorni).",
+    "searchHidden_other": "{{count}} annunci corrispondenti di altri inserzionisti sono nascosti (solo inserzionisti attivi: ≥ {{ads}} annunci attivi da ≥ {{days}} giorni)."
+  },
   "creative": {
     "title": "Analizzatore di creatività",
     "subtitle": "Apri una creatività, scomponi hook e persuasione e genera concept originali. Salva le migliori nel tuo swipe file.",

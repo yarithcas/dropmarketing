@@ -460,12 +460,17 @@ export function generateDemoDataset(snapshot: string = demoSnapshot()): DemoData
     }
   }
 
-  // Link a fraction of ads to stores' domains so "associated ads" exist.
+  // Link a fraction of ads to stores' domains so "associated ads" exist. 60 % of the base-window ads of a
+  // carried product (55 % before the active-advertiser rule): established stores run several ads at
+  // once, so a realistic set of advertisers qualifies as active (≥ 5 ads active for ≥ 7 days) from the
+  // base snapshot on (9 on the base day instead of 7). Only advertiser/landing fields of base-window
+  // ads change (and the daily new-advertiser counts derived from them); ad ids, dates, products and the
+  // ads generated for later days are unchanged.
   const arand = prng(777);
   const baseListings = [...storeProducts];
   for (const ad of ads) {
     const carriers = baseListings.filter((sp) => sp.productId === ad.productId);
-    if (carriers.length && arand() > 0.45) {
+    if (carriers.length && arand() > 0.4) {
       const sp = pick(arand, carriers);
       const store = stores.find((s) => s.id === sp.storeId)!;
       ad.advertiser = store.name;

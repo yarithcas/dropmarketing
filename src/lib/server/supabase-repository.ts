@@ -2,10 +2,11 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { DemoDataset } from "../demo/generate";
 import type { AdQuery, ProductQuery } from "../queries";
-import { normalizeDomain } from "../queries";
+import { adThresholds, normalizeDomain } from "../queries";
 import { addDays } from "../dates";
+import { activeSince, activityFromCounts, advertiserKey, emptyActivity, type AdvertiserActivity, type AdvertiserThresholds } from "../advertisers";
 import type { AdMedia, Advertisement, OpportunityScore, ProductMetrics, Product, ProductObservation, ProductWithMetrics, SourceRef, Store, StoreProduct, StoreSnapshot } from "../types";
-import type { Page } from "./repository";
+import type { AdPage, Page } from "./repository";
 
 /**
  * Live data access (Supabase/Postgres). Large listings (products, ads) are
@@ -196,11 +197,27 @@ export async function listProductsDb(db: SupabaseClient, q: ProductQuery): Promi
   return { items, total: count ?? items.length, page: q.page, pageSize: q.pageSize };
 }
 
-export async function listAdsDb(db: SupabaseClient, q: AdQuery, asOf: string): Promise<Page<Advertisement & { productName: string | null }>> {
-  let query = db.from("advertisements").select("*, products(name)", { count: "exact" });
+/** The PostgREST filter methods listAdsDb uses (shared by table and RPC queries). */
+interface AdFilterBuilder {
+  or(filters: string): AdFilterBuilder;
+  ilike(column: string, pattern: string): AdFilterBuilder;
+  eq(column: string, value: string): AdFilterBuilder;
+  in(column: string, values: readonly string[]): AdFilterBuilder;
+  gte(column: string, value: string): AdFilterBuilder;
+  lte(column: string, value: string): AdFilterBuilder;
+}
+
+/**
+ * Applies the Ad Spy filters to a table or RPC query. postgrest-js filter methods add the filter to
+ * the builder and return that same builder (`this`), so the input builder is returned with its type
+ * (the structural view only avoids instantiating supabase-js' deep generic types twice).
+ */
+function applyAdFilters<Q>(builder: Q, q: AdQuery, asOf: string): Q {
+  let query = builder as unknown as AdFilterBuilder;
   if (q.q) query = query.or(ilikeAny(["copy", "headline", "advertiser"], q.q));
   // Single-column filters are not parsed as a logic tree: only the LIKE metacharacters need escaping.
-  if (q.advertiser) query = query.ilike("advertiser", `%${likeLiteral(q.advertiser)}%`);
+  // Advertiser search matches the normalized identity (advertiser_key, migration 0008), like demo mode.
+  if (q.advertiser) query = query.ilike("advertiser_key", `%${likeLiteral(advertiserKey(q.advertiser))}%`);
   if (q.domain) query = query.ilike("landing_domain", `%${likeLiteral(normalizeDomain(q.domain))}%`);
   if (q.productId) query = query.eq("product_id", q.productId);
   if (q.platform.length) query = query.in("platform", q.platform);
@@ -213,17 +230,58 @@ export async function listAdsDb(db: SupabaseClient, q: AdQuery, asOf: string): P
   if (q.firstTo) query = query.lte("first_seen", q.firstTo);
   if (q.lastFrom) query = query.gte("last_seen", q.lastFrom);
   if (q.lastTo) query = query.lte("last_seen", q.lastTo);
-  if (q.activeOnly) query = query.gte("last_seen", addDays(asOf, -2));
-  // "longest" needs a computed duration; approximate with earliest first_seen among recently active ads.
-  query = q.sort === "recent" ? query.order("last_seen", { ascending: false }) : q.sort === "longest" ? query.order("first_seen", { ascending: true }) : query.order("first_seen", { ascending: false });
-  const from = (q.page - 1) * q.pageSize;
-  const { data, count, error } = await query.range(from, from + q.pageSize - 1);
+  if (q.activeOnly) query = query.gte("last_seen", activeSince(asOf));
+  return query as unknown as Q;
+}
+
+type ActivityRow = { advertiser_key: string; active_ads: number; active_since_min_days: number; oldest_active_first_seen: string | null };
+
+/**
+ * Activity of the given advertisers on `asOf` from `public.advertiser_activity()` (0008). The keys
+ * travel in the JSON body of the RPC call, never in a filter string.
+ */
+export async function advertiserActivityDb(db: SupabaseClient, keys: string[], asOf: string, t: AdvertiserThresholds): Promise<Map<string, AdvertiserActivity>> {
+  const out = new Map<string, AdvertiserActivity>();
+  if (!keys.length) return out;
+  const { data, error } = await db.rpc("advertiser_activity", { as_of: asOf, min_days: t.minDays, keys });
   if (error) throw error;
+  for (const r of (data ?? []) as ActivityRow[]) {
+    out.set(r.advertiser_key, activityFromCounts({ activeAds: Number(r.active_ads), activeSinceMinDays: Number(r.active_since_min_days), oldestActiveFirstSeen: r.oldest_active_first_seen ?? null }, t));
+  }
+  return out;
+}
+
+/**
+ * Ad Spy in live mode. With the active-advertiser rule on (default), the base relation is the
+ * set-returning function `public.ads_of_active_advertisers(as_of, min_ads, min_days)` (0008):
+ * PostgREST applies the same filters, order, range and exact count to it, so totals and pages
+ * describe the filtered set. Thresholds are RPC arguments (JSON body), not filter strings.
+ */
+export async function listAdsDb(db: SupabaseClient, q: AdQuery, asOf: string): Promise<AdPage> {
+  const select = "*, products(name)";
+  const t = adThresholds(q);
+  // "longest" needs a computed duration; approximate with earliest first_seen among recently active ads.
+  const sortColumn = q.sort === "recent" ? "last_seen" : "first_seen";
+  const order = { ascending: q.sort === "longest" };
+  const from = (q.page - 1) * q.pageSize;
+  const to = from + q.pageSize - 1;
+  const { data, count, error } = q.activeAdvertisers
+    ? await applyAdFilters(db.rpc("ads_of_active_advertisers", { as_of: asOf, min_ads: t.minAds, min_days: t.minDays }, { count: "exact" }), q, asOf).select(select).order(sortColumn, order).range(from, to)
+    : await applyAdFilters(db.from("advertisements").select(select, { count: "exact" }), q, asOf).order(sortColumn, order).range(from, to);
+  if (error) throw error;
+  const rows = (data ?? []) as Row[];
+  const keyOf = (r: Row) => (typeof r.advertiser_key === "string" ? r.advertiser_key : advertiserKey(String(r.advertiser ?? "")));
+  const activity = await advertiserActivityDb(db, [...new Set(rows.map(keyOf))], asOf, t);
   return {
-    items: (data ?? []).map((r: Row) => ({ ...rowToAd(r), productName: ((r.products as Row | null)?.name as string) ?? null })),
+    items: rows.map((r) => ({
+      ...rowToAd(r),
+      productName: ((r.products as Row | null)?.name as string) ?? null,
+      advertiserActivity: activity.get(keyOf(r)) ?? emptyActivity(t),
+    })),
     total: count ?? 0,
     page: q.page,
     pageSize: q.pageSize,
+    advertiserRule: { enabled: q.activeAdvertisers, ...t, asOf },
   };
 }
 

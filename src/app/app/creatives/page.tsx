@@ -26,10 +26,12 @@ import { useLocale } from "@/lib/i18n/provider";
 import { daysBetween } from "@/lib/dates";
 import { formatInfo, type CreativeAnalysis } from "@/lib/analyst/creative";
 import type { Advertisement, ProductWithMetrics, Store } from "@/lib/types";
+import type { AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
+import { ActiveAdvertiserBadge, ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
 import { cn } from "@/lib/cn";
 
 interface AdDetail {
-  ad: Advertisement;
+  ad: AdWithActivity;
   product: ProductWithMetrics | null;
   store: Store | null;
   related: Advertisement[];
@@ -88,7 +90,9 @@ function Viewer({ adId }: { adId: string }) {
           <div className="space-y-3 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <div className="text-base font-semibold">{ad.advertiser}</div>
+                <div className="flex items-center gap-2 text-base font-semibold">
+                  {ad.advertiser} <ActiveAdvertiserBadge activity={ad.advertiserActivity} />
+                </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   <PlatformBadge platform={ad.platform} />
                   <Badge>{t(`formats.${ad.format}`)}</Badge>
@@ -302,7 +306,11 @@ function CreativesInner() {
   const { workspace } = useWorkspace();
   const [tab, setTab] = useState<"swipe" | "recent" | "long">(workspace.collections.find((c) => c.kind === "swipe")?.items.length ? "swipe" : "recent");
   const adId = url.get("ad");
-  const { data } = useApi<{ items: Advertisement[] }>(tab === "swipe" ? null : `/api/ads?pageSize=20&sort=${tab === "long" ? "longest" : "newest"}&page=1`);
+  // Recent / long-running lists: active advertisers only by default, like Ad Spy.
+  const [allAds, setAllAds] = useState(false);
+  const { data } = useApi<{ items: Advertisement[]; advertiserRule?: AdvertiserRule }>(
+    tab === "swipe" ? null : `/api/ads?pageSize=20&sort=${tab === "long" ? "longest" : "newest"}&page=1${allAds ? "&activeAdvertisers=false" : ""}`,
+  );
   const swipe = workspace.collections.find((c) => c.kind === "swipe");
   const list: { id: string; title: string; subtitle: string }[] =
     tab === "swipe" ? (swipe?.items ?? []).filter((i) => i.type === "ad").map((i) => ({ id: i.refId, title: i.label, subtitle: i.note })) : (data?.items ?? []).map((a) => ({ id: a.id, title: a.advertiser, subtitle: a.headline }));
@@ -323,9 +331,18 @@ function CreativesInner() {
               ]}
             />
           </div>
+          {tab !== "swipe" ? (
+            <div className="border-b border-border px-3 py-2">
+              <ActiveAdvertisersSwitch checked={!allAds} thresholds={data?.advertiserRule} onChange={(on) => setAllAds(!on)} className="text-xs" testId="creatives-active-toggle" />
+            </div>
+          ) : null}
           {list.length === 0 ? (
             <div className="p-4">
-              <EmptyState icon={<Clapperboard />} title={t("creative.swipeEmpty")} description={t("creative.swipeEmptyText")} action={<Link href="/app/ads" className="text-sm text-accent hover:underline">{t("nav.ads")}</Link>} />
+              {tab !== "swipe" && data && !allAds ? (
+                <ActiveAdvertisersEmpty thresholds={data.advertiserRule} onShowAll={() => setAllAds(true)} />
+              ) : (
+                <EmptyState icon={<Clapperboard />} title={t("creative.swipeEmpty")} description={t("creative.swipeEmptyText")} action={<Link href="/app/ads" className="text-sm text-accent hover:underline">{t("nav.ads")}</Link>} />
+              )}
             </div>
           ) : (
             <ul className="max-h-[70vh] divide-y divide-border/70 overflow-y-auto">

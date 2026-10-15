@@ -12,6 +12,8 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { PlatformBadge, ProvenanceBadge, SourceLine } from "./bits";
 import { SaveButton } from "./save";
 import { isWatchable, WatchAdButton } from "./ad-player";
+import { ActiveAdvertiserBadge } from "./active-advertiser";
+import type { AdvertiserActivity } from "@/lib/advertisers";
 import { cn } from "@/lib/cn";
 
 const FORMAT_ICON = { video: PlayCircle, image: ImageIcon, carousel: Images, unknown: FileQuestion };
@@ -59,7 +61,7 @@ export function CreativePreview({ ad, className, hideIcon = false }: { ad: Adver
   );
 }
 
-export function AdCard({ ad, productName }: { ad: Advertisement; productName?: string | null }) {
+export function AdCard({ ad, productName }: { ad: Advertisement & { advertiserActivity?: AdvertiserActivity | null }; productName?: string | null }) {
   const { t } = useTranslation();
   const f = useFormat();
   const days = daysBetween(ad.firstSeen, ad.lastSeen) + 1;
@@ -80,6 +82,7 @@ export function AdCard({ ad, productName }: { ad: Advertisement; productName?: s
         </div>
         {ad.copy ? <p className="mt-1.5 line-clamp-3 text-[13px] leading-relaxed text-muted">{ad.copy}</p> : <p className="mt-1.5 text-xs text-subtle">{t("ads.noCopy")}</p>}
         <div className="mt-3 flex flex-wrap gap-1.5">
+          <ActiveAdvertiserBadge activity={ad.advertiserActivity} />
           <Badge>{t(`formats.${ad.format}`)}</Badge>
           <Badge>{t(`cta.${ad.cta}`)}</Badge>
           <Badge>{t(`countries.${ad.country}`)}</Badge>

@@ -498,6 +498,28 @@
       "token_overlap": "Asociado por TrendHunter por palabras comunes entre el texto del anuncio y el nombre/etiquetas del producto. Estimación, no un vínculo indicado por la plataforma."
     }
   },
+  "activeAdvertisers": {
+    "badge": "Anunciante activo",
+    "badgeTip_one": "{{count}} anuncio activo desde hace ≥ {{days}} días",
+    "badgeTip_other": "{{count}} anuncios activos desde hace ≥ {{days}} días",
+    "badgeDetail": "{{active}} activos en total · el más antiguo visto el {{date}}",
+    "toggle": "Solo anunciantes activos — ≥ {{ads}} anuncios activos desde hace ≥ {{days}} días",
+    "thresholds": "Umbrales de «anunciante activo»",
+    "minAds": "Anuncios activos mín.",
+    "minDays": "Desde hace (días)",
+    "resultCount_one": "{{count}} anuncio de anunciantes activos",
+    "resultCount_other": "{{count}} anuncios de anunciantes activos",
+    "emptyTitle": "Ningún anunciante activo coincide",
+    "emptyText": "Por defecto, TrendHunter solo muestra anuncios de anunciantes activos: al menos {{ads}} anuncios activos desde hace al menos {{days}} días. Los anuncios de otros anunciantes se ocultan, no se eliminan.",
+    "showAll": "Mostrar todos los anuncios",
+    "qualifyingOf": "{{qualifying}} de {{total}} anuncios proceden de anunciantes activos",
+    "suggestionActive_one": "Anunciante activo · {{count}} anuncio activo desde hace ≥ {{days}} días",
+    "suggestionActive_other": "Anunciante activo · {{count}} anuncios activos desde hace ≥ {{days}} días",
+    "suggestionInactive_one": "{{count}} anuncio observado",
+    "suggestionInactive_other": "{{count}} anuncios observados",
+    "searchHidden_one": "{{count}} anuncio coincidente de otro anunciante está oculto (solo anunciantes activos: ≥ {{ads}} anuncios activos desde hace ≥ {{days}} días).",
+    "searchHidden_other": "{{count}} anuncios coincidentes de otros anunciantes están ocultos (solo anunciantes activos: ≥ {{ads}} anuncios activos desde hace ≥ {{days}} días)."
+  },
   "creative": {
     "title": "Analizador de creatividades",
     "subtitle": "Abre una creatividad, desglosa su gancho y su persuasión y genera conceptos originales. Guarda las mejores en tu swipe file.",

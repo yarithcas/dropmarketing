@@ -34,13 +34,17 @@ import { useLocale } from "@/lib/i18n/provider";
 import { NORMALIZATION, SCORE_WEIGHTS, type TrendValue } from "@/lib/scoring";
 import { RANGE_DAYS, addDays } from "@/lib/dates";
 import type { AnalystResponse } from "@/lib/analyst/types";
-import type { Advertisement, ProductObservation, ProductWithMetrics, Signal, Store, StoreProduct, TimeRange } from "@/lib/types";
+import type { ProductObservation, ProductWithMetrics, Signal, Store, StoreProduct, TimeRange } from "@/lib/types";
+import type { AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
+import { ActiveAdvertiserBadge, ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
 import { cn } from "@/lib/cn";
 
 interface Detail {
   product: ProductWithMetrics;
   observations: ProductObservation[];
-  ads: Advertisement[];
+  /** Every ad of the product, each with its advertiser's activity. */
+  ads: AdWithActivity[];
+  advertiserRule: AdvertiserRule;
   stores: (Store & { listing: StoreProduct })[];
   similar: ProductWithMetrics[];
   trends: Record<TimeRange, TrendValue>;
@@ -76,6 +80,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [analysis, setAnalysis] = useState<AnalystResponse | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  // Related ads default to active advertisers; "show all ads" keeps every piece of evidence one click away.
+  const [allAds, setAllAds] = useState(false);
 
   if (error) return <ErrorState message={error.status === 404 ? t("errors.notFound") : undefined} onRetry={reload} />;
   if (loading || !data)
@@ -91,6 +97,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const p = data.product;
   const m = p.metrics;
+  const qualifyingAds = data.ads.filter((a) => a.advertiserActivity?.qualifies);
+  const relatedAds = allAds ? data.ads : qualifyingAds;
   const s = p.score;
   const kind = p.source.kind;
   const span = Math.max(RANGE_DAYS[range], 14);
@@ -349,21 +357,37 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       </Card>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <Card>
-          <CardHeader title={t("product.relatedAds", { n: data.ads.length })} action={<Link href={`/app/ads?productId=${p.id}`} className="text-xs text-accent hover:underline">{t("common.viewAll")}</Link>} />
-          {data.ads.length === 0 ? (
+        <Card data-testid="product-related-ads">
+          <CardHeader
+            title={t("product.relatedAds", { n: relatedAds.length })}
+            action={
+              <Link href={`/app/ads?productId=${p.id}${allAds ? "&activeAdvertisers=false" : ""}`} className="text-xs text-accent hover:underline">
+                {t("common.viewAll")}
+              </Link>
+            }
+          />
+          {data.ads.length > 0 ? (
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/70 px-4 py-2.5">
+              <ActiveAdvertisersSwitch checked={!allAds} thresholds={data.advertiserRule} onChange={(on) => setAllAds(!on)} className="text-xs" testId="related-ads-active-toggle" />
+              <span className="text-[11px] text-subtle" data-testid="related-ads-count">
+                {t("activeAdvertisers.qualifyingOf", { qualifying: qualifyingAds.length, total: data.ads.length })}
+              </span>
+            </div>
+          ) : null}
+          {relatedAds.length === 0 ? (
             <CardBody>
-              <EmptyState title={t("ads.emptyTitle")} />
+              {data.ads.length > 0 ? <ActiveAdvertisersEmpty thresholds={data.advertiserRule} onShowAll={() => setAllAds(true)} /> : <EmptyState title={t("ads.emptyTitle")} />}
             </CardBody>
           ) : (
             <ul className="divide-y divide-border/70">
-              {data.ads.slice(0, 6).map((a) => (
+              {relatedAds.slice(0, 6).map((a) => (
                 <li key={a.id}>
                   <Link href={`/app/creatives?ad=${a.id}`} className="flex gap-3 px-4 py-3 hover:bg-surface-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-sm font-medium">
                         <span className="truncate">{a.advertiser}</span>
                         <PlatformBadge platform={a.platform} />
+                        <ActiveAdvertiserBadge activity={a.advertiserActivity} focusable={false} />
                       </div>
                       <p className="mt-0.5 line-clamp-2 text-xs text-muted">{a.copy}</p>
                     </div>

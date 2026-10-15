@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, LANGUAGES, PLATFORMS, TIME_RANGES } from "./types";
+import { THRESHOLD_LIMITS, resolveThresholds, type AdvertiserThresholds } from "./advertisers";
 
 /** Query schemas shared by API routes (validation) and the client (URL building). */
 
@@ -64,11 +65,27 @@ export const adQuerySchema = z.object({
   lastFrom: day,
   lastTo: day,
   activeOnly: bool,
+  /**
+   * Only ads of active advertisers (lib/advertisers.ts). ON unless explicitly "false": it is the
+   * product's default quality bar, on every plan.
+   */
+  activeAdvertisers: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v !== "false"),
+  /** Adjusted thresholds of the active-advertiser rule (advanced filters; defaults 5 ads / 7 days). */
+  minActiveAds: z.coerce.number().int().min(THRESHOLD_LIMITS.minAds.min).max(THRESHOLD_LIMITS.minAds.max).optional(),
+  minActiveDays: z.coerce.number().int().min(THRESHOLD_LIMITS.minDays.min).max(THRESHOLD_LIMITS.minDays.max).optional(),
   sort: z.enum(AD_SORTS).optional().default("newest"),
   page: z.coerce.number().int().min(1).max(1000).optional().default(1),
   pageSize: z.coerce.number().int().min(1).max(100).optional().default(24),
 });
 export type AdQuery = z.infer<typeof adQuerySchema>;
+
+/** Thresholds of the active-advertiser rule for an ad query (defaults when not adjusted). */
+export function adThresholds(q: Pick<AdQuery, "minActiveAds" | "minActiveDays">): AdvertiserThresholds {
+  return resolveThresholds({ minAds: q.minActiveAds, minDays: q.minActiveDays });
+}
 
 export const storeQuerySchema = z.object({
   q: text, // name, domain, url, or product keyword

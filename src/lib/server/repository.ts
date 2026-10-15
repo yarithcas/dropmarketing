@@ -1,7 +1,19 @@
 import "server-only";
 import { getDemoDataset, type DemoDataset } from "../demo/generate";
 import type { AdQuery, ProductQuery, StoreQuery } from "../queries";
-import { normalizeDomain } from "../queries";
+import { adThresholds, normalizeDomain } from "../queries";
+import {
+  DEFAULT_THRESHOLDS,
+  activeSince,
+  activityOf,
+  advertiserActivity,
+  advertiserKey,
+  rankAdvertisers,
+  type AdvertiserRule,
+  type AdvertiserSummary,
+  type AdvertiserThresholds,
+  type AdWithActivity,
+} from "../advertisers";
 import { computeMetrics, scoreProduct, trendGrowth, type TrendValue } from "../scoring";
 import type {
   Advertisement,
@@ -81,10 +93,17 @@ export interface DataMeta {
   sources: string[];
 }
 
+/** A page of ads plus the active-advertiser rule it was filtered (or only annotated) with. */
+export interface AdPage extends Page<AdWithActivity<Advertisement & { productName: string | null }>> {
+  advertiserRule: AdvertiserRule;
+}
+
 export interface ProductDetail {
   product: ProductWithMetrics;
   observations: ProductObservation[];
-  ads: Advertisement[];
+  /** Every ad of the product (evidence is never dropped); the page hides non-qualifying advertisers by default. */
+  ads: AdWithActivity[];
+  advertiserRule: AdvertiserRule;
   stores: (Store & { listing: StoreProduct })[];
   similar: ProductWithMetrics[];
   trends: Record<TimeRange, TrendValue>;
@@ -94,7 +113,9 @@ export interface StoreDetail {
   store: Store;
   listings: StoreProduct[];
   snapshots: StoreSnapshot[];
-  ads: Advertisement[];
+  /** Every ad pointing at the store; the page hides non-qualifying advertisers by default. */
+  ads: AdWithActivity[];
+  advertiserRule: AdvertiserRule;
   products: ProductWithMetrics[];
 }
 
@@ -186,6 +207,28 @@ export function allProducts(): ProductWithMetrics[] {
   return products;
 }
 
+let activityCache: { ds: DemoDataset; key: string; map: Map<string, AdvertiserSummary> }[] = [];
+
+/** Activity of every advertiser of the working dataset on its snapshot day (cached per dataset and thresholds). */
+export function advertisersOf(t: AdvertiserThresholds = DEFAULT_THRESHOLDS): Map<string, AdvertiserSummary> {
+  const d = ds();
+  const key = `${t.minAds}/${t.minDays}`;
+  const hit = activityCache.find((c) => c.ds === d && c.key === key);
+  if (hit) return hit.map;
+  const map = advertiserActivity(d.ads, d.snapshot, t);
+  activityCache = [{ ds: d, key, map }, ...activityCache.filter((c) => c.ds === d)].slice(0, 8);
+  return map;
+}
+
+function withActivity<T extends Advertisement>(ads: T[], t: AdvertiserThresholds = DEFAULT_THRESHOLDS): AdWithActivity<T>[] {
+  const map = advertisersOf(t);
+  return ads.map((a) => ({ ...a, advertiserActivity: activityOf(map, a.advertiser, t) }));
+}
+
+function ruleOf(enabled: boolean, t: AdvertiserThresholds = DEFAULT_THRESHOLDS): AdvertiserRule {
+  return { enabled, ...t, asOf: ds().snapshot };
+}
+
 function matchesText(hay: (string | null | undefined)[], q?: string) {
   if (!q) return true;
   const needle = fold(q);
@@ -251,19 +294,24 @@ export function getProduct(id: string): ProductDetail | null {
   return {
     product,
     observations: obs,
-    ads: d.ads.filter((a) => a.productId === id).sort((a, b) => b.lastSeen.localeCompare(a.lastSeen)),
+    ads: withActivity(d.ads.filter((a) => a.productId === id).sort((a, b) => b.lastSeen.localeCompare(a.lastSeen))),
+    advertiserRule: ruleOf(true),
     stores,
     similar,
     trends,
   };
 }
 
-export function listAds(q: AdQuery): Page<Advertisement & { productName: string | null }> {
+export function listAds(q: AdQuery): AdPage {
   const d = ds();
   const names = new Map(d.products.map((p) => [p.id, p.name]));
+  const thresholds = adThresholds(q);
+  const activity = advertisersOf(thresholds);
+  const advertiserNeedle = q.advertiser ? advertiserKey(q.advertiser) : "";
   let items = d.ads.filter((a) => {
     if (!matchesText([a.copy, a.headline, a.advertiser, names.get(a.productId ?? "")], q.q)) return false;
-    if (q.advertiser && !a.advertiser.toLowerCase().includes(q.advertiser.toLowerCase())) return false;
+    // Advertiser search uses the advertiser identity (case-, accent- and spacing-insensitive).
+    if (advertiserNeedle && !advertiserKey(a.advertiser).includes(advertiserNeedle)) return false;
     if (q.domain && !(a.landingDomain ?? "").includes(normalizeDomain(q.domain))) return false;
     if (q.productId && a.productId !== q.productId) return false;
     if (q.platform.length && !q.platform.includes(a.platform)) return false;
@@ -276,7 +324,9 @@ export function listAds(q: AdQuery): Page<Advertisement & { productName: string 
     if (q.firstTo && a.firstSeen > q.firstTo) return false;
     if (q.lastFrom && a.lastSeen < q.lastFrom) return false;
     if (q.lastTo && a.lastSeen > q.lastTo) return false;
-    if (q.activeOnly && a.lastSeen < addDays(d.snapshot, -2)) return false;
+    if (q.activeOnly && a.lastSeen < activeSince(d.snapshot)) return false;
+    // Default quality bar: only ads of advertisers that qualify on the snapshot day (totals follow).
+    if (q.activeAdvertisers && !activity.get(advertiserKey(a.advertiser))?.qualifies) return false;
     return true;
   });
   const sorters: Record<AdQuery["sort"], (a: Advertisement, b: Advertisement) => number> = {
@@ -286,18 +336,23 @@ export function listAds(q: AdQuery): Page<Advertisement & { productName: string 
   };
   items = [...items].sort((a, b) => sorters[q.sort](a, b) || a.id.localeCompare(b.id));
   const page = paginate(items, q.page, q.pageSize);
-  return { ...page, items: page.items.map((a) => ({ ...a, productName: names.get(a.productId ?? "") ?? null })) };
+  return {
+    ...page,
+    items: page.items.map((a) => ({ ...a, productName: names.get(a.productId ?? "") ?? null, advertiserActivity: activityOf(activity, a.advertiser, thresholds) })),
+    advertiserRule: ruleOf(q.activeAdvertisers, thresholds),
+  };
 }
 
 export function getAd(id: string) {
   const d = ds();
-  const ad = d.ads.find((a) => a.id === id);
-  if (!ad) return null;
+  const found = d.ads.find((a) => a.id === id);
+  if (!found) return null;
+  const [ad] = withActivity([found]);
   const product = ad.productId ? allProducts().find((p) => p.id === ad.productId) ?? null : null;
   const store = d.stores.find((s) => s.domain === ad.landingDomain) ?? null;
   // Ads without a product link are not "related" to each other.
   const related = ad.productId ? d.ads.filter((a) => a.productId === ad.productId && a.id !== ad.id).slice(0, 6) : [];
-  return { ad, product, store, related };
+  return { ad, product, store, related, advertiserRule: ruleOf(true) };
 }
 
 export function listStores(q: StoreQuery): Page<Store & { adsCount: number; trackedProducts: number }> {
@@ -339,7 +394,8 @@ export function getStore(id: string): StoreDetail | null {
     store,
     listings,
     snapshots: d.storeSnapshots[id] ?? [],
-    ads: d.ads.filter((a) => a.landingDomain === store.domain).sort((a, b) => b.lastSeen.localeCompare(a.lastSeen)),
+    ads: withActivity(d.ads.filter((a) => a.landingDomain === store.domain).sort((a, b) => b.lastSeen.localeCompare(a.lastSeen))),
+    advertiserRule: ruleOf(true),
     products: allProducts().filter((p) => ids.has(p.id)),
   };
 }
@@ -499,7 +555,7 @@ export function overview() {
   const week = addDays(asOf, -6);
   const top = [...scored].sort((a, b) => (b.score.overall as number) - (a.score.overall as number)).slice(0, 6);
   const newProducts = products.filter((p) => p.firstDetected >= addDays(asOf, -29)).length;
-  const activeAds = d.ads.filter((a) => a.lastSeen >= addDays(asOf, -2)).length;
+  const activeAds = d.ads.filter((a) => a.lastSeen >= activeSince(asOf)).length;
   const newAdsWeek = d.ads.filter((a) => a.firstSeen >= week).length;
   const series = [];
   for (let i = 59; i >= 0; i--) {
@@ -521,21 +577,45 @@ export function overview() {
   };
 }
 
+export interface AdvertiserMatch {
+  name: string;
+  /** Ads observed for this advertiser (all spellings of its identity). */
+  ads: number;
+  /** Qualifies as an active advertiser on the snapshot day (lib/advertisers.ts). */
+  active: boolean;
+  activeAds: number;
+  activeSinceMinDays: number;
+}
+
+/**
+ * Advertisers whose identity contains `q` (case-, accent- and spacing-insensitive), qualifying
+ * active advertisers first. Feeds the global search and the Ad Spy advertiser suggestions.
+ */
+export function searchAdvertisers(q: string, limit = 8): AdvertiserMatch[] {
+  const needle = advertiserKey(q);
+  if (needle.length < 2) return [];
+  const matches = [...advertisersOf().values()].filter((s) => s.key.includes(needle));
+  return rankAdvertisers(matches)
+    .slice(0, limit)
+    .map((s) => ({ name: s.name, ads: s.totalAds, active: s.qualifies, activeAds: s.activeAds, activeSinceMinDays: s.activeSinceMinDays }));
+}
+
 export function globalSearch(q: string) {
   const d = ds();
   const needle = q.trim().toLowerCase();
-  if (needle.length < 2) return { products: [], advertisers: [], ads: [], stores: [], niches: [] };
+  const rule = ruleOf(true);
+  if (needle.length < 2) return { products: [], advertisers: [], ads: [], hiddenAds: 0, advertiserRule: rule, stores: [], niches: [] };
   const products = allProducts()
     .filter((p) => matchesText([p.name, ...p.tags], needle) || categoryMatches(p.category, needle))
     .slice(0, 6)
     .map((p) => ({ id: p.id, name: p.name, category: p.category, score: p.score.overall }));
-  const advertisers = Array.from(new Set(d.ads.filter((a) => a.advertiser.toLowerCase().includes(needle)).map((a) => a.advertiser)))
-    .slice(0, 5)
-    .map((name) => ({ name, ads: d.ads.filter((a) => a.advertiser === name).length }));
-  const ads = d.ads
-    .filter((a) => a.copy.toLowerCase().includes(needle) || a.headline.toLowerCase().includes(needle))
-    .slice(0, 5)
-    .map((a) => ({ id: a.id, advertiser: a.advertiser, headline: a.headline, platform: a.platform }));
+  const advertisers = searchAdvertisers(needle, 5);
+  // Ads found by text: only those of active advertisers (the default quality bar); the others are counted.
+  const activity = advertisersOf();
+  const adHits = d.ads.filter((a) => a.copy.toLowerCase().includes(needle) || a.headline.toLowerCase().includes(needle));
+  const qualifying = adHits.filter((a) => activity.get(advertiserKey(a.advertiser))?.qualifies);
+  const ads = qualifying.slice(0, 5).map((a) => ({ id: a.id, advertiser: a.advertiser, headline: a.headline, platform: a.platform }));
+  const hiddenAds = adHits.length - qualifying.length;
   const stores = d.stores
     .filter((s) => s.name.toLowerCase().includes(needle) || s.domain.includes(needle))
     .slice(0, 5)
@@ -549,7 +629,7 @@ export function globalSearch(q: string) {
     ...matchedCats.map((c) => ({ kind: "category" as const, value: c, products: d.products.filter((p) => p.category === c).length, growth: growth.get(c) ?? null })),
     ...[...tagHits.entries()].map(([value, n]) => ({ kind: "tag" as const, value, products: n, growth: undefined })),
   ].slice(0, 6);
-  return { products, advertisers, ads, stores, niches };
+  return { products, advertisers, ads, hiddenAds, advertiserRule: rule, stores, niches };
 }
 
 export function datasetForEngines() {

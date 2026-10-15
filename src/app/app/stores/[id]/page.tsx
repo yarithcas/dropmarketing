@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Info, Swords } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -16,13 +16,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
 import { useApi } from "@/lib/client/use-api";
 import { useFormat } from "@/lib/format";
-import type { Advertisement, ProductWithMetrics, SourceRef, Store, StoreProduct, StoreSnapshot } from "@/lib/types";
+import type { ProductWithMetrics, SourceRef, Store, StoreProduct, StoreSnapshot } from "@/lib/types";
+import type { AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
+import { ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
 
 interface StoreDetail {
   store: Store;
   listings: StoreProduct[];
   snapshots: StoreSnapshot[];
-  ads: Advertisement[];
+  /** Every ad pointing at the store, each with its advertiser's activity. */
+  ads: AdWithActivity[];
+  advertiserRule: AdvertiserRule;
   products: ProductWithMetrics[];
 }
 
@@ -39,10 +43,14 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
   const { t } = useTranslation();
   const f = useFormat();
   const { data, error, loading, reload } = useApi<StoreDetail>(`/api/stores/${id}`);
+  // Associated ads default to active advertisers; "show all ads" keeps every ad one click away.
+  const [allAds, setAllAds] = useState(false);
   if (error) return <ErrorState message={error.status === 404 ? t("errors.notFound") : undefined} onRetry={reload} />;
   if (loading || !data) return <Skeleton className="h-96 rounded-xl" />;
   const s = data.store;
   const names = new Map(data.products.map((p) => [p.id, p]));
+  const qualifyingAds = data.ads.filter((a) => a.advertiserActivity?.qualifies);
+  const storeAds = allAds ? data.ads : qualifyingAds;
   // Listings stored before listing provenance was recorded inherit the store's.
   const listingSource = (l: StoreProduct): SourceRef => l.source ?? s.source;
   const latest = data.listings.map(listingSource).reduce<SourceRef>((a, b) => (b.observedAt > a.observedAt ? b : a), data.listings.length ? listingSource(data.listings[0]) : s.source);
@@ -189,13 +197,21 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       </Card>
 
-      <div>
-        <h2 className="mb-3 text-sm font-semibold">{t("stores.associatedAds", { n: data.ads.length })}</h2>
-        {data.ads.length === 0 ? (
-          <EmptyState title={t("ads.emptyTitle")} />
+      <div data-testid="store-associated-ads">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold">{t("stores.associatedAds", { n: storeAds.length })}</h2>
+          {data.ads.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <ActiveAdvertisersSwitch checked={!allAds} thresholds={data.advertiserRule} onChange={(on) => setAllAds(!on)} className="text-xs" testId="store-ads-active-toggle" />
+              <span className="text-[11px] text-subtle">{t("activeAdvertisers.qualifyingOf", { qualifying: qualifyingAds.length, total: data.ads.length })}</span>
+            </div>
+          ) : null}
+        </div>
+        {storeAds.length === 0 ? (
+          data.ads.length > 0 ? <ActiveAdvertisersEmpty thresholds={data.advertiserRule} onShowAll={() => setAllAds(true)} /> : <EmptyState title={t("ads.emptyTitle")} />
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {data.ads.slice(0, 8).map((a) => (
+            {storeAds.slice(0, 8).map((a) => (
               <AdCard key={a.id} ad={a} productName={a.productId ? names.get(a.productId)?.name : null} />
             ))}
           </div>

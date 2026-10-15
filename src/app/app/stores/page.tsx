@@ -97,7 +97,7 @@ function PublicStores() {
             <tbody>
               {data.items.map((s) => (
                 <tr key={s.id} className="cursor-pointer border-b border-border/50 transition-colors last:border-0 hover:bg-surface-2 active:bg-surface-3" {...cardLink(`/app/stores/${s.id}`)} data-testid="store-row">
-                  <td className="p-0">
+                  <td className="p-0" data-card-ignore onClick={(e) => e.target === e.currentTarget && toggle(s.id)}>
                     {/* The whole cell toggles the checkbox (bigger target) and never opens the row. */}
                     <label className="flex min-h-10 cursor-pointer items-center justify-center px-3">
                     <input

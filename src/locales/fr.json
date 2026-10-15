@@ -1485,7 +1485,7 @@
       "q3": "Puis-je résilier à tout moment ?",
       "a3": "Oui. Les abonnements sont gérés via le portail client Stripe et peuvent être résiliés à tout moment."
     },
-    "currentReason": "C'est votre formule actuelle"
+    "currentReason": "C'est votre offre actuelle"
   },
   "settings": {
     "title": "Paramètres et abonnement",

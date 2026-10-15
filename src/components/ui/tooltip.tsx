@@ -1,10 +1,13 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-/** Lightweight accessible tooltip (hover + keyboard focus). */
+/**
+ * Lightweight accessible tooltip (hover + keyboard focus). Inside a clickable card or row, a tap on the trigger
+ * reveals the tooltip instead of opening the card (`data-card-ignore`).
+ */
 export function Tooltip({ content, children, side = "top", className }: { content: ReactNode; children: ReactNode; side?: "top" | "bottom"; className?: string }) {
   return (
-    <span className={cn("group/tt relative inline-flex", className)}>
+    <span data-card-ignore className={cn("group/tt relative inline-flex", className)}>
       {children}
       <span
         role="tooltip"

@@ -21,6 +21,10 @@ test("clicking anywhere on an ad card opens the creative viewer, nested actions 
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page).toHaveURL(/\/app\/ads/);
+  // A tooltip badge (provenance explanation) reveals its tooltip instead of opening the card.
+  await card.getByText("Demo data", { exact: true }).click();
+  await page.waitForTimeout(500);
+  await expect(page).toHaveURL(/\/app\/ads$/);
   // A click on plain card content navigates.
   await card.locator("dl").click();
   await expect(page).toHaveURL(/\/app\/creatives\?ad=/);
@@ -46,6 +50,13 @@ test("ticking a store checkbox selects it without opening the row", async ({ pag
   await expect(compare).toBeDisabled();
   await expect(compare).toHaveAttribute("title", /at least 2/);
   await page.getByRole("checkbox").first().check();
+  await expect(page).toHaveURL(/\/app\/stores$/);
+  // A click in the checkbox cell but outside the label also toggles and never opens the row.
+  const row = page.getByTestId("store-row").nth(1);
+  await row.locator("td").first().click({ position: { x: 2, y: 2 } });
+  await expect(row.getByRole("checkbox")).toBeChecked();
+  await expect(compare).toBeEnabled();
+  await page.waitForTimeout(500);
   await expect(page).toHaveURL(/\/app\/stores$/);
 });
 

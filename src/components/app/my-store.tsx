@@ -66,10 +66,22 @@ interface ShopifyStatus {
 
 const DEFAULT_SCOPES = ["read_products", "read_orders", "read_inventory"];
 
-/** Leaves for the Shopify OAuth screen. The returned promise never settles, so the clicked button keeps its loading state until the page unloads. */
+/**
+ * Leaves for the Shopify OAuth screen. The returned promise keeps the clicked button loading while the page
+ * unloads, and settles if the page is still here: restored from the back/forward cache (pageshow) or after a
+ * cancelled navigation (timeout), so the button can be used again.
+ */
 function startInstall(shop: string) {
   window.location.href = `/api/integrations/shopify/install?shop=${encodeURIComponent(shop.trim())}`;
-  return new Promise<void>(() => {});
+  return new Promise<void>((resolve) => {
+    const done = () => {
+      clearTimeout(timer);
+      window.removeEventListener("pageshow", done);
+      resolve();
+    };
+    const timer = setTimeout(done, 10_000);
+    window.addEventListener("pageshow", done);
+  });
 }
 
 export function MyStorePanel() {
@@ -288,7 +300,7 @@ export function MyStorePanel() {
                   e.preventDefault();
                   if (!shop.trim()) return;
                   setInstalling(true);
-                  startInstall(shop);
+                  startInstall(shop).then(() => setInstalling(false));
                 }}
               >
                 <label className="text-xs text-muted" htmlFor="shop">

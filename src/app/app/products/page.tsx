@@ -180,10 +180,10 @@ function ProductsInner() {
               ))}
             </Select>
             <div className="flex rounded-lg border border-border bg-surface-2 p-0.5">
-              <button type="button" onClick={() => changeView("grid")} className={cn("focus-ring tap rounded-md p-1.5 transition-[color,background-color,transform] duration-150 active:scale-90 motion-reduce:active:scale-100", view === "grid" ? "bg-surface-3 text-fg" : "text-subtle hover:bg-surface-3/60 hover:text-fg")} aria-label={t("common.gridView")} title={t("common.gridView")} aria-pressed={view === "grid"}>
+              <button type="button" onClick={() => changeView("grid")} className={cn("focus-ring rounded-md p-1.5 transition-[color,background-color,transform] duration-150 active:scale-90 coarse:p-3 motion-reduce:active:scale-100", view === "grid" ? "bg-surface-3 text-fg" : "text-subtle hover:bg-surface-3/60 hover:text-fg")} aria-label={t("common.gridView")} title={t("common.gridView")} aria-pressed={view === "grid"}>
                 <LayoutGrid className="size-4" />
               </button>
-              <button type="button" onClick={() => changeView("table")} className={cn("focus-ring tap rounded-md p-1.5 transition-[color,background-color,transform] duration-150 active:scale-90 motion-reduce:active:scale-100", view === "table" ? "bg-surface-3 text-fg" : "text-subtle hover:bg-surface-3/60 hover:text-fg")} aria-label={t("common.tableView")} title={t("common.tableView")} aria-pressed={view === "table"}>
+              <button type="button" onClick={() => changeView("table")} className={cn("focus-ring rounded-md p-1.5 transition-[color,background-color,transform] duration-150 active:scale-90 coarse:p-3 motion-reduce:active:scale-100", view === "table" ? "bg-surface-3 text-fg" : "text-subtle hover:bg-surface-3/60 hover:text-fg")} aria-label={t("common.tableView")} title={t("common.tableView")} aria-pressed={view === "table"}>
                 <List className="size-4" />
               </button>
             </div>

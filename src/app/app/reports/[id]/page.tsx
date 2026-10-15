@@ -11,7 +11,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/states";
-import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/client/session";
 import { useApi } from "@/lib/client/use-api";
 import { useFormat } from "@/lib/format";
@@ -49,7 +48,6 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   const { t } = useTranslation();
   const f = useFormat();
   const { session } = useSession();
-  const toast = useToast();
   const { data, error, loading, reload } = useApi<Report>(`/api/reports/${id}`);
   if (error?.code === "plan_required") return <PlanGate feature={t("reports.kinds.competitive")} allowed={false}>{null}</PlanGate>;
   if (error) return <ErrorState message={error.status === 404 ? t("errors.notFound") : undefined} onRetry={reload} />;
@@ -69,7 +67,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
             <Printer /> {t("reports.exportPdf")}
           </Button>
           {canExport ? (
-            <a href={`/api/reports/${id}/csv`} className={buttonVariants({ variant: "secondary" })} onClick={() => toast(t("common.exported", { file: "CSV" }), "info")} data-testid="export-report-csv">
+            <a href={`/api/reports/${id}/csv`} className={buttonVariants({ variant: "secondary" })} data-testid="export-report-csv">
               <Download /> CSV
             </a>
           ) : (

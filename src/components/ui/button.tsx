@@ -7,10 +7,12 @@ import { cn } from "@/lib/cn";
 
 /**
  * Shared look for buttons and button-styled links. `hov:`/`press:` never apply to disabled, aria-disabled or
- * busy controls; `tap` grows the hit area to 40px on touch screens without changing layout.
+ * busy controls; `tap` grows the hit area to 40px on touch screens without changing layout. Press feedback is a
+ * colour change: scaling a wide button moves its edges, so a press near them would release outside and lose the
+ * click. Only icon buttons, whose edges barely move, also shrink.
  */
 export const buttonVariants = cva(
-  "focus-ring tap inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-150 ease-out press:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-busy:cursor-progress motion-reduce:press:scale-100 [&_svg]:size-4 [&_svg]:shrink-0",
+  "focus-ring tap inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-busy:cursor-progress [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -20,14 +22,14 @@ export const buttonVariants = cva(
         ghost: "text-muted hov:bg-surface-2 hov:text-fg press:bg-surface-3",
         outline: "border border-border text-fg hov:border-muted/40 hov:bg-surface-2 press:bg-surface-3",
         danger: "bg-critical/90 text-white hov:bg-critical press:bg-critical/80",
-        link: "h-auto px-0 text-accent underline-offset-4 hov:underline press:opacity-80 press:scale-100",
+        link: "h-auto px-0 text-accent underline-offset-4 hov:underline press:opacity-80",
       },
       size: {
         sm: "h-8 px-3 text-[13px]",
         md: "h-9 px-4",
         lg: "h-11 px-6 text-[15px]",
-        icon: "h-9 w-9 shrink-0",
-        "icon-sm": "h-8 w-8 shrink-0",
+        icon: "h-9 w-9 shrink-0 press:scale-95 motion-reduce:press:scale-100",
+        "icon-sm": "h-8 w-8 shrink-0 press:scale-95 motion-reduce:press:scale-100",
       },
     },
     defaultVariants: { variant: "primary", size: "md" },

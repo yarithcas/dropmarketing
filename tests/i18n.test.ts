@@ -43,6 +43,11 @@ describe("i18n", () => {
     });
   }
 
+  it("de addresses the user informally (du), never with Sie/Ihr", () => {
+    const formal = /(^|[^\p{L}])(Ihr|Ihre|Ihren|Ihrem|Ihrer|Ihres|Ihnen)(?!\p{L})|\p{Lu}\p{Ll}+en Sie(?!\p{L})|^Sie (sind|können|haben) /u;
+    expect([...flatten(de as Tree)].filter(([, v]) => formal.test(v)).map(([k]) => k)).toEqual([]);
+  });
+
   it("every literal key used in the source exists", () => {
     const missing = new Set<string>();
     for (const f of sourceFiles("src")) {

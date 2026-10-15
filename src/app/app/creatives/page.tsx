@@ -23,7 +23,7 @@ import { useWorkspace } from "@/lib/client/workspace";
 import { useFormat } from "@/lib/format";
 import { useLocale } from "@/lib/i18n/provider";
 import { daysBetween } from "@/lib/dates";
-import type { CreativeAnalysis } from "@/lib/analyst/creative";
+import { formatInfo, type CreativeAnalysis } from "@/lib/analyst/creative";
 import type { Advertisement, ProductWithMetrics, Store } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
@@ -172,25 +172,45 @@ function Viewer({ adId }: { adId: string }) {
                   <Badge tone={analysis.engine === "claude" ? "purple" : "neutral"}>{t(`analyst.engine.${analysis.engine}`)}</Badge>
                 </div>
                 {analysis.notice ? <p className="rounded-lg border border-warn/30 bg-warn/5 px-3 py-2 text-xs text-warn">{tx(analysis.notice)}</p> : null}
+                {analysis.noCopy ? (
+                  <p className="rounded-lg border border-border bg-surface-2/60 px-3 py-2 text-xs text-muted" data-testid="creative-no-copy">
+                    {t("creative.noCopy.banner")}
+                  </p>
+                ) : null}
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   <Section title={t("creative.hook")}>
-                    <p>“{tx(analysis.hook)}”</p>
-                    <Badge tone="accent" className="mt-2">
-                      {t(`creative.hookTypes.${analysis.hookType}`)}
-                    </Badge>
+                    {analysis.noCopy ? <p className="text-subtle">{tx(analysis.hook)}</p> : <p>“{tx(analysis.hook)}”</p>}
+                    {analysis.hookType ? (
+                      <Badge tone="accent" className="mt-2">
+                        {t(`creative.hookTypes.${analysis.hookType}`)}
+                      </Badge>
+                    ) : null}
                   </Section>
                   <Section title={t("creative.problem.title")}>{tx(analysis.problem)}</Section>
                   <Section title={t("creative.benefit.title")}>{tx(analysis.benefit)}</Section>
                   <Section title={t("creative.audience.title")}>{tx(analysis.audience)}</Section>
-                  <Section title={t("creative.value.title")}>{tx(analysis.valueProposition)}</Section>
+                  <Section title={t("creative.value.title")}>
+                    <p>{tx(analysis.valueProposition)}</p>
+                    {analysis.valueEvidence?.length ? (
+                      <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={t("creative.value.evidence")}>
+                        {analysis.valueEvidence.map((c) => (
+                          <li key={`${c.kind}-${c.quote}`} className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-[11px] text-muted">
+                            <span className="text-subtle">{t(`creative.cues.${c.kind}`)}</span> · “{c.quote}”
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </Section>
                   <Section title={t("creative.cta.title")}>{tx(analysis.cta)}</Section>
+                  {/* Format as recorded by the source; never inferred from the creative. */}
+                  <Section title={t("creative.formatInfo.title")}>{tx(analysis.format ?? formatInfo(ad))}</Section>
                   <Section title={t("creative.triggers")}>
                     <div className="flex flex-wrap gap-1.5">
                       {analysis.triggers.length ? analysis.triggers.map((tr) => <Badge key={tr}>{t(`creative.triggerNames.${tr}`)}</Badge>) : <span className="text-subtle">{t("common.none")}</span>}
                     </div>
                   </Section>
                   <Section title={t("creative.structure")}>
-                    <span className="font-medium">{t(`creative.structures.${analysis.structure}`)}</span>
+                    {analysis.structure ? <span className="font-medium">{t(`creative.structures.${analysis.structure}`)}</span> : <span className="text-subtle">{t("creative.notDeterminable")}</span>}
                   </Section>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
@@ -198,21 +218,29 @@ function Viewer({ adId }: { adId: string }) {
                     <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-[#3fcf3f]">
                       <ThumbsUp className="size-3.5" /> {t("creative.strengthsTitle")}
                     </div>
-                    <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
-                      {analysis.strengths.map((s, i) => (
-                        <li key={i}>{tx(s)}</li>
-                      ))}
-                    </ul>
+                    {analysis.strengths.length ? (
+                      <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
+                        {analysis.strengths.map((s, i) => (
+                          <li key={i}>{tx(s)}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-subtle">{t("creative.notDeterminable")}</p>
+                    )}
                   </div>
                   <div className="rounded-lg border border-border p-3">
                     <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-[#f07a7a]">
                       <ThumbsDown className="size-3.5" /> {t("creative.weaknessesTitle")}
                     </div>
-                    <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
-                      {analysis.weaknesses.map((s, i) => (
-                        <li key={i}>{tx(s)}</li>
-                      ))}
-                    </ul>
+                    {analysis.weaknesses.length ? (
+                      <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
+                        {analysis.weaknesses.map((s, i) => (
+                          <li key={i}>{tx(s)}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-subtle">{t("creative.notDeterminable")}</p>
+                    )}
                   </div>
                 </div>
                 <div className="rounded-lg border border-accent-2/30 bg-accent-2/5 p-3">

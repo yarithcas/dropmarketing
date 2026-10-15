@@ -16,7 +16,7 @@ import { apiFetch, useApi } from "@/lib/client/use-api";
 import { errorKey } from "@/lib/client/errors";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { useLocale } from "@/lib/i18n/provider";
-import type { AnalystResponse } from "@/lib/analyst/types";
+import { COMPARE_MAX, type AnalystResponse } from "@/lib/analyst/types";
 import type { ProductWithMetrics } from "@/lib/types";
 
 const EXAMPLES = ["fitness", "moderate", "analyze", "compare", "angles", "risks", "checklist"] as const;
@@ -46,15 +46,14 @@ function AnalystInner() {
   const preset = url.get("products");
   const { data: presetData } = useApi<{ items: ProductWithMetrics[] }>(preset ? `/api/products/batch?ids=${preset}` : null);
   useEffect(() => {
-    if (presetData?.items.length) setPicked(presetData.items.slice(0, 5).map((p) => ({ id: p.id, name: p.name })));
+    if (presetData?.items.length) setPicked(presetData.items.slice(0, COMPARE_MAX).map((p) => ({ id: p.id, name: p.name })));
   }, [presetData]);
 
   useEffect(() => bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" }), [turns]);
 
-  const ask = async (q: string) => {
+  const ask = async (q: string, products = picked) => {
     if (!q.trim() || busy) return;
     const id = Date.now();
-    const products = picked;
     setTurns((ts) => [...ts, { id, question: q, products }]);
     setQuestion("");
     setBusy(true);
@@ -68,6 +67,19 @@ function AnalystInner() {
       setBusy(false);
       refresh();
     }
+  };
+
+  const addProduct = (p: { id: string; name: string }) => setPicked((ps) => (ps.some((x) => x.id === p.id) || ps.length >= COMPARE_MAX ? ps : [...ps, p]));
+  const openContext = () => {
+    const el = document.getElementById("analyst-context-search");
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    el?.focus({ preventScroll: true });
+  };
+  // Re-asks a question that needed products, with the suggested records added to that turn's context.
+  const askWith = (turn: Turn, suggestions: { id: string; name: string }[]) => {
+    const next = [...turn.products, ...suggestions.filter((s) => !turn.products.some((p) => p.id === s.id))].slice(0, COMPARE_MAX);
+    setPicked(next);
+    ask(turn.question, next);
   };
 
   const usage = session?.usage.ai_query;
@@ -117,7 +129,10 @@ function AnalystInner() {
                 <Card>
                   <CardBody>
                     {turn.result ? (
-                      <AnalystResult result={turn.result} />
+                      <AnalystResult
+                        result={turn.result}
+                        actions={{ pickedIds: picked.map((p) => p.id), onAddProduct: addProduct, onOpenContext: openContext, onCompare: (ps) => askWith(turn, ps) }}
+                      />
                     ) : turn.error ? (
                       <p className="text-sm text-critical">{turn.error}</p>
                     ) : (
@@ -181,12 +196,12 @@ function AnalystInner() {
           <Card>
             <CardHeader title={t("analyst.contextTitle")} description={t("analyst.contextDesc")} />
             <CardBody className="space-y-2">
-              <DebouncedInput value={search} onCommit={setSearch} placeholder={t("products.searchPlaceholder")} aria-label={t("products.searchPlaceholder")} />
+              <DebouncedInput id="analyst-context-search" value={search} onCommit={setSearch} placeholder={t("products.searchPlaceholder")} aria-label={t("products.searchPlaceholder")} />
               <ul className="divide-y divide-border/60">
                 {(searchResults?.items ?? []).map((p) => (
                   <li key={p.id} className="flex items-center justify-between gap-2 py-2 text-sm">
                     <span className="truncate">{p.name}</span>
-                    <Button size="sm" variant="secondary" disabled={picked.some((x) => x.id === p.id) || picked.length >= 5} onClick={() => setPicked((ps) => [...ps, { id: p.id, name: p.name }])}>
+                    <Button size="sm" variant="secondary" disabled={picked.some((x) => x.id === p.id) || picked.length >= COMPARE_MAX} onClick={() => addProduct({ id: p.id, name: p.name })}>
                       {t("competitors.add")}
                     </Button>
                   </li>

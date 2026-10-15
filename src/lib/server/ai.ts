@@ -4,9 +4,9 @@ import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 import { env, features } from "./env";
 import type { AnalystIntent, AnalystResponse } from "../analyst/types";
-import { ANALYST_INTENTS } from "../analyst/types";
+import { ANALYST_INTENTS, COMPARE_MAX, COMPARE_MIN } from "../analyst/types";
 import type { CreativeAnalysis } from "../analyst/creative";
-import { HOOK_TYPES, STRUCTURES, TRIGGERS } from "../analyst/creative";
+import { HOOK_TYPES, STRUCTURES, TRIGGERS, recordedFormat } from "../analyst/creative";
 import type { Advertisement, ProductWithMetrics } from "../types";
 import { LOCALE_LABEL, type Locale } from "../i18n/config";
 
@@ -81,9 +81,36 @@ Ground rules:
 - When asked for advertising angles, propose original concepts; never copy third-party ad copy.
 - Be concise and practical.`;
 
-export async function claudeAnalyst(question: string, locale: Locale, records: ProductWithMetrics[], intentHint: AnalystIntent): Promise<AnalystResponse | null> {
+/** What each suggested intent asks of the model (same contract as the rule engine). */
+const INTENT_HINTS: Record<AnalystIntent, string> = {
+  find: "find: recommend the records that best answer the question, ranked.",
+  analyze: "analyze: analyse the record(s) in depth (strengths, weaknesses, evidence, risks).",
+  compare: "compare: compare every record side by side, rank them and explain the trade-offs.",
+  angles: "angles: propose original advertising angles for the record(s).",
+  risks: "risks: review the risks of the record(s) before a launch.",
+  checklist: "checklist: produce a practical launch checklist as a section.",
+};
+
+/**
+ * `userSelected` tells whether the records are products the user chose as
+ * context, or candidates TrendHunter pre-selected for the question. A
+ * comparison only runs on COMPARE_MIN–COMPARE_MAX records the user chose;
+ * otherwise this returns null and the caller answers with the rule engine's
+ * "select products to compare" state instead of comparing records nobody picked.
+ */
+export async function claudeAnalyst(
+  question: string,
+  locale: Locale,
+  records: ProductWithMetrics[],
+  intentHint: AnalystIntent,
+  userSelected?: boolean,
+): Promise<AnalystResponse | null> {
+  if (intentHint === "compare" && (!userSelected || records.length < COMPARE_MIN || records.length > COMPARE_MAX)) return null;
   const c = anthropic();
   if (!c) return null;
+  const context = userSelected
+    ? "The records are the products the user selected as context; answer about them."
+    : "The user selected no product: the records are TrendHunter's top candidates for this question (highest opportunity scores and recent trends matching it). State explicitly which record(s) you used and why.";
   const response = await c.beta.messages.parse({
     model: env.anthropicModel,
     max_tokens: 8000,
@@ -95,7 +122,7 @@ export async function claudeAnalyst(question: string, locale: Locale, records: P
     messages: [
       {
         role: "user",
-        content: `<records>\n${JSON.stringify(records.map(compactRecord))}\n</records>\n\nSuggested intent: ${intentHint}\nAnswer in ${LOCALE_LABEL[locale]}.\n\nQuestion: ${question}`,
+        content: `<records>\n${JSON.stringify(records.map(compactRecord))}\n</records>\n\nSuggested intent: ${INTENT_HINTS[intentHint]}\n${context}\nAnswer in ${LOCALE_LABEL[locale]}.\n\nQuestion: ${question}`,
       },
     ],
   } as Parameters<typeof c.beta.messages.parse>[0]);
@@ -112,6 +139,8 @@ export async function claudeAnalyst(question: string, locale: Locale, records: P
     sections: out.sections,
     sources: out.recommendations.filter((r) => byId.has(r.productId)).map((r) => ({ label: byId.get(r.productId)!.name, href: `/app/products/${r.productId}` })),
     disclaimer: { key: "analyst.disclaimer" },
+    // Single-product intents answered from pre-selected candidates say so, as the rule engine does.
+    contextNote: userSelected || intentHint === "find" || intentHint === "checklist" ? undefined : { key: "analyst.context.candidatesAi" },
   };
 }
 
@@ -131,6 +160,8 @@ const creativeSchema = z.object({
 });
 
 export async function claudeCreative(ad: Advertisement, product: ProductWithMetrics | null, locale: Locale): Promise<CreativeAnalysis | null> {
+  // No copy to analyse: the rule engine states it instead of letting the model guess.
+  if (!ad.copy?.trim()) return null;
   const c = anthropic();
   if (!c) return null;
   const response = await c.beta.messages.parse({
@@ -146,7 +177,7 @@ Never claim an ad is profitable because it has been observed for a long time. Su
     messages: [
       {
         role: "user",
-        content: `<ad>${JSON.stringify({ advertiser: ad.advertiser, platform: ad.platform, format: ad.format, language: ad.language, headline: ad.headline, copy: ad.copy, cta: ad.cta, firstSeen: ad.firstSeen, lastSeen: ad.lastSeen, dataKind: ad.source.kind })}</ad>
+        content: `<ad>${JSON.stringify({ advertiser: ad.advertiser, platform: ad.platform, format: recordedFormat(ad) ?? "unknown", language: ad.language, headline: ad.headline, copy: ad.copy, cta: ad.cta, firstSeen: ad.firstSeen, lastSeen: ad.lastSeen, dataKind: ad.source.kind })}</ad>
 <product>${product ? JSON.stringify(compactRecord(product)) : "null"}</product>
 Answer in ${LOCALE_LABEL[locale]}.`,
       },

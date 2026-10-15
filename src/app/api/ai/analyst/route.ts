@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   let result: AnalystResponse | null = null;
   let notice: AnalystResponse["notice"];
   try {
-    result = await claudeAnalyst(question, locale, records, intent);
+    result = await claudeAnalyst(question, locale, records, intent, selected.length > 0);
   } catch (e) {
     console.error("claude analyst failed", e instanceof Error ? e.message : e);
     notice = { key: "analyst.aiFailedNotice" };

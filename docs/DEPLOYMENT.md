@@ -41,8 +41,39 @@ Plans are granted **only** by the verified webhook. Until all four values are se
    `SHOPIFY_API_VERSION`.
 3. `ENCRYPTION_KEY` — `openssl rand -base64 32` (AES-256-GCM for access tokens at rest).
 4. For order data older than 60 days Shopify requires `read_all_orders` approval (not requested by default).
-5. Publishing to the Shopify App Store additionally requires the mandatory GDPR webhooks
-   (`customers/data_request`, `customers/redact`, `shop/redact`).
+5. Run migration `supabase/migrations/0006_shopify.sql` (revocation, daily inventory snapshots, manual market
+   matches, store currency).
+6. Webhooks — all delivered to `${APP_URL}/api/integrations/shopify/webhooks`, which verifies
+   `X-Shopify-Hmac-Sha256` (base64 HMAC-SHA256 of the raw body with `SHOPIFY_API_SECRET`) and rejects
+   unsigned requests with 401:
+   | Topic | Effect |
+   | --- | --- |
+   | `app/uninstalled` | every connection to that shop is marked `revoked` and its token deleted |
+   | `customers/data_request`, `customers/redact` | acknowledged: no customer personal data is stored (orders are aggregated per product and day) |
+   | `shop/redact` | deletes all synced data of that shop (products, sales, inventory history, matches) and any token |
+   With the Shopify CLI, declare them in `shopify.app.toml` and run `shopify app deploy`:
+   ```toml
+   [webhooks]
+   api_version = "2025-07"
+
+     [[webhooks.subscriptions]]
+     topics = ["app/uninstalled"]
+     uri = "https://YOUR_APP_URL/api/integrations/shopify/webhooks"
+
+     [[webhooks.subscriptions]]
+     compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+     uri = "https://YOUR_APP_URL/api/integrations/shopify/webhooks"
+   ```
+   Without the CLI: set the three compliance webhook URLs in the Partner Dashboard (App setup → Compliance
+   webhooks) and subscribe `app/uninstalled` to the same URL. The mandatory compliance webhooks are required for
+   App Store distribution.
+7. Automatic sync: the daily cron calls `syncDueShopifyIntegrations()` (`lib/server/shopify.ts`), which syncs
+   every non-revoked connection whose last sync is older than its interval (`sync_interval_hours`, default 24)
+   and within the owner's plan store limit. Requires `CRON_SECRET` + the service role key; otherwise only
+   "Sync now" runs and the store page says so. Any 401/403 from Shopify marks the connection revoked and deletes
+   the token; the user sees a translated message with a "Reconnect" action.
+8. Store limits: Pro 1, Business 5 (`entitlements.shopifyStores`). Stores beyond the limit after a downgrade are
+   neither synced nor shown, but can always be disconnected.
 
 ## 5. Email alerts — Resend
 `RESEND_API_KEY`, `EMAIL_FROM` (verified domain). Without it, alerts are in-app only and the UI says so.

@@ -22,6 +22,10 @@ export const ERROR_CODES = [
   "network",
   "no_customer",
   "delete_failed",
+  "shopify_revoked",
+  "shopify_access_denied",
+  "shopify_unavailable",
+  "store_limit",
 ] as const;
 
 const KNOWN = new Set<string>(ERROR_CODES);

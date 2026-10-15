@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Columns3, Download, FolderHeart, Lock, Megaphone, Package, Pencil, Plus, Store as StoreIcon, Trash2, Users, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -172,7 +172,16 @@ function CollectionsInner() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [comparing, setComparing] = useState(false);
   const shared = workspace.sharedCollections ?? [];
-  const selectedId = url.get("c") || workspace.collections[0]?.id;
+  // The URL is the source of truth for the selection, but router.replace waits for a server round trip: a click
+  // applies at once so Edit/Delete never act on the previously selected collection in the meantime.
+  const urlSelected = url.get("c");
+  const [picked, setPicked] = useState<string | null>(null);
+  useEffect(() => setPicked(null), [urlSelected]);
+  const select = (id: string) => {
+    setPicked(id);
+    url.set({ c: id });
+  };
+  const selectedId = picked || urlSelected || workspace.collections[0]?.id;
   const c = workspace.collections.find((x) => x.id === selectedId) ?? shared.find((x) => x.id === selectedId);
   // Teammates' shared collections are read-only; only their creator edits them.
   const readOnly = Boolean(c?.sharedBy);
@@ -246,7 +255,7 @@ function CollectionsInner() {
               <li key={col.id}>
                 <button
                   type="button"
-                  onClick={() => url.set({ c: col.id })}
+                  onClick={() => select(col.id)}
                   aria-current={col.id === selectedId ? "true" : undefined}
                   className={cn("focus-ring tap flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors duration-150 active:bg-surface-3", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2 hover:text-fg")}
                 >
@@ -267,7 +276,7 @@ function CollectionsInner() {
                   <li key={col.id}>
                     <button
                       type="button"
-                      onClick={() => url.set({ c: col.id })}
+                      onClick={() => select(col.id)}
                       aria-current={col.id === selectedId ? "true" : undefined}
                       className={cn("focus-ring tap flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors duration-150 active:bg-surface-3", col.id === selectedId ? "bg-surface-3 text-fg" : "text-muted hover:bg-surface-2 hover:text-fg")}
                     >

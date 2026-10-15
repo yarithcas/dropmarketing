@@ -51,7 +51,9 @@ test("collections: create, rename and delete", async ({ page }) => {
   await page.locator("#col-name").fill("E2E rename me");
   await page.getByTestId("create-collection").click();
   await expect(page.getByText("Collection created")).toBeVisible();
-  await page.getByRole("button", { name: /E2E rename me/ }).click();
+  const created = page.getByRole("button", { name: /E2E rename me/ });
+  await created.click();
+  await expect(created).toHaveAttribute("aria-current", "true");
 
   await page.getByRole("button", { name: "Edit collection" }).click();
   await page.locator("#col-name").fill("E2E renamed");
@@ -62,6 +64,22 @@ test("collections: create, rename and delete", async ({ page }) => {
   await page.getByRole("button", { name: "Delete collection" }).click();
   await expect(page.getByText("Collection deleted")).toBeVisible();
   await expect(page.getByRole("button", { name: /E2E renamed/ })).toHaveCount(0);
+});
+
+test("collections: a selection applies at once, even while the URL round trip is slow", async ({ page }) => {
+  await page.goto("/app/collections");
+  // Delay router round trips: Edit must still target the collection that was just clicked.
+  await page.route(/_rsc=/, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await route.continue().catch(() => {});
+  });
+  await page.getByTestId("new-collection").click();
+  await page.locator("#col-name").fill("E2E slow select");
+  await page.getByTestId("create-collection").click();
+  await expect(page.getByText("Collection created")).toBeVisible();
+  await page.getByRole("button", { name: /E2E slow select/ }).click();
+  await page.getByRole("button", { name: "Edit collection" }).click();
+  await expect(page.locator("#col-name")).toHaveValue("E2E slow select");
 });
 
 test("free plan locks advanced ad filters and watchlists", async ({ page }) => {

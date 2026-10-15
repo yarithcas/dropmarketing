@@ -72,7 +72,20 @@
       "invalid_body": "Le informazioni inviate non sono valide.",
       "network": "Rete non disponibile. Controlla la connessione.",
       "no_customer": "Nessun abbonamento a pagamento è associato a questo account.",
-      "delete_failed": "Eliminazione dell'account non riuscita. Contatta il supporto."
+      "delete_failed": "Eliminazione dell'account non riuscita. Contatta il supporto.",
+      "database_error": "Si è verificato un errore del database. Riprova.",
+      "no_workspace": "Nessuno spazio di lavoro disponibile per questo account.",
+      "role_required": "Il tuo ruolo in questo spazio non consente questa azione.",
+      "owner_required": "Solo un proprietario può farlo.",
+      "last_owner": "Uno spazio mantiene sempre almeno un proprietario. Nomina prima un altro proprietario.",
+      "last_workspace": "Non puoi uscire dal tuo unico spazio di lavoro.",
+      "seats_exhausted": "Tutti i posti inclusi nel tuo piano sono occupati.",
+      "already_member": "Questa persona è già membro dello spazio.",
+      "limit_workspaces": "Hai raggiunto il limite di spazi di lavoro del tuo piano.",
+      "invite_invalid": "Questo link di invito non è valido o è stato revocato.",
+      "invite_expired": "Questo invito è scaduto.",
+      "invite_email_mismatch": "Questo invito è stato inviato a un altro indirizzo e-mail.",
+      "email_unconfirmed": "Conferma il tuo indirizzo e-mail prima di accettare un invito."
     }
   },
   "search": {
@@ -769,7 +782,16 @@
     "compareTitle": "Confronta i prodotti salvati",
     "selectCompare": "Seleziona per il confronto",
     "exportNote": "Le esportazioni includono note, tag, link e metriche TrendHunter. Le creatività di terzi sono indicate tramite link, non copiate.",
-    "tagsPlaceholder": "test, Q4, fitness"
+    "tagsPlaceholder": "test, Q4, fitness",
+    "sharedTitle": "Condivise dal team",
+    "sharedBy": "Condivisa da {{name}}",
+    "sharedByUnknown": "Condivisa da un collega",
+    "sharedBadge": "Condivisa con il team",
+    "shareWithTeam": "Condividi con il team",
+    "stopSharing": "Interrompi condivisione",
+    "sharedOn": "Raccolta condivisa con il team",
+    "sharedOff": "La raccolta è di nuovo privata",
+    "readOnly": "Sola lettura: solo chi l'ha creata può modificarla"
   },
   "watchlist": {
     "watch": "Monitora",
@@ -794,7 +816,8 @@
       "plan_required": "Questa funzione richiede un piano superiore.",
       "unauthenticated": "Effettua di nuovo l'accesso.",
       "rate_limited": "Troppe richieste. Attendi un momento.",
-      "limit_reached": "Limite giornaliero del tuo piano raggiunto."
+      "limit_reached": "Limite giornaliero del tuo piano raggiunto.",
+      "no_workspace": "Nessuno spazio di lavoro attivo. Ricarica la pagina."
     }
   },
   "analyst": {
@@ -1150,7 +1173,8 @@
     "advancedFilterLocked": "Filtro avanzato — piano Pro",
     "filtersIgnored": "Alcuni filtri avanzati non sono stati applicati con il piano Free.",
     "limitReached": "Hai raggiunto il limite giornaliero del tuo piano.",
-    "exportLocked": "Le esportazioni sono disponibili nei piani Pro e Business."
+    "exportLocked": "Le esportazioni sono disponibili nei piani Pro e Business.",
+    "roleRequired": "Solo proprietari e amministratori dello spazio titolare dell'abbonamento possono cambiare piano o accedere alla fatturazione."
   },
   "plans": {
     "free": {
@@ -1316,10 +1340,87 @@
   "team": {
     "title": "Team e spazi di lavoro",
     "desc": "Il tuo piano include {{workspaces}} spazio/i di lavoro e {{seats}} posto/i.",
-    "owner": "Proprietario",
     "businessOnly": "La collaborazione in team e più spazi di lavoro sono disponibili con il piano Business.",
-    "demoInvite": "Modalità demo: gli inviti al team richiedono che l'autenticazione sia configurata.",
-    "inviteSoon": "Invita i colleghi via e-mail dalle impostazioni della tua organizzazione."
+    "demoText": "Modalità demo: membri del team, inviti e più spazi di lavoro richiedono un database configurato (Supabase) e account reali. Il tuo spazio demo resta in questo browser e ne sei l'unico membro.",
+    "membersTitle": "Membri di {{workspace}}",
+    "membersDesc": "I membri condividono il piano dello spazio e possono consultare le raccolte condivise con il team.",
+    "seats": "{{used}} / {{limit}} posti",
+    "seatsHint": "I posti contano i membri distinti di tutti gli spazi fatturati con questo abbonamento, più gli inviti in sospeso.",
+    "seatsFull": "Tutti i posti sono occupati. Rimuovi un membro o revoca un invito per invitare qualcun altro.",
+    "you": "Tu",
+    "unnamed": "Nessun nome impostato",
+    "joined": "entrato il {{date}}",
+    "roleLabel": "Ruolo",
+    "roles": {
+      "owner": "Proprietario",
+      "admin": "Amministratore",
+      "member": "Membro"
+    },
+    "roleChanged": "Ruolo aggiornato",
+    "leave": "Esci",
+    "confirmRemove": "Rimuovere {{name}} da {{workspace}}? I suoi dati privati restano suoi; le raccolte che ha condiviso restano visibili al team.",
+    "confirmLeave": "Uscire da {{workspace}}? Perderai l'accesso alle sue raccolte condivise.",
+    "removed": "Membro rimosso",
+    "left": "Sei uscito dallo spazio di lavoro",
+    "managersOnly": "Solo proprietari e amministratori possono invitare o gestire i membri.",
+    "inviteEmail": "Indirizzo e-mail da invitare",
+    "inviteBtn": "Invita",
+    "inviteSent": "Invito creato per {{email}}",
+    "inviteEmailed": "Un'e-mail con il link è stata inviata a {{email}}. Puoi anche condividere il link tu stesso.",
+    "inviteNotEmailed": "L'invio di e-mail non è configurato: copia il link qui sotto e invialo tu stesso al tuo collega.",
+    "inviteLinkLabel": "Link di invito (monouso, valido {{days}} giorni)",
+    "inviteLinkHint": "Di ogni link viene conservata solo un'impronta, quindi non potrà essere mostrato di nuovo in seguito. Puoi generare un nuovo link in qualsiasi momento.",
+    "pendingTitle": "Inviti in sospeso",
+    "pendingEmpty": "Nessun invito in sospeso.",
+    "expires": "Scade il {{date}}",
+    "expired": "Scaduto",
+    "newLink": "Copia un nuovo link",
+    "newLinkDone": "Nuovo link per {{email}}: il link precedente non funziona più.",
+    "revoke": "Revoca",
+    "revoked": "Invito revocato",
+    "confirmRevoke": "Revocare l'invito inviato a {{email}}?"
+  },
+  "workspaces": {
+    "title": "Spazi di lavoro",
+    "desc": "Ogni spazio ha le proprie raccolte, la propria lista di monitoraggio e i propri avvisi. Cambia spazio quando vuoi dalla barra laterale.",
+    "members_one": "{{count}} membro",
+    "members_other": "{{count}} membri",
+    "active": "Attivo",
+    "switch": "Apri",
+    "switched": "Ora stai lavorando in {{name}}",
+    "switcherLabel": "Spazio di lavoro attivo",
+    "rename": "Rinomina spazio",
+    "renamed": "Spazio rinominato",
+    "name": "Nome dello spazio",
+    "createTitle": "Nuovo spazio di lavoro",
+    "created": "Spazio «{{name}}» creato",
+    "usage": "{{used}} / {{limit}} spazi",
+    "billedHint": "Il nuovo spazio viene fatturato con l'abbonamento dello spazio attivo e ne diventi il proprietario.",
+    "blocked": {
+      "plan_required": "Più spazi di lavoro sono disponibili con il piano Business.",
+      "role_required": "Solo proprietari e amministratori dello spazio titolare dell'abbonamento possono aggiungere spazi.",
+      "limit_workspaces": "Hai raggiunto il limite di spazi di lavoro del tuo piano."
+    }
+  },
+  "invite": {
+    "title": "Invito",
+    "cardTitle": "Unisciti a uno spazio di lavoro",
+    "invited": "{{inviter}} ti ha invitato a unirti a {{workspace}} come {{role}}.",
+    "invitedAnon": "Sei stato invitato a unirti a {{workspace}} come {{role}}.",
+    "expiresOn": "Questo invito scade il {{date}}.",
+    "accept": "Accetta e unisciti",
+    "welcome": "Benvenuto in {{workspace}}",
+    "invalid": "Questo link di invito non è valido o è stato revocato. Chiedi un nuovo link a chi ti ha invitato.",
+    "status": {
+      "expired": "Questo invito è scaduto. Chiedi un nuovo link a un proprietario o amministratore dello spazio.",
+      "accepted": "Questo invito è già stato utilizzato.",
+      "email_mismatch": "Questo invito è stato inviato a {{email}}, ma hai effettuato l'accesso come {{current}}. Accedi con l'indirizzo invitato per accettarlo.",
+      "already_member": "Sei già membro di questo spazio di lavoro."
+    },
+    "switchAccount": "Accedi con un altro account",
+    "open": "Apri lo spazio",
+    "demo": "Gli inviti richiedono un database configurato (Supabase) e account reali, quindi non sono disponibili in modalità demo.",
+    "backToApp": "Torna all'app"
   },
   "privacy": {
     "exportTitle": "Esporta i miei dati",
@@ -1547,6 +1648,10 @@
     "subject": "TrendHunter · {{rule}}",
     "intro": "Nuovi risultati per il tuo avviso «{{rule}}»:",
     "manage": "Gestisci i tuoi avvisi: {{url}}",
-    "footer": "I valori stimati o generati dall'IA non sono fatti misurati. Ricevi questa email perché le notifiche email sono attive per questo avviso."
+    "footer": "I valori stimati o generati dall'IA non sono fatti misurati. Ricevi questa email perché le notifiche email sono attive per questo avviso.",
+    "inviteSubject": "{{inviter}} ti ha invitato in {{workspace}} su TrendHunter",
+    "inviteIntro": "{{inviter}} ti ha invitato a unirti allo spazio di lavoro «{{workspace}}» su TrendHunter come {{role}}.",
+    "inviteSteps": "Accedi o crea un account con {{email}}, poi apri questo link per accettare:",
+    "inviteExpiry": "Il link funziona una sola volta e scade tra {{days}} giorni. Se non aspettavi questo invito, puoi ignorare questa e-mail."
   }
 }

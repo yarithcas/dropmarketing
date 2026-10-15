@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const sb = (await supabaseForRequest())!;
   const [{ data: profile }, workspace, { data: usage }, { data: integrations }, { data: reports }] = await Promise.all([
     sb.from("profiles").select("*").eq("user_id", session.id).maybeSingle(),
-    loadWorkspace(sb, session.id),
+    loadWorkspace(sb, session, { allWorkspaces: true }),
     sb.from("usage_events").select("feature, created_at").eq("user_id", session.id).order("created_at", { ascending: false }).limit(5000),
     sb.from("connected_integrations").select("provider, external_account, scopes, status, last_sync_at, created_at"),
     sb.from("reports").select("*").eq("user_id", session.id),

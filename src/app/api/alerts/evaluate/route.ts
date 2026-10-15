@@ -45,7 +45,9 @@ export async function POST(req: NextRequest) {
   if (!session.authenticated) return apiError(401, "unauthenticated");
   const sb = await supabaseForRequest();
   if (!sb) return apiError(503, "database_unavailable");
-  const { data: rows } = await sb.from("alerts").select("*").eq("user_id", session.id).eq("active", true);
+  if (!session.organizationId) return apiError(409, "no_workspace");
+  // Manual check of the active workspace's rules.
+  const { data: rows } = await sb.from("alerts").select("*").eq("user_id", session.id).eq("organization_id", session.organizationId).eq("active", true);
   const matches = await runAlertsForRows(sb, rows ?? [], "manual");
-  return json({ matches: matches.length, workspace: await loadWorkspace(sb, session.id) });
+  return json({ matches: matches.length, workspace: await loadWorkspace(sb, session) });
 }

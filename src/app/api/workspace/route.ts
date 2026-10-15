@@ -11,6 +11,8 @@ async function ctx() {
   const session = await getSession();
   if (session.mode !== "live") return { err: apiError(400, "demo_mode", "Demo workspaces are stored in the browser") };
   if (!session.authenticated) return { err: apiError(401, "unauthenticated") };
+  // Data is scoped to the active workspace; a user without any membership has none.
+  if (!session.organizationId) return { err: apiError(409, "no_workspace") };
   const sb = await supabaseForRequest();
   if (!sb) return { err: apiError(503, "database_unavailable") };
   return { session, sb };
@@ -21,7 +23,7 @@ export async function GET(req: NextRequest) {
   if (limited) return limited;
   const c = await ctx();
   if (c.err) return c.err;
-  return json(await loadWorkspace(c.sb, c.session.id));
+  return json(await loadWorkspace(c.sb, c.session));
 }
 
 export async function POST(req: NextRequest) {
@@ -37,5 +39,5 @@ export async function POST(req: NextRequest) {
     if (e instanceof WorkspaceError) return apiError(e.code === "not_found" ? 404 : 409, e.code);
     return apiError(500, "database_error");
   }
-  return json(await loadWorkspace(c.sb, c.session.id));
+  return json(await loadWorkspace(c.sb, c.session));
 }

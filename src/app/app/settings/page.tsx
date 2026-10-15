@@ -3,16 +3,18 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, CheckCircle2, CircleDashed, CreditCard, Download, ExternalLink, FlaskConical, Trash2, Users } from "lucide-react";
+import { AlertTriangle, Building2, CheckCircle2, CircleDashed, Copy, CreditCard, Download, ExternalLink, FlaskConical, Link2, LogOut, Mail, Pencil, Plus, Trash2, UserMinus, UserPlus, Users, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSelect } from "@/components/app/language-select";
 import { PageHeader } from "@/components/app/bits";
+import { useSwitchWorkspace } from "@/components/app/workspace-switcher";
 import { PricingTable } from "@/components/marketing/pricing-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Field, Input, Select } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/states";
 import { Tabs } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/toast";
 import { useSession } from "@/lib/client/session";
@@ -23,6 +25,7 @@ import { useUrlState } from "@/lib/client/use-url-state";
 import { useWorkspace } from "@/lib/client/workspace";
 import { useFormat } from "@/lib/format";
 import type { PlanId } from "@/lib/plans";
+import { INVITE_ROLES, INVITE_TTL_DAYS, ORG_ROLES, type InviteRole, type OrgRole, type TeamInvitation, type TeamMember, type TeamResponse, type WorkspacesResponse } from "@/lib/team";
 import { cn } from "@/lib/cn";
 
 type Tab = "profile" | "billing" | "integrations" | "team" | "privacy";
@@ -207,11 +210,16 @@ function BillingTab() {
             <UsageBar label={t("billing.meters.ad_search")} used={session.usage.ad_search?.used ?? 0} limit={e.adSearchesPerDay} />
             <UsageBar label={t("billing.meters.ai_query")} used={session.usage.ai_query?.used ?? 0} limit={e.aiQueriesPerDay} />
             <UsageBar label={t("billing.meters.saved")} used={savedItems} limit={e.savedItems} />
-            <UsageBar label={t("billing.meters.collections")} used={workspace.collections.length} limit={e.collections} />
+            <UsageBar label={t("billing.meters.collections")} used={workspace.collections.filter((c) => c.kind === "standard").length} limit={e.collections} />
             <UsageBar label={t("billing.meters.alerts")} used={workspace.alertRules.length} limit={e.alertRules} />
           </CardBody>
         </Card>
       </div>
+      {!session.canManageBilling && (
+        <p className="flex gap-2 rounded-lg border border-border bg-surface-2 px-3 py-2.5 text-xs text-muted" data-testid="billing-role">
+          <Users className="size-4 shrink-0" /> {t("billing.roleRequired")}
+        </p>
+      )}
       <PricingTable current={session.plan} onChoose={choose} busy={busy} demo={demoBilling} />
     </div>
   );
@@ -325,36 +333,392 @@ function IntegrationsTab() {
   );
 }
 
-function TeamTab() {
+const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false; // clipboard blocked: the link stays visible in the field
+  }
+};
+
+type IssuedLink = { email: string; link: string; note: "emailed" | "share" | "renewed" };
+
+/** Members, invitations and seats of the active workspace. Every action is re-checked server-side (role, plan, seats). */
+function MembersSection() {
   const { t } = useTranslation();
-  const { session } = useSession();
-  if (!session) return <Skeleton className="h-40" />;
-  const e = session.entitlements;
+  const f = useFormat();
+  const toast = useToast();
+  const { session, refresh } = useSession();
+  const active = session?.workspace ?? null;
+  const { data, error, reload } = useApi<TeamResponse>(active ? `/api/team?ws=${active.id}` : null);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<InviteRole>("member");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [issued, setIssued] = useState<IssuedLink | null>(null);
+  useEffect(() => setIssued(null), [active?.id]);
+
+  if (!active)
+    return (
+      <Card>
+        <CardBody className="text-sm text-muted">{t("errors.codes.no_workspace")}</CardBody>
+      </Card>
+    );
+  if (error) return <ErrorState message={t(errorKey(error))} onRetry={reload} />;
+  if (!data) return <Skeleton className="h-64" />;
+
+  const full = data.seats.used >= data.seats.limit;
+  const run = async (key: string, action: () => Promise<void>, done?: string) => {
+    setBusy(key);
+    try {
+      await action();
+      if (done) toast(done);
+      reload();
+    } catch (e) {
+      toast(t(errorKey(e)), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+  const label = (m: TeamMember) => m.name || m.email || t("team.unnamed");
+
+  const invite = () =>
+    run("invite", async () => {
+      const res = await apiFetch<{ link: string; emailed: boolean }>("/api/team/invitations", { method: "POST", body: JSON.stringify({ email, role }) });
+      setIssued({ email: email.trim().toLowerCase(), link: res.link, note: res.emailed ? "emailed" : "share" });
+      setEmail("");
+      toast(t("team.inviteSent", { email: email.trim().toLowerCase() }));
+    });
+  const renew = (inv: TeamInvitation) =>
+    run(`link:${inv.id}`, async () => {
+      const res = await apiFetch<{ link: string }>(`/api/team/invitations/${inv.id}/link`, { method: "POST" });
+      setIssued({ email: inv.email, link: res.link, note: "renewed" });
+      if (await copyText(res.link)) toast(t("common.copied"));
+    });
+  const revoke = (inv: TeamInvitation) =>
+    confirm(t("team.confirmRevoke", { email: inv.email })) &&
+    run(`revoke:${inv.id}`, async () => {
+      await apiFetch(`/api/team/invitations/${inv.id}`, { method: "DELETE" });
+      if (issued?.email === inv.email) setIssued(null);
+    }, t("team.revoked"));
+  const changeRole = (m: TeamMember, next: OrgRole) =>
+    run(`role:${m.userId}`, async () => {
+      await apiFetch(`/api/team/members/${m.userId}`, { method: "PATCH", body: JSON.stringify({ role: next }) });
+      if (m.self) await refresh();
+    }, t("team.roleChanged"));
+  const remove = (m: TeamMember) =>
+    confirm(m.self ? t("team.confirmLeave", { workspace: data.workspace.name }) : t("team.confirmRemove", { name: label(m), workspace: data.workspace.name })) &&
+    run(`remove:${m.userId}`, async () => {
+      await apiFetch(`/api/team/members/${m.userId}`, { method: "DELETE" });
+      // Leaving moves the session to another workspace.
+      if (m.self) await refresh();
+    }, m.self ? t("team.left") : t("team.removed"));
+
   return (
-    <Card>
-      <CardHeader title={t("team.title")} description={t("team.desc", { seats: e.seats, workspaces: e.workspaces })} />
-      <CardBody className="space-y-3 text-sm">
-        <div className="flex items-center gap-3 rounded-lg border border-border p-3">
-          <Users className="size-4 text-accent" />
-          <div className="flex-1">
-            <div className="font-medium">{session.user?.name || session.user?.email || t("auth.visitor")}</div>
-            <div className="text-xs text-subtle">{t("team.owner")}</div>
-          </div>
-        </div>
-        {session.plan !== "business" ? (
-          <p className="text-muted">
-            {t("team.businessOnly")}{" "}
+    <div className="space-y-4">
+      <Card data-testid="team-members">
+        <CardHeader
+          title={t("team.membersTitle", { workspace: data.workspace.name })}
+          description={t("team.membersDesc")}
+          action={
+            <Badge tone={full ? "warn" : "neutral"} title={t("team.seatsHint")} data-testid="team-seats">
+              {t("team.seats", { used: f.number(data.seats.used), limit: f.number(data.seats.limit) })}
+            </Badge>
+          }
+        />
+        <ul className="divide-y divide-border/60">
+          {data.members.map((m) => (
+            <li key={m.userId} className="flex flex-wrap items-center gap-3 px-4 py-3" data-testid="team-member">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-2 text-xs font-semibold text-white">{label(m).slice(0, 1).toUpperCase()}</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 text-sm font-medium">
+                  <span className="truncate">{label(m)}</span>
+                  {m.self && <Badge tone="accent">{t("team.you")}</Badge>}
+                </div>
+                <div className="truncate text-xs text-subtle">
+                  {m.email ?? "—"} · {t("team.joined", { date: f.date(m.joinedAt) })}
+                </div>
+              </div>
+              {m.assignableRoles.length ? (
+                <Select
+                  aria-label={t("team.roleLabel")}
+                  value={m.role}
+                  disabled={busy === `role:${m.userId}`}
+                  onChange={(e) => changeRole(m, e.target.value as OrgRole)}
+                  className="h-8 w-auto text-[13px]"
+                  data-testid="member-role"
+                >
+                  {ORG_ROLES.filter((r) => r === m.role || m.assignableRoles.includes(r)).map((r) => (
+                    <option key={r} value={r}>
+                      {t(`team.roles.${r}`)}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                <Badge tone={m.role === "owner" ? "accent" : "neutral"}>{t(`team.roles.${m.role}`)}</Badge>
+              )}
+              {m.canRemove && (
+                <Button size="sm" variant="ghost" disabled={busy === `remove:${m.userId}`} onClick={() => remove(m)} data-testid="remove-member">
+                  {m.self ? <LogOut /> : <UserMinus />} {m.self ? t("team.leave") : t("common.remove")}
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+        {!data.teamPlan ? (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border/70 px-4 py-3 text-sm text-muted" data-testid="team-upsell">
+            <Users className="size-4 text-accent" />
+            <span>{t("team.businessOnly")}</span>
             <Link href="/app/settings?tab=billing" className="text-accent hover:underline">
               {t("billing.upgrade")}
             </Link>
-          </p>
-        ) : session.mode === "demo" ? (
-          <p className="text-muted">{t("team.demoInvite")}</p>
+          </div>
+        ) : data.canManage ? (
+          <form
+            className="grid gap-3 border-t border-border/70 p-4 sm:grid-cols-[1fr_160px_auto] sm:items-end"
+            onSubmit={(e) => {
+              e.preventDefault();
+              invite();
+            }}
+          >
+            <Field label={t("team.inviteEmail")} htmlFor="invite-email">
+              <Input id="invite-email" type="email" required maxLength={254} autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} data-testid="invite-email" />
+            </Field>
+            <Field label={t("team.roleLabel")} htmlFor="invite-role">
+              <Select id="invite-role" value={role} onChange={(e) => setRole(e.target.value as InviteRole)}>
+                {INVITE_ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {t(`team.roles.${r}`)}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Button type="submit" disabled={full || !email.trim() || busy === "invite"} data-testid="invite-submit">
+              <UserPlus /> {t("team.inviteBtn")}
+            </Button>
+            <p className="text-[11px] text-subtle sm:col-span-3">{full ? <span className="text-warn">{t("team.seatsFull")}</span> : t("team.seatsHint")}</p>
+          </form>
         ) : (
-          <p className="text-muted">{t("team.inviteSoon")}</p>
+          <p className="border-t border-border/70 px-4 py-3 text-xs text-subtle">{t("team.managersOnly")}</p>
         )}
-      </CardBody>
+        {issued && (
+          <div className="space-y-2 border-t border-border/70 bg-accent/[0.04] p-4" data-testid="invite-link">
+            <p className="text-sm">{issued.note === "emailed" ? t("team.inviteEmailed", { email: issued.email }) : issued.note === "renewed" ? t("team.newLinkDone", { email: issued.email }) : t("team.inviteNotEmailed")}</p>
+            <label htmlFor="invite-link-value" className="block text-xs font-medium text-muted">
+              {t("team.inviteLinkLabel", { days: f.number(INVITE_TTL_DAYS) })}
+            </label>
+            <div className="flex gap-2">
+              <Input id="invite-link-value" readOnly value={issued.link} onFocus={(e) => e.currentTarget.select()} className="font-mono text-xs" />
+              <Button variant="secondary" onClick={async () => (await copyText(issued.link)) && toast(t("common.copied"))}>
+                <Copy /> {t("common.copy")}
+              </Button>
+            </div>
+            <p className="text-[11px] text-subtle">{t("team.inviteLinkHint")}</p>
+          </div>
+        )}
+      </Card>
+
+      {data.canManage && data.teamPlan && (
+        <Card data-testid="team-invitations">
+          <CardHeader title={t("team.pendingTitle")} />
+          {data.invitations.length === 0 ? (
+            <CardBody className="text-sm text-subtle">{t("team.pendingEmpty")}</CardBody>
+          ) : (
+            <ul className="divide-y divide-border/60">
+              {data.invitations.map((inv) => (
+                <li key={inv.id} className="flex flex-wrap items-center gap-3 px-4 py-3" data-testid="team-invitation">
+                  <Mail className="size-4 shrink-0 text-subtle" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-medium">{inv.email}</div>
+                    <div className="text-xs text-subtle">{inv.expired ? <Badge tone="critical">{t("team.expired")}</Badge> : t("team.expires", { date: f.dateTime(inv.expiresAt) })}</div>
+                  </div>
+                  <Badge>{t(`team.roles.${inv.role}`)}</Badge>
+                  <Button size="sm" variant="secondary" disabled={busy === `link:${inv.id}`} onClick={() => renew(inv)} title={t("team.inviteLinkHint")}>
+                    <Link2 /> {t("team.newLink")}
+                  </Button>
+                  <Button size="sm" variant="ghost" disabled={busy === `revoke:${inv.id}`} onClick={() => revoke(inv)}>
+                    <X /> {t("team.revoke")}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      )}
+    </div>
+  );
+}
+
+/** The user's workspaces: switch, rename (owners/admins) and create (Business, within the plan's limit). */
+function WorkspacesSection() {
+  const { t } = useTranslation();
+  const f = useFormat();
+  const toast = useToast();
+  const router = useRouter();
+  const { session, refresh } = useSession();
+  const switchTo = useSwitchWorkspace();
+  const { data, error, reload } = useApi<WorkspacesResponse>(`/api/workspaces?ws=${session?.workspace?.id ?? ""}`);
+  const [name, setName] = useState("");
+  const [editing, setEditing] = useState<{ id: string; name: string } | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  if (error) return <ErrorState message={t(errorKey(error))} onRetry={reload} />;
+  if (!data) return <Skeleton className="h-48" />;
+
+  const rename = async () => {
+    if (!editing?.name.trim()) return;
+    setBusy(`rename:${editing.id}`);
+    try {
+      await apiFetch(`/api/workspaces/${editing.id}`, { method: "PATCH", body: JSON.stringify({ name: editing.name.trim() }) });
+      setEditing(null);
+      await refresh();
+      reload();
+      toast(t("workspaces.renamed"));
+    } catch (e) {
+      toast(t(errorKey(e)), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+  const create = async () => {
+    const value = name.trim();
+    if (!value) return;
+    setBusy("create");
+    try {
+      // The server makes the new workspace active.
+      await apiFetch("/api/workspaces", { method: "POST", body: JSON.stringify({ name: value }) });
+      setName("");
+      await refresh();
+      router.refresh();
+      toast(t("workspaces.created", { name: value }));
+    } catch (e) {
+      toast(t(errorKey(e)), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <Card data-testid="workspaces">
+      <CardHeader
+        title={t("workspaces.title")}
+        description={t("workspaces.desc")}
+        action={data.create.limit > 1 ? <Badge>{t("workspaces.usage", { used: f.number(data.create.used), limit: f.number(data.create.limit) })}</Badge> : undefined}
+      />
+      <ul className="divide-y divide-border/60">
+        {data.workspaces.map((w) => (
+          <li key={w.id} className="flex flex-wrap items-center gap-3 px-4 py-3" data-testid="workspace-row">
+            <Building2 className="size-4 shrink-0 text-subtle" />
+            {editing?.id === w.id ? (
+              <form
+                className="flex min-w-0 flex-1 gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  rename();
+                }}
+              >
+                <Input aria-label={t("workspaces.name")} value={editing.name} maxLength={80} autoFocus onChange={(e) => setEditing({ id: w.id, name: e.target.value })} className="h-8" />
+                <Button size="sm" type="submit" disabled={!editing.name.trim() || busy === `rename:${w.id}`}>
+                  {t("common.save")}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>
+                  {t("common.cancel")}
+                </Button>
+              </form>
+            ) : (
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-medium">{w.name}</div>
+                <div className="text-xs text-subtle">{t("workspaces.members", { count: w.members })}</div>
+              </div>
+            )}
+            <Badge>{t(`team.roles.${w.role}`)}</Badge>
+            <Badge tone={w.plan === "free" ? "neutral" : "accent"}>{t(`plans.${w.plan}.name`)}</Badge>
+            {w.canRename && editing?.id !== w.id && (
+              <Button size="icon-sm" variant="ghost" aria-label={t("workspaces.rename")} onClick={() => setEditing({ id: w.id, name: w.name })}>
+                <Pencil />
+              </Button>
+            )}
+            {w.active ? (
+              <Badge tone="good">{t("workspaces.active")}</Badge>
+            ) : (
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={busy === `switch:${w.id}`}
+                onClick={async () => {
+                  setBusy(`switch:${w.id}`);
+                  await switchTo(w.id, w.name);
+                  setBusy(null);
+                }}
+              >
+                {t("workspaces.switch")}
+              </Button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {data.create.allowed ? (
+        <form
+          className="space-y-2 border-t border-border/70 p-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            create();
+          }}
+        >
+          <Field label={t("workspaces.createTitle")} htmlFor="ws-name" hint={t("workspaces.billedHint")}>
+            <div className="flex gap-2">
+              <Input id="ws-name" value={name} maxLength={80} placeholder={t("workspaces.name")} onChange={(e) => setName(e.target.value)} data-testid="workspace-name" />
+              <Button type="submit" disabled={!name.trim() || busy === "create"} data-testid="workspace-create">
+                <Plus /> {t("common.create")}
+              </Button>
+            </div>
+          </Field>
+        </form>
+      ) : (
+        data.create.reason && (
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border/70 px-4 py-3 text-xs text-subtle" data-testid="workspace-create-blocked">
+            {t(`workspaces.blocked.${data.create.reason}`)}
+            {data.create.reason === "plan_required" && (
+              <Link href="/app/settings?tab=billing" className="text-accent hover:underline">
+                {t("billing.upgrade")}
+              </Link>
+            )}
+          </p>
+        )
+      )}
     </Card>
+  );
+}
+
+function TeamTab() {
+  const { t } = useTranslation();
+  const f = useFormat();
+  const { session } = useSession();
+  if (!session) return <Skeleton className="h-40" />;
+  const e = session.entitlements;
+  if (session.mode === "demo")
+    return (
+      <Card data-testid="team-demo">
+        <CardHeader title={t("team.title")} description={t("team.desc", { seats: f.number(e.seats), workspaces: f.number(e.workspaces) })} />
+        <CardBody className="space-y-3 text-sm">
+          <div className="flex gap-2 rounded-lg border border-warn/30 bg-warn/5 px-3 py-2.5 text-xs text-warn">
+            <FlaskConical className="size-4 shrink-0" /> {t("team.demoText")}
+          </div>
+          {session.plan !== "business" && (
+            <p className="text-muted">
+              {t("team.businessOnly")}{" "}
+              <Link href="/app/settings?tab=billing" className="text-accent hover:underline">
+                {t("billing.upgrade")}
+              </Link>
+            </p>
+          )}
+        </CardBody>
+      </Card>
+    );
+  return (
+    <div className="space-y-4">
+      <MembersSection />
+      <WorkspacesSection />
+    </div>
   );
 }
 

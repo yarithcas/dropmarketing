@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CATEGORIES, COUNTRIES, LANGUAGES, PLATFORMS, TIME_RANGES } from "./types";
+import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, LANGUAGES, PLATFORMS, TIME_RANGES } from "./types";
 
 /** Query schemas shared by API routes (validation) and the client (URL building). */
 
@@ -56,9 +56,9 @@ export const adQuerySchema = z.object({
   platform: csv(PLATFORMS),
   country: csv(COUNTRIES),
   language: csv(LANGUAGES),
-  format: csv(["video", "image", "carousel"] as const),
+  format: csv(CREATIVE_FORMATS),
   category: csv(CATEGORIES),
-  cta: csv(["shop_now", "learn_more", "sign_up", "get_offer", "order_now"] as const),
+  cta: csv(CALLS_TO_ACTION),
   firstFrom: day,
   firstTo: day,
   lastFrom: day,

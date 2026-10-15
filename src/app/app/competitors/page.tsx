@@ -114,7 +114,7 @@ function CompetitorsInner() {
   const rows: { label: string; render: (s: CompareResponse["stores"][number]) => React.ReactNode }[] = [
     { label: t("stores.domain"), render: (s) => <span className="text-xs">{s.store.domain}</span> },
     { label: t("stores.technology"), render: (s) => <TechBadge tech={s.store.technology} /> },
-    { label: t("filters.country"), render: (s) => t(`countries.${s.store.country}`) },
+    { label: t("filters.country"), render: (s) => (s.store.country ? t(`countries.${s.store.country}`) : t("common.unknown")) },
     { label: t("filters.category"), render: (s) => s.store.categories.map((c) => t(`categories.${c}`)).join(", ") },
     { label: t("stores.publicListings"), render: (s) => <span className="num">{s.listingCount}</span> },
     { label: t("competitors.listingGrowth"), render: (s) => <TrendPill pct={s.listingGrowth} /> },

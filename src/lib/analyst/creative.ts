@@ -60,8 +60,9 @@ export function rulesCreativeAnalysis(ad: Advertisement, product: ProductWithMet
   const hasBenefit = triggers.includes("convenience") || triggers.includes("self_improvement") || triggers.includes("value");
   const structure: CreativeAnalysis["structure"] =
     hookType === "listicle" ? "listicle" : hookType === "personal" ? "testimonial" : hasProblem && hasBenefit ? "PAS" : hookType === "curiosity" || hookType === "question" ? "AIDA" : "direct";
-  const tag = product?.tags[0] ?? ad.category;
-  const name = product?.name ?? ad.headline;
+  // Category may be unknown for live ads; fall back to what the ad itself names.
+  const tag = product?.tags[0] ?? ad.category ?? (ad.headline || ad.advertiser);
+  const name = product?.name ?? (ad.headline || ad.advertiser);
 
   const strengths: Text[] = [];
   const weaknesses: Text[] = [];

@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { Clapperboard, Copy, Lightbulb, Sparkles, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { CreativePreview } from "@/components/app/ad-card";
+import { AdLibraryLink, CreativePreview, MatchEstimateTag } from "@/components/app/ad-card";
 import { useText } from "@/components/app/analyst-result";
 import { PageHeader, PlanGate, PlatformBadge, ProvenanceBadge, ScoreBadge, SourceLine } from "@/components/app/bits";
 import { SaveButton } from "@/components/app/save";
@@ -59,6 +59,8 @@ function Viewer({ adId }: { adId: string }) {
   if (loading || !data) return <Skeleton className="h-[520px] rounded-xl" />;
   const { ad, product } = data;
   const allowed = session?.entitlements.creativeAnalysis ?? false;
+  // Some sources (e.g. the TikTok query API) disclose no ad text: there is nothing to analyze.
+  const hasText = Boolean(ad.headline.trim() || ad.copy.trim());
 
   const run = async () => {
     setBusy(true);
@@ -83,7 +85,8 @@ function Viewer({ adId }: { adId: string }) {
                 <div className="mt-0.5 flex items-center gap-2">
                   <PlatformBadge platform={ad.platform} />
                   <Badge>{t(`formats.${ad.format}`)}</Badge>
-                  <Badge>{ad.language.toUpperCase()}</Badge>
+                  <Badge>{ad.language ? ad.language.toUpperCase() : t("ads.languageUnknown")}</Badge>
+                  {ad.placements?.length ? <span className="text-xs text-subtle">{ad.placements.map((p) => t(`placements.${p}`, { defaultValue: p })).join(" · ")}</span> : null}
                 </div>
               </div>
               <div className="flex gap-2">
@@ -92,7 +95,7 @@ function Viewer({ adId }: { adId: string }) {
             </div>
             <div>
               <div className="label mb-1">{t("creative.headline")}</div>
-              <p className="text-sm font-medium">{ad.headline}</p>
+              {ad.headline ? <p className="text-sm font-medium">{ad.headline}</p> : <p className="text-xs text-subtle">{t("ads.noCopy")}</p>}
             </div>
             <div>
               <div className="label mb-1 flex items-center gap-2">
@@ -107,7 +110,7 @@ function Viewer({ adId }: { adId: string }) {
                   <Copy className="size-3" />
                 </button>
               </div>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{ad.copy}</p>
+              {ad.copy ? <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{ad.copy}</p> : <p className="text-xs text-subtle">{t("ads.noCopy")}</p>}
             </div>
             <dl className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
               <div>
@@ -128,14 +131,18 @@ function Viewer({ adId }: { adId: string }) {
               </div>
             </dl>
             {product && (
-              <Link href={`/app/products/${product.id}`} className="flex items-center gap-2 text-xs text-accent hover:underline">
-                {t("ads.product")}: {product.name} <ScoreBadge score={product.score.overall} />
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link href={`/app/products/${product.id}`} className="flex items-center gap-2 text-xs text-accent hover:underline">
+                  {t("ads.product")}: {product.name} <ScoreBadge score={product.score.overall} />
+                </Link>
+                <MatchEstimateTag ad={ad} />
+              </div>
             )}
             <div className="flex flex-wrap items-center gap-2">
               <ProvenanceBadge kind={ad.source.kind} />
               <SourceLine connector={ad.source.connector} observedAt={ad.source.observedAt} />
             </div>
+            <AdLibraryLink ad={ad} />
             <p className="text-[11px] text-subtle">{t("creative.durationNotProof")}</p>
           </div>
         </div>
@@ -151,7 +158,7 @@ function Viewer({ adId }: { adId: string }) {
             }
             description={t("creative.analysisDesc")}
             action={
-              <Button size="sm" onClick={run} disabled={busy} data-testid="run-creative-analysis">
+              <Button size="sm" onClick={run} disabled={busy || !hasText} data-testid="run-creative-analysis">
                 <Sparkles /> {busy ? t("common.loading") : analysis ? t("product.aiRegenerate") : t("creative.analyze")}
               </Button>
             }
@@ -164,7 +171,7 @@ function Viewer({ adId }: { adId: string }) {
                 ))}
               </div>
             ) : !analysis ? (
-              <p className="text-sm text-subtle">{t("creative.analysisEmpty")}</p>
+              <p className="text-sm text-subtle">{hasText ? t("creative.analysisEmpty") : t("creative.noCopyToAnalyze")}</p>
             ) : (
               <div className="space-y-4" data-testid="creative-analysis">
                 <div className="flex flex-wrap gap-2">

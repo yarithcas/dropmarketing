@@ -21,7 +21,8 @@
     "saved": "Gespeichert",
     "tableView": "Tabellenansicht",
     "viewAll": "Alle anzeigen",
-    "info": "Informationen"
+    "info": "Informationen",
+    "unknown": "Unbekannt"
   },
   "nav": {
     "main": "Hauptnavigation",
@@ -273,14 +274,16 @@
   "formats": {
     "video": "Video",
     "image": "Bild",
-    "carousel": "Karussell"
+    "carousel": "Karussell",
+    "unknown": "Unbekanntes Format"
   },
   "cta": {
     "shop_now": "Jetzt einkaufen",
     "learn_more": "Mehr erfahren",
     "sign_up": "Registrieren",
     "get_offer": "Angebot sichern",
-    "order_now": "Jetzt bestellen"
+    "order_now": "Jetzt bestellen",
+    "unknown": "Unbekannter CTA"
   },
   "productTypes": {
     "physical": "Physisch",
@@ -465,7 +468,14 @@
     "landingDemo": "{{domain}} (Demo-Domain, keine echte Website)",
     "analyze": "Analysieren",
     "previewLabel": "Creative-Vorschau von {{advertiser}}",
-    "generatedPreview": "Generierte Vorschau"
+    "generatedPreview": "Generierte Vorschau",
+    "languageUnknown": "Unbekannte Sprache",
+    "noCopy": "Die Quelle gibt keinen Anzeigentext an.",
+    "viewInLibrary": "In der {{platform}}-Werbebibliothek ansehen",
+    "matchBasis": {
+      "search_term": "Suchbegriff: Die Plattform hat die Anzeige bei der Suche nach dem Namen dieses Produkts geliefert. TrendHunter-Schätzung, keine von der Plattform angegebene Verknüpfung.",
+      "token_overlap": "Von TrendHunter über gemeinsame Wörter in Anzeigentext und Produktname/-tags zugeordnet. Schätzung, keine von der Plattform angegebene Verknüpfung."
+    }
   },
   "creative": {
     "title": "Creative-Analyzer",
@@ -519,7 +529,8 @@
       "learn_more": "„Mehr erfahren“ — weicher CTA, passend für kalte Zielgruppen.",
       "sign_up": "„Registrieren“ — Lead-Generierung.",
       "get_offer": "„Angebot sichern“ — aktionsgetrieben.",
-      "order_now": "„Jetzt bestellen“ — dringlich, Kaufabsicht."
+      "order_now": "„Jetzt bestellen“ — dringlich, Kaufabsicht.",
+      "unknown": "Die Quelle gibt den Call-to-Action nicht an."
     },
     "triggers": "Emotionale Trigger",
     "triggerNames": {
@@ -566,7 +577,8 @@
       "founder": "Gründer-Story in die Kamera: warum wir das {{tag}}-Erlebnis neu gedacht haben."
     },
     "related": "Weitere Creatives zu diesem Produkt",
-    "disclaimer": "KI-gestützte Analyse zur Inspiration. Übernimm keine fremden Werbeinhalte; entwickle originelle Konzepte."
+    "disclaimer": "KI-gestützte Analyse zur Inspiration. Übernimm keine fremden Werbeinhalte; entwickle originelle Konzepte.",
+    "noCopyToAnalyze": "Diese Quelle gibt für diese Anzeige weder Überschrift noch Text an, daher gibt es nichts zu analysieren. Öffne sie in der Werbebibliothek, um das Creative zu prüfen."
   },
   "trends": {
     "title": "Trendprodukte",
@@ -614,7 +626,7 @@
     "adsObserved": "Beobachtete Anzeigen",
     "firstSeen": "Erstmals beobachtet",
     "techUnknown": "Unbekannt",
-    "techVerifiedTip": "Storefront-Technologie anhand öffentlicher Seitensignale verifiziert.",
+    "techVerifiedTip": "Technologie verifiziert: Der öffentliche Endpunkt der Plattform (Shopify /products.json oder WooCommerce Store API) lieferte eine gültige Antwort.",
     "techUnverifiedTip": "Wahrscheinliche Technologie, nicht verifiziert.",
     "unverified": "nicht verifiziert",
     "platforms": {
@@ -650,7 +662,9 @@
     "displayedPrice": "Angezeigter Preis",
     "listedSince": "Beobachtet seit",
     "trackedProduct": "Beobachtetes Produkt",
-    "associatedAds": "Zugehörige Anzeigen ({{n}})"
+    "associatedAds": "Zugehörige Anzeigen ({{n}})",
+    "lastObserved": "Zuletzt beobachtet",
+    "socialDemo": "Demo-Link, kein echtes Profil"
   },
   "competitors": {
     "title": "Wettbewerbsanalyse",
@@ -1050,7 +1064,8 @@
       "success": "Erfolgreich",
       "failed": "Fehlgeschlagen",
       "skipped": "Übersprungen",
-      "running": "Läuft"
+      "running": "Läuft",
+      "partial": "Teilweise"
     },
     "origins": {
       "demo": "Demo-Prüfung",
@@ -1287,7 +1302,8 @@
     "fields": "Felder",
     "setup": "Erforderliche Variablen",
     "docs": "Doku",
-    "shopifyHint": "Verbinde deinen eigenen Shopify-Shop unter"
+    "shopifyHint": "Verbinde deinen eigenen Shopify-Shop unter",
+    "notAvailable": "Noch nicht verfügbar"
   },
   "connectors": {
     "names": {
@@ -1305,9 +1321,9 @@
     "permitted": {
       "meta": "Offizielle Ad Library API. Anzeigendaten wie von Meta offengelegt; unterliegt den Meta-Plattformbedingungen und der Identitätsprüfung.",
       "tiktok": "TikTok Commercial Content API für zugelassene Forschende; Anzeigen-Metadaten wie von TikTok offengelegt.",
-      "pinterest": "Reserviert für einen autorisierten Pinterest-Transparenz-Feed; wird nur unter bestätigten Bedingungen aktiviert.",
-      "trends": "Suchinteresse-Indizes eines autorisierten Anbieters (z. B. einer offiziellen Trends-API).",
-      "storefronts": "Nur öffentlich zugängliche Listings, unter Beachtung von robots.txt, Nutzungsbedingungen und einem Limit von 1 Anfrage pro Sekunde.",
+      "pinterest": "Noch nicht verfügbar: Es ist keine Anbindung an Pinterest-Werbetransparenzdaten implementiert; ein Token hat keine Wirkung.",
+      "trends": "Noch nicht verfügbar: Es ist keine Anbindung an einen Suchtrend-Anbieter implementiert; ein API-Schlüssel hat keine Wirkung.",
+      "storefronts": "Nur öffentlich zugängliche Angebote (Shopify products.json/meta.json, WooCommerce Store API), unter Beachtung von robots.txt, Nutzungsbedingungen und einem Limit von 1 Anfrage pro Sekunde.",
       "licensed": "Vertraglich lizenzierter Drittanbieter-Datensatz; Felder wie mit dem Anbieter vereinbart.",
       "shopify": "Nur dein eigener Shop, per OAuth mit Leseberechtigungen, die du freigibst.",
       "demo": "Synthetische Beispieldaten zur Demonstration. Werden nie als echte Beobachtungen dargestellt."
@@ -1548,5 +1564,14 @@
     "intro": "Neue Ergebnisse für deine Benachrichtigung „{{rule}}“:",
     "manage": "Benachrichtigungen verwalten: {{url}}",
     "footer": "Geschätzte oder KI-generierte Werte sind keine gemessenen Fakten. Du erhältst diese E-Mail, weil E-Mail-Benachrichtigungen für diese Regel aktiviert sind."
+  },
+  "placements": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "messenger": "Messenger",
+    "audience_network": "Audience Network",
+    "whatsapp": "WhatsApp",
+    "threads": "Threads",
+    "oculus": "Oculus"
   }
 }

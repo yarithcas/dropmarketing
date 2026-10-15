@@ -21,7 +21,8 @@
     "saved": "Saved",
     "tableView": "Table view",
     "viewAll": "View all",
-    "info": "Information"
+    "info": "Information",
+    "unknown": "Unknown"
   },
   "nav": {
     "main": "Main navigation",
@@ -273,14 +274,16 @@
   "formats": {
     "video": "Video",
     "image": "Image",
-    "carousel": "Carousel"
+    "carousel": "Carousel",
+    "unknown": "Unknown format"
   },
   "cta": {
     "shop_now": "Shop now",
     "learn_more": "Learn more",
     "sign_up": "Sign up",
     "get_offer": "Get offer",
-    "order_now": "Order now"
+    "order_now": "Order now",
+    "unknown": "Unknown CTA"
   },
   "productTypes": {
     "physical": "Physical",
@@ -465,7 +468,14 @@
     "landingDemo": "{{domain}} (demo domain, not a real website)",
     "analyze": "Analyze",
     "previewLabel": "Creative preview for {{advertiser}}",
-    "generatedPreview": "Generated preview"
+    "generatedPreview": "Generated preview",
+    "languageUnknown": "Unknown language",
+    "noCopy": "No ad text disclosed by the source.",
+    "viewInLibrary": "View in the {{platform}} ad library",
+    "matchBasis": {
+      "search_term": "Search term: the ad was returned by the platform's search for this product's name. TrendHunter estimate, not a link disclosed by the platform.",
+      "token_overlap": "Matched by TrendHunter from words shared by the ad text and the product name/tags. Estimate, not a link disclosed by the platform."
+    }
   },
   "creative": {
     "title": "Ad Creative Analyzer",
@@ -519,7 +529,8 @@
       "learn_more": "“Learn more” — soft CTA, suited to colder audiences.",
       "sign_up": "“Sign up” — lead generation.",
       "get_offer": "“Get offer” — promotion-led.",
-      "order_now": "“Order now” — urgent, purchase intent."
+      "order_now": "“Order now” — urgent, purchase intent.",
+      "unknown": "The source does not disclose the call to action."
     },
     "triggers": "Emotional triggers",
     "triggerNames": {
@@ -566,7 +577,8 @@
       "founder": "Founder-to-camera story: why we redesigned the {{tag}} experience."
     },
     "related": "Other creatives for this product",
-    "disclaimer": "AI-assisted analysis for inspiration. Do not reproduce third-party ad content; build original concepts."
+    "disclaimer": "AI-assisted analysis for inspiration. Do not reproduce third-party ad content; build original concepts.",
+    "noCopyToAnalyze": "This source discloses no headline or copy for this ad, so there is nothing to analyze. Open it in the ad library to review the creative."
   },
   "trends": {
     "title": "Trending Products",
@@ -614,7 +626,7 @@
     "adsObserved": "Ads observed",
     "firstSeen": "First observed",
     "techUnknown": "Unknown",
-    "techVerifiedTip": "Storefront technology verified from public page signals.",
+    "techVerifiedTip": "Technology verified: the platform's public endpoint (Shopify /products.json or WooCommerce Store API) returned a valid response.",
     "techUnverifiedTip": "Likely technology, not verified.",
     "unverified": "unverified",
     "platforms": {
@@ -650,7 +662,9 @@
     "displayedPrice": "Displayed price",
     "listedSince": "Observed since",
     "trackedProduct": "Tracked product",
-    "associatedAds": "Associated advertisements ({{n}})"
+    "associatedAds": "Associated advertisements ({{n}})",
+    "lastObserved": "Last observed",
+    "socialDemo": "Demo link, not a real profile"
   },
   "competitors": {
     "title": "Competitor Research",
@@ -1050,7 +1064,8 @@
       "success": "Success",
       "failed": "Failed",
       "skipped": "Skipped",
-      "running": "Running"
+      "running": "Running",
+      "partial": "Partial"
     },
     "origins": {
       "demo": "Demo check",
@@ -1287,7 +1302,8 @@
     "fields": "Fields",
     "setup": "Required variables",
     "docs": "Docs",
-    "shopifyHint": "Connect your own Shopify store from"
+    "shopifyHint": "Connect your own Shopify store from",
+    "notAvailable": "Not available yet"
   },
   "connectors": {
     "names": {
@@ -1305,9 +1321,9 @@
     "permitted": {
       "meta": "Official Ad Library API. Ads data as disclosed by Meta; subject to Meta's Platform Terms and identity verification.",
       "tiktok": "TikTok Commercial Content API for approved researchers; ad metadata as disclosed by TikTok.",
-      "pinterest": "Reserved for an authorized Pinterest ad-transparency feed; activated only under confirmed terms.",
-      "trends": "Search-interest indices from an authorized provider (e.g. an official trends API).",
-      "storefronts": "Publicly accessible product listings only, respecting robots.txt, site terms and a 1 request/second limit.",
+      "pinterest": "Not available yet: no Pinterest ad-transparency mapping is implemented, so setting a token has no effect.",
+      "trends": "Not available yet: no search-trends provider mapping is implemented, so setting an API key has no effect.",
+      "storefronts": "Publicly accessible listings only (Shopify products.json/meta.json, WooCommerce Store API), respecting robots.txt, site terms and a 1 request/second limit.",
       "licensed": "Licensed third-party dataset under contract; fields as agreed with the provider.",
       "shopify": "Your own store only, via OAuth with read-only scopes you approve.",
       "demo": "Synthetic sample data for demonstration. Never presented as real observations."
@@ -1548,5 +1564,14 @@
     "intro": "New results for your alert “{{rule}}”:",
     "manage": "Manage your alerts: {{url}}",
     "footer": "Estimated or AI-generated values are not measured facts. You receive this email because email notifications are enabled for this alert."
+  },
+  "placements": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "messenger": "Messenger",
+    "audience_network": "Audience Network",
+    "whatsapp": "WhatsApp",
+    "threads": "Threads",
+    "oculus": "Oculus"
   }
 }

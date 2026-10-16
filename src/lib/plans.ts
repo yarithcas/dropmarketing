@@ -119,5 +119,8 @@ export function isPlan(v: unknown): v is PlanId {
 /** Advanced product filters (Free plan only gets keyword, category, price and sort). */
 export const ADVANCED_PRODUCT_FILTERS = ["country", "platform", "competition", "productType", "marginMin", "growthMin", "firstFrom", "firstTo", "shippingVerified", "warehouse", "maxDeliveryDays"] as const;
 
-/** Advanced ad filters (Free plan only gets keyword, category, platform and sort). */
-export const ADVANCED_AD_FILTERS = ["advertiser", "domain", "country", "language", "format", "cta", "firstFrom", "firstTo", "lastFrom", "lastTo", "activeOnly"] as const;
+/**
+ * Advanced ad filters (Free plan only gets keyword, category, platform, sort and the
+ * active-advertiser switch; adjusting that rule's thresholds is advanced).
+ */
+export const ADVANCED_AD_FILTERS = ["advertiser", "domain", "country", "language", "format", "cta", "firstFrom", "firstTo", "lastFrom", "lastTo", "activeOnly", "minActiveAds", "minActiveDays"] as const;

@@ -25,14 +25,20 @@ import { useFormat } from "@/lib/format";
 import { useLocale } from "@/lib/i18n/provider";
 import { daysBetween } from "@/lib/dates";
 import { formatInfo, type CreativeAnalysis } from "@/lib/analyst/creative";
-import type { Advertisement, ProductWithMetrics, Store } from "@/lib/types";
+import type { ProductWithMetrics, Store } from "@/lib/types";
+import type { AdvertiserActivity, AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
+import { ActiveAdvertiserBadge, ActiveAdvertiserFlag, ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
 import { cn } from "@/lib/cn";
 
 interface AdDetail {
-  ad: Advertisement;
+  ad: AdWithActivity;
   product: ProductWithMetrics | null;
   store: Store | null;
-  related: Advertisement[];
+  /** Other ads of the product: of active advertisers (default) and all of them, up to 6 each. */
+  related: AdWithActivity[];
+  relatedAll: AdWithActivity[];
+  relatedCounts: { qualifying: number; total: number };
+  advertiserRule: AdvertiserRule;
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -54,6 +60,8 @@ function Viewer({ adId }: { adId: string }) {
   const { data, error, loading, reload } = useApi<AdDetail>(`/api/ads/${adId}`);
   const [analysis, setAnalysis] = useState<CreativeAnalysis | null>(null);
   const [busy, setBusy] = useState(false);
+  // Related ads default to active advertisers, like every ad list; one switch shows them all.
+  const [allRelated, setAllRelated] = useState(false);
   useEffect(() => setAnalysis(null), [adId]);
 
   if (error) return <ErrorState message={error.status === 404 ? t("errors.notFound") : undefined} onRetry={reload} />;
@@ -89,7 +97,9 @@ function Viewer({ adId }: { adId: string }) {
           <div className="space-y-3 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <div className="text-base font-semibold">{ad.advertiser}</div>
+                <div className="flex items-center gap-2 text-base font-semibold">
+                  {ad.advertiser} <ActiveAdvertiserBadge activity={ad.advertiserActivity} />
+                </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   <PlatformBadge platform={ad.platform} />
                   <Badge>{t(`formats.${ad.format}`)}</Badge>
@@ -278,22 +288,37 @@ function Viewer({ adId }: { adId: string }) {
         </Card>
       </PlanGate>
 
-      {data.related.length > 0 && (
-        <Card>
+      {data.relatedCounts.total > 0 && (
+        <Card data-testid="creative-related">
           <CardHeader title={t("creative.related")} />
-          <ul className="grid gap-px sm:grid-cols-2 lg:grid-cols-3">
-            {data.related.map((r) => (
-              <li key={r.id}>
-                <Link href={`/app/creatives?ad=${r.id}`} className="block p-4 hover:bg-surface-2">
-                  <div className="flex items-center justify-between text-sm font-medium">
-                    <span className="truncate">{r.advertiser}</span>
-                    <PlatformBadge platform={r.platform} />
-                  </div>
-                  <p className="mt-1 line-clamp-2 text-xs text-muted">{r.headline}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/70 px-4 py-2.5">
+            <ActiveAdvertisersSwitch checked={!allRelated} thresholds={data.advertiserRule} onChange={(on) => setAllRelated(!on)} className="text-xs" testId="creative-related-toggle" />
+            <span className="text-[11px] text-subtle" data-testid="creative-related-count">
+              {t("activeAdvertisers.qualifyingOf", { qualifying: data.relatedCounts.qualifying, total: data.relatedCounts.total })}
+            </span>
+          </div>
+          {(allRelated ? data.relatedAll : data.related).length === 0 ? (
+            <CardBody>
+              <ActiveAdvertisersEmpty thresholds={data.advertiserRule} onShowAll={() => setAllRelated(true)} />
+            </CardBody>
+          ) : (
+            <ul className="grid gap-px sm:grid-cols-2 lg:grid-cols-3">
+              {(allRelated ? data.relatedAll : data.related).map((r) => (
+                <li key={r.id}>
+                  <Link href={`/app/creatives?ad=${r.id}`} className="focus-ring block p-4 hover:bg-surface-2">
+                    <div className="flex items-center justify-between gap-2 text-sm font-medium">
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span className="truncate">{r.advertiser}</span>
+                        {r.advertiserActivity?.qualifies ? <ActiveAdvertiserFlag count={r.advertiserActivity.activeSinceMinDays} days={r.advertiserActivity.minDays} /> : null}
+                      </span>
+                      <PlatformBadge platform={r.platform} />
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-xs text-muted">{r.headline}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
     </div>
@@ -306,10 +331,16 @@ function CreativesInner() {
   const { workspace } = useWorkspace();
   const [tab, setTab] = useState<"swipe" | "recent" | "long">(workspace.collections.find((c) => c.kind === "swipe")?.items.length ? "swipe" : "recent");
   const adId = url.get("ad");
-  const { data } = useApi<{ items: Advertisement[] }>(tab === "swipe" ? null : `/api/ads?pageSize=20&sort=${tab === "long" ? "longest" : "newest"}&page=1`);
+  // Recent / long-running lists: active advertisers only by default, like Ad Spy.
+  const [allAds, setAllAds] = useState(false);
+  const { data } = useApi<{ items: AdWithActivity[]; advertiserRule?: AdvertiserRule }>(
+    tab === "swipe" ? null : `/api/ads?pageSize=20&sort=${tab === "long" ? "longest" : "newest"}&page=1${allAds ? "&activeAdvertisers=false" : ""}`,
+  );
   const swipe = workspace.collections.find((c) => c.kind === "swipe");
-  const list: { id: string; title: string; subtitle: string }[] =
-    tab === "swipe" ? (swipe?.items ?? []).filter((i) => i.type === "ad").map((i) => ({ id: i.refId, title: i.label, subtitle: i.note })) : (data?.items ?? []).map((a) => ({ id: a.id, title: a.advertiser, subtitle: a.headline }));
+  const list: { id: string; title: string; subtitle: string; activity?: AdvertiserActivity }[] =
+    tab === "swipe"
+      ? (swipe?.items ?? []).filter((i) => i.type === "ad").map((i) => ({ id: i.refId, title: i.label, subtitle: i.note }))
+      : (data?.items ?? []).map((a) => ({ id: a.id, title: a.advertiser, subtitle: a.headline, activity: a.advertiserActivity }));
 
   return (
     <div>
@@ -327,12 +358,21 @@ function CreativesInner() {
               ]}
             />
           </div>
+          {tab !== "swipe" ? (
+            <div className="border-b border-border px-3 py-2">
+              <ActiveAdvertisersSwitch checked={!allAds} thresholds={data?.advertiserRule} onChange={(on) => setAllAds(!on)} className="text-xs" testId="creatives-active-toggle" />
+            </div>
+          ) : null}
           {list.length === 0 ? (
             <div className="p-4">
-              <EmptyState icon={<Clapperboard />} title={t("creative.swipeEmpty")} description={t("creative.swipeEmptyText")} action={<Link href="/app/ads" className="text-sm text-accent hover:underline">{t("nav.ads")}</Link>} />
+              {tab !== "swipe" && data && !allAds ? (
+                <ActiveAdvertisersEmpty thresholds={data.advertiserRule} onShowAll={() => setAllAds(true)} />
+              ) : (
+                <EmptyState icon={<Clapperboard />} title={t("creative.swipeEmpty")} description={t("creative.swipeEmptyText")} action={<Link href="/app/ads" className="text-sm text-accent hover:underline">{t("nav.ads")}</Link>} />
+              )}
             </div>
           ) : (
-            <ul className="max-h-[70vh] divide-y divide-border/70 overflow-y-auto">
+            <ul className="max-h-[70vh] divide-y divide-border/70 overflow-y-auto" data-testid="creatives-list">
               {list.map((it) => (
                 <li key={it.id}>
                   <button
@@ -341,7 +381,10 @@ function CreativesInner() {
                     aria-current={adId === it.id ? "true" : undefined}
                     className={cn("focus-ring block w-full px-4 py-3 text-left transition-colors hover:bg-surface-2 active:bg-surface-3", adId === it.id && "bg-surface-2 shadow-[inset_2px_0_0_rgb(var(--accent))]")}
                   >
-                    <div className="truncate text-sm font-medium">{it.title}</div>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-sm font-medium">{it.title}</span>
+                      {it.activity?.qualifies ? <ActiveAdvertiserFlag count={it.activity.activeSinceMinDays} days={it.activity.minDays} /> : null}
+                    </div>
                     {it.subtitle ? <div className="mt-0.5 truncate text-xs text-subtle">{it.subtitle}</div> : null}
                   </button>
                 </li>

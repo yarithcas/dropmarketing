@@ -10,6 +10,10 @@ It combines **product discovery**, **Ad Spy**, a **creative analyzer**, **trend 
 *no fabricated metrics*. Every value is labelled **Measured**, **Estimate**, **AI-generated** or **Demo**,
 and carries its source and observation date.
 
+- **Active advertisers by default**: Ad Spy, creatives, search and product/store pages show ads of advertisers
+  running ≥ 5 active ads for ≥ 7 days (badge + one-click "show all ads"; thresholds adjustable on Pro) —
+  see [Data sources](docs/DATA_SOURCES.md#active-advertisers-default-quality-bar--migration-0008).
+
 > The original static landing page that lived in this repository is preserved in [`legacy/`](legacy/).
 
 ## Quick start (demo mode — no credentials needed)

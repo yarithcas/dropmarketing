@@ -12,15 +12,19 @@ import { ErrorState } from "@/components/ui/states";
 import { useApi } from "@/lib/client/use-api";
 import { useFormat } from "@/lib/format";
 import { useSession } from "@/lib/client/session";
-import type { Advertisement, ProductWithMetrics } from "@/lib/types";
+import type { ProductWithMetrics } from "@/lib/types";
 import type { TrendValue } from "@/lib/scoring";
+import type { AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
+import { ActiveAdvertiserFlag } from "@/components/app/active-advertiser";
 
 interface Overview {
   asOf: string;
   counts: { products: number; scored: number; activeAds: number; newAdsWeek: number; newProducts: number; stores: number };
   top: ProductWithMetrics[];
   series: { date: string; activeAds: number; newAds: number }[];
-  recentAds: Advertisement[];
+  /** Newest ads of active advertisers (the same default as Ad Spy, its "View all" target). */
+  recentAds: AdWithActivity[];
+  advertiserRule: AdvertiserRule;
   trends: (ProductWithMetrics & { trend: TrendValue })[];
   meta: { mode: "demo" | "live"; asOf: string };
 }
@@ -170,12 +174,23 @@ export default function OverviewPage() {
             </Card>
             <Card>
               <CardHeader title={t("overview.recentAdsTitle")} action={<Link href="/app/ads" className="focus-ring tap rounded text-xs text-accent underline-offset-4 hover:underline">{t("common.viewAll")}</Link>} />
-              <ul className="divide-y divide-border/70">
+              {data && data.recentAds.length === 0 ? (
+                <p className="px-4 py-3 text-xs text-subtle" data-testid="recent-ads-empty">
+                  {t("activeAdvertisers.emptyTitle")} ·{" "}
+                  <Link href="/app/ads?activeAdvertisers=false" className="focus-ring rounded text-accent underline-offset-4 hover:underline">
+                    {t("activeAdvertisers.showAll")}
+                  </Link>
+                </p>
+              ) : null}
+              <ul className="divide-y divide-border/70" data-testid="recent-ads">
                 {(data?.recentAds ?? []).map((a) => (
                   <li key={a.id}>
                     <Link href={`/app/creatives?ad=${a.id}`} className="focus-ring block px-4 py-3 transition-colors hover:bg-surface-2 active:bg-surface-3">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="truncate text-sm font-medium">{a.advertiser}</span>
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className="truncate text-sm font-medium">{a.advertiser}</span>
+                          {a.advertiserActivity?.qualifies ? <ActiveAdvertiserFlag count={a.advertiserActivity.activeSinceMinDays} days={a.advertiserActivity.minDays} /> : null}
+                        </span>
                         <PlatformBadge platform={a.platform} />
                       </div>
                       <p className="mt-1 line-clamp-2 text-xs text-muted">{a.copy}</p>

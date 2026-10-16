@@ -504,6 +504,30 @@
       "token_overlap": "Matched by TrendHunter from words shared by the ad text and the product name/tags. Estimate, not a link disclosed by the platform."
     }
   },
+  "activeAdvertisers": {
+    "badge": "Active advertiser",
+    "nAds_one": "{{count}} active ad",
+    "nAds_other": "{{count}} active ads",
+    "nDays_one": "{{count}} day",
+    "nDays_other": "{{count}} days",
+    "badgeTip": "{{ads}} running for ≥ {{days}}",
+    "badgeDetail": "{{active}} active in total · oldest first seen {{date}}",
+    "toggle": "Active advertisers only — ≥ {{ads}} for ≥ {{days}}",
+    "thresholds": "Active advertiser thresholds",
+    "minAds": "Min. active ads",
+    "minDays": "Running for (days)",
+    "resultCount_one": "{{count}} ad from active advertisers",
+    "resultCount_other": "{{count}} ads from active advertisers",
+    "emptyTitle": "No active advertiser matches",
+    "emptyText": "By default TrendHunter only shows ads from active advertisers: at least {{ads}} currently running for at least {{days}}. Ads from other advertisers are hidden, not deleted.",
+    "showAll": "Show all ads",
+    "qualifyingOf": "{{qualifying}} of {{total}} ads come from active advertisers",
+    "suggestionActive": "Active advertiser · {{ads}} for ≥ {{days}}",
+    "suggestionInactive_one": "{{count}} ad observed",
+    "suggestionInactive_other": "{{count}} ads observed",
+    "searchHidden_one": "{{count}} matching ad from another advertiser is hidden (active advertisers only: ≥ {{ads}} for ≥ {{days}}).",
+    "searchHidden_other": "{{count}} matching ads from other advertisers are hidden (active advertisers only: ≥ {{ads}} for ≥ {{days}})."
+  },
   "creative": {
     "title": "Ad Creative Analyzer",
     "subtitle": "Open a creative, break down its hook and persuasion, and generate original concepts. Save the best to your swipe file.",
@@ -1346,6 +1370,8 @@
       "experiments": "Recommended validation experiments",
       "sources": "Data sources and collection dates"
     },
+    "adExamplesActive": "Longest-running ads of active advertisers (≥ {{ads}} for ≥ {{days}}).",
+    "adExamplesFallback": "No advertiser in this report qualifies as active (≥ {{ads}} for ≥ {{days}}): examples from all advertisers.",
     "ov": {
       "products": "Products tracked",
       "scored": "{{n}} scored",

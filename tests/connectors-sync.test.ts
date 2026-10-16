@@ -73,6 +73,11 @@ describe("Meta Ad Library sync", () => {
       ["meta-1", "posture", "search_term", "unknown", "unknown"],
       ["meta-2", "posture", "search_term", "unknown", "unknown"],
     ]);
+    // The connector flag is kept on the ad (advertisements.ended, 0008): meta-1 stopped before today.
+    expect(ads.map((a) => [a.id, a.last_seen, a.ended])).toEqual([
+      ["meta-1", "2026-09-30", true],
+      ["meta-2", new Date().toISOString().slice(0, 10), false],
+    ]);
     const obs = state.calls.find((c) => c.table === "ad_observations")!.rows as { ad_id: string; active: boolean }[];
     expect(obs.map((o) => [o.ad_id, o.active])).toEqual([
       ["meta-1", false],

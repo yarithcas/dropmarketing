@@ -63,8 +63,9 @@ export async function loadMatchableProducts(db: SupabaseClient, t: WriteTally): 
 }
 
 async function writeAds(db: SupabaseClient, recs: AdRecord[], today: string): Promise<DbError | null> {
+  // `ended` (migration 0008) keeps the latest connector flag on the ad itself, for the active-ad rule.
   const { error } = await db.from("advertisements").upsert(
-    recs.map((r) => r.row),
+    recs.map((r) => ({ ...r.row, ended: !r.active })),
     { onConflict: "connector,external_id" },
   );
   if (error) return error;
@@ -75,7 +76,7 @@ async function writeAds(db: SupabaseClient, recs: AdRecord[], today: string): Pr
   return obsError;
 }
 
-/** Upserts ads and today's observation (active derived from the delivery dates), in batches of 100. */
+/** Upserts ads (with `ended`) and today's observation (active derived from the delivery dates), in batches of 100. */
 export async function storeAds(db: SupabaseClient, records: AdRecord[], today: string, t: WriteTally): Promise<void> {
   const seen = new Set<string>();
   // One row per (connector, external_id): a batch may not touch the same row twice.

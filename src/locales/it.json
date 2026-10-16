@@ -504,6 +504,30 @@
       "token_overlap": "Associato da TrendHunter tramite parole in comune tra il testo dell'annuncio e il nome/i tag del prodotto. Stima, non un collegamento indicato dalla piattaforma."
     }
   },
+  "activeAdvertisers": {
+    "badge": "Inserzionista attivo",
+    "nAds_one": "{{count}} annuncio attivo",
+    "nAds_other": "{{count}} annunci attivi",
+    "nDays_one": "{{count}} giorno",
+    "nDays_other": "{{count}} giorni",
+    "badgeTip": "{{ads}} da ≥ {{days}}",
+    "badgeDetail": "{{active}} attivi in totale · il più vecchio visto il {{date}}",
+    "toggle": "Solo inserzionisti attivi — ≥ {{ads}} da ≥ {{days}}",
+    "thresholds": "Soglie «inserzionista attivo»",
+    "minAds": "Annunci attivi min.",
+    "minDays": "Da (giorni)",
+    "resultCount_one": "{{count}} annuncio di inserzionisti attivi",
+    "resultCount_other": "{{count}} annunci di inserzionisti attivi",
+    "emptyTitle": "Nessun inserzionista attivo corrisponde",
+    "emptyText": "Per impostazione predefinita TrendHunter mostra solo gli annunci degli inserzionisti attivi: almeno {{ads}} in questo momento, da almeno {{days}}. Gli annunci degli altri inserzionisti sono nascosti, non eliminati.",
+    "showAll": "Mostra tutti gli annunci",
+    "qualifyingOf": "{{qualifying}} annunci su {{total}} provengono da inserzionisti attivi",
+    "suggestionActive": "Inserzionista attivo · {{ads}} da ≥ {{days}}",
+    "suggestionInactive_one": "{{count}} annuncio osservato",
+    "suggestionInactive_other": "{{count}} annunci osservati",
+    "searchHidden_one": "{{count}} annuncio corrispondente di un altro inserzionista è nascosto (solo inserzionisti attivi: ≥ {{ads}} da ≥ {{days}}).",
+    "searchHidden_other": "{{count}} annunci corrispondenti di altri inserzionisti sono nascosti (solo inserzionisti attivi: ≥ {{ads}} da ≥ {{days}})."
+  },
   "creative": {
     "title": "Analizzatore di creatività",
     "subtitle": "Apri una creatività, scomponi hook e persuasione e genera concept originali. Salva le migliori nel tuo swipe file.",
@@ -1346,6 +1370,8 @@
       "experiments": "Esperimenti di validazione consigliati",
       "sources": "Fonti dei dati e date di raccolta"
     },
+    "adExamplesActive": "Annunci più duraturi degli inserzionisti attivi (≥ {{ads}} da ≥ {{days}}).",
+    "adExamplesFallback": "Nessun inserzionista di questo report è attivo (≥ {{ads}} da ≥ {{days}}): esempi da tutti gli inserzionisti.",
     "ov": {
       "products": "Prodotti monitorati",
       "scored": "{{n}} con punteggio",

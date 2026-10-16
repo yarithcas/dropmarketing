@@ -5,14 +5,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Hash, Loader2, Megaphone, Package, Search, Store as StoreIcon, TrendingUp, UserRound, type LucideIcon } from "lucide-react";
 import { TrendPill } from "./bits";
+import { ActiveAdvertiserFlag } from "./active-advertiser";
 import { useTranslation } from "react-i18next";
 import { apiFetch } from "@/lib/client/use-api";
 import { cn } from "@/lib/cn";
+import { DEFAULT_THRESHOLDS, type AdvertiserRule } from "@/lib/advertisers";
 
 export interface SearchResults {
   products: { id: string; name: string; category: string; score: number | null }[];
-  advertisers: { name: string; ads: number }[];
+  /** Ranked: qualifying active advertisers first (lib/advertisers.ts). */
+  advertisers: { name: string; ads: number; active?: boolean; activeAds?: number; activeSinceMinDays?: number }[];
+  /** Ads of active advertisers only (the default quality bar). */
   ads: { id: string; advertiser: string; headline: string; platform: string }[];
+  /** Matching ads of other advertisers, not listed. */
+  hiddenAds?: number;
+  advertiserRule?: AdvertiserRule;
   stores: { id: string; name: string; domain: string }[];
   niches: { kind: "category" | "tag"; value: string; products: number; growth?: number | null }[];
 }
@@ -25,6 +32,13 @@ export interface SearchLink {
   icon: LucideIcon;
   /** Only set for category niches: 30-day growth (null when history is insufficient). */
   growth?: number | null;
+  /** Only set for qualifying active advertisers: their long-running active ads and the rule's day threshold. */
+  activeAdvertiser?: { count: number; days: number };
+}
+
+/** Flag shown next to a qualifying advertiser in search results. */
+export function SearchLinkFlag({ link }: { link: SearchLink }) {
+  return link.activeAdvertiser ? <ActiveAdvertiserFlag count={link.activeAdvertiser.count} days={link.activeAdvertiser.days} /> : null;
 }
 
 export function searchLinks(r: SearchResults): SearchLink[] {
@@ -39,7 +53,15 @@ export function searchLinks(r: SearchResults): SearchLink[] {
       icon: n.kind === "category" ? TrendingUp : Hash,
       growth: n.kind === "category" ? (n.growth ?? null) : undefined,
     })),
-    ...r.advertisers.map((a) => ({ group: "advertisers", href: `/app/ads?advertiser=${encodeURIComponent(a.name)}`, label: a.name, meta: String(a.ads), icon: UserRound })),
+    // Ad Spy hides non-qualifying advertisers by default: their link turns the rule off so their ads show.
+    ...r.advertisers.map((a) => ({
+      group: "advertisers",
+      href: `/app/ads?advertiser=${encodeURIComponent(a.name)}${a.active === false ? "&activeAdvertisers=false" : ""}`,
+      label: a.name,
+      meta: String(a.ads),
+      icon: UserRound,
+      activeAdvertiser: a.active ? { count: a.activeSinceMinDays ?? 0, days: r.advertiserRule?.minDays ?? DEFAULT_THRESHOLDS.minDays } : undefined,
+    })),
     ...r.ads.map((a) => ({ group: "ads", href: `/app/creatives?ad=${a.id}`, label: a.headline, meta: a.advertiser, icon: Megaphone })),
     ...r.stores.map((s) => ({ group: "stores", href: `/app/stores/${s.id}`, label: s.name, meta: s.domain, icon: StoreIcon })),
   ];
@@ -158,6 +180,7 @@ export function GlobalSearch() {
                     >
                       <Icon className="size-4 shrink-0 text-subtle" />
                       <span className="truncate">{l.group === "niches" && l.label in CATEGORY_HINT ? t(`categories.${l.label}`) : l.label}</span>
+                      <SearchLinkFlag link={l} />
                       {l.growth !== undefined ? (
                         <TrendPill pct={l.growth} className="ml-auto shrink-0" />
                       ) : (

@@ -150,6 +150,12 @@ export interface Advertisement {
   media?: AdMedia[];
   firstSeen: string;
   lastSeen: string;
+  /**
+   * The source reported at its latest observation that the ad no longer runs (connector flag
+   * `ad_observations.active = false`, column `advertisements.ended`); `lastSeen` is then its last
+   * delivery day. Absent or false: still running at the latest observation (see lib/advertisers.ts).
+   */
+  ended?: boolean;
   source: SourceRef;
   hue: number;
 }

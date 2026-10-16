@@ -8,11 +8,12 @@ import { meta, overview } from "@/lib/server/repository";
 const D = "2026-10-20";
 const D1 = addDays(D, 1);
 
-/** Ad fields that do not depend on the snapshot (lastSeen/source move while an ad keeps running). */
+/** Ad fields that do not depend on the snapshot (lastSeen/source move while an ad keeps running; ended once it stops). */
 const stable = (ad: DemoDataset["ads"][number]) => {
   const rest: Partial<typeof ad> = { ...ad };
   delete rest.lastSeen;
   delete rest.source;
+  delete rest.ended;
   return rest;
 };
 
@@ -59,6 +60,9 @@ describe("rolling demo dataset", () => {
       const next = byId.get(ad.id)!;
       expect(stable(next)).toEqual(stable(ad));
       expect(next.lastSeen === ad.lastSeen || (ad.lastSeen === D && next.lastSeen === D1)).toBe(true);
+      // An ad that stopped stays stopped; one last seen on D has stopped on D1 exactly when it did not move.
+      if (ad.ended) expect(next.ended).toBe(true);
+      expect(Boolean(next.ended)).toBe(next.lastSeen < D1);
     }
     const added = b.ads.filter((x) => !a.ads.some((y) => y.id === x.id));
     expect(added.length).toBeGreaterThan(0); // new ads first seen "yesterday"

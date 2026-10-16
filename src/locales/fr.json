@@ -504,6 +504,30 @@
       "token_overlap": "Associé par TrendHunter à partir de mots communs au texte de la publicité et au nom/aux tags du produit. Estimation, pas un lien communiqué par la plateforme."
     }
   },
+  "activeAdvertisers": {
+    "badge": "Annonceur actif",
+    "nAds_one": "{{count}} pub active",
+    "nAds_other": "{{count}} pubs actives",
+    "nDays_one": "{{count}} jour",
+    "nDays_other": "{{count}} jours",
+    "badgeTip": "{{ads}} depuis ≥ {{days}}",
+    "badgeDetail": "{{active}} actives au total · la plus ancienne vue le {{date}}",
+    "toggle": "Annonceurs actifs uniquement — ≥ {{ads}} depuis ≥ {{days}}",
+    "thresholds": "Seuils « annonceur actif »",
+    "minAds": "Pubs actives min.",
+    "minDays": "Depuis (jours)",
+    "resultCount_one": "{{count}} publicité d'annonceurs actifs",
+    "resultCount_other": "{{count}} publicités d'annonceurs actifs",
+    "emptyTitle": "Aucun annonceur actif ne correspond",
+    "emptyText": "Par défaut, TrendHunter n'affiche que les publicités des annonceurs actifs : au moins {{ads}} en ce moment, depuis au moins {{days}}. Les publicités des autres annonceurs sont masquées, pas supprimées.",
+    "showAll": "Afficher toutes les pubs",
+    "qualifyingOf": "{{qualifying}} sur {{total}} publicités proviennent d'annonceurs actifs",
+    "suggestionActive": "Annonceur actif · {{ads}} depuis ≥ {{days}}",
+    "suggestionInactive_one": "{{count}} publicité observée",
+    "suggestionInactive_other": "{{count}} publicités observées",
+    "searchHidden_one": "{{count}} publicité correspondante d'un autre annonceur est masquée (annonceurs actifs uniquement : ≥ {{ads}} depuis ≥ {{days}}).",
+    "searchHidden_other": "{{count}} publicités correspondantes d'autres annonceurs sont masquées (annonceurs actifs uniquement : ≥ {{ads}} depuis ≥ {{days}})."
+  },
   "creative": {
     "title": "Analyseur de créatives",
     "subtitle": "Ouvrez une créative, décortiquez son accroche et sa persuasion, puis générez des concepts originaux. Gardez les meilleures dans votre swipe file.",
@@ -1346,6 +1370,8 @@
       "experiments": "Expériences de validation recommandées",
       "sources": "Sources de données et dates de collecte"
     },
+    "adExamplesActive": "Publicités les plus durables des annonceurs actifs (≥ {{ads}} depuis ≥ {{days}}).",
+    "adExamplesFallback": "Aucun annonceur de ce rapport n'est actif (≥ {{ads}} depuis ≥ {{days}}) : exemples issus de tous les annonceurs.",
     "ov": {
       "products": "Produits suivis",
       "scored": "{{n}} notés",

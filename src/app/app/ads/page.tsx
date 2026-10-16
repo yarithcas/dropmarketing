@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Info, Radar, Search, SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { AdCard } from "@/components/app/ad-card";
+import { ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
 import { DebouncedInput } from "@/components/app/debounced-input";
 import { PageHeader, Pagination, ProvenanceBadge } from "@/components/app/bits";
 import { ChipSet, FilterGroup, ResetFilters } from "@/components/app/filters";
@@ -18,18 +19,31 @@ import { useApi } from "@/lib/client/use-api";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { AD_SORTS } from "@/lib/queries";
 import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, LANGUAGES, PLATFORMS, type Advertisement } from "@/lib/types";
+import { DEFAULT_THRESHOLDS, THRESHOLD_LIMITS, ruleValues, type AdvertiserRule, type AdWithActivity } from "@/lib/advertisers";
 import { cn } from "@/lib/cn";
 
 interface AdsResponse {
-  items: (Advertisement & { productName: string | null })[];
+  items: AdWithActivity<Advertisement & { productName: string | null }>[];
   total: number;
   page: number;
   pageSize: number;
   meta: { mode: "demo" | "live"; asOf: string };
   ignoredFilters?: string[];
+  advertiserRule?: AdvertiserRule;
 }
 
-const KEYS = ["q", "advertiser", "domain", "productId", "platform", "country", "language", "format", "category", "cta", "firstFrom", "firstTo", "lastFrom", "lastTo", "activeOnly"];
+interface AdvertiserSuggestions {
+  items: { name: string; ads: number; active: boolean; activeAds: number; activeSinceMinDays: number }[];
+  advertiserRule: AdvertiserRule;
+}
+
+/** Threshold field value → URL parameter: empty means the default, anything else is clamped to the allowed range (never a 400). */
+function thresholdParam(v: string, limits: { min: number; max: number }): string | null {
+  const n = Number.parseInt(v, 10);
+  return v.trim() === "" || Number.isNaN(n) ? null : String(Math.min(limits.max, Math.max(limits.min, n)));
+}
+
+const KEYS = ["q", "advertiser", "domain", "productId", "platform", "country", "language", "format", "category", "cta", "firstFrom", "firstTo", "lastFrom", "lastTo", "activeOnly", "activeAdvertisers", "minActiveAds", "minActiveDays"];
 
 function AdsInner() {
   const { t } = useTranslation();
@@ -41,6 +55,11 @@ function AdsInner() {
   const set = url.set;
   // Free plan: keyword, category, platform and sort only (enforced server-side too).
   const locked = session ? !session.entitlements.advancedFilters : false;
+  // Active advertisers only: ON unless explicitly turned off (every plan). Thresholds come back from the server.
+  const activeAdvertisers = url.get("activeAdvertisers") !== "false";
+  const rule = data?.advertiserRule ?? { ...DEFAULT_THRESHOLDS, enabled: activeAdvertisers };
+  const advertiserQuery = url.get("advertiser").trim();
+  const { data: suggestions } = useApi<AdvertiserSuggestions>(session && !locked && advertiserQuery.length >= 2 ? `/api/advertisers?q=${encodeURIComponent(advertiserQuery)}` : null);
 
   const filters = (
     <div className="space-y-5">
@@ -78,6 +97,38 @@ function AdsInner() {
         <input type="checkbox" className="accent-[rgb(var(--accent))]" disabled={locked} checked={url.get("activeOnly") === "true"} onChange={(e) => set({ activeOnly: e.target.checked ? "true" : null })} />
         {t("filters.activeOnly")}
       </label>
+      <FilterGroup label={t("activeAdvertisers.thresholds")} locked={locked}>
+        <div className="grid grid-cols-2 gap-2" data-testid="active-advertiser-thresholds">
+          <label className="space-y-1 text-[11px] text-subtle">
+            <span>{t("activeAdvertisers.minAds")}</span>
+            <DebouncedInput
+              type="number"
+              inputMode="numeric"
+              min={THRESHOLD_LIMITS.minAds.min}
+              max={THRESHOLD_LIMITS.minAds.max}
+              value={url.get("minActiveAds")}
+              placeholder={String(DEFAULT_THRESHOLDS.minAds)}
+              onCommit={(v) => set({ minActiveAds: thresholdParam(v, THRESHOLD_LIMITS.minAds) })}
+              disabled={locked || !activeAdvertisers}
+              data-testid="min-active-ads"
+            />
+          </label>
+          <label className="space-y-1 text-[11px] text-subtle">
+            <span>{t("activeAdvertisers.minDays")}</span>
+            <DebouncedInput
+              type="number"
+              inputMode="numeric"
+              min={THRESHOLD_LIMITS.minDays.min}
+              max={THRESHOLD_LIMITS.minDays.max}
+              value={url.get("minActiveDays")}
+              placeholder={String(DEFAULT_THRESHOLDS.minDays)}
+              onCommit={(v) => set({ minActiveDays: thresholdParam(v, THRESHOLD_LIMITS.minDays) })}
+              disabled={locked || !activeAdvertisers}
+              data-testid="min-active-days"
+            />
+          </label>
+        </div>
+      </FilterGroup>
     </div>
   );
 
@@ -104,7 +155,21 @@ function AdsInner() {
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-subtle" />
               <DebouncedInput value={url.get("q")} onCommit={(q) => set({ q })} placeholder={t("ads.searchKeyword")} className="pl-9" aria-label={t("ads.searchKeyword")} data-testid="ads-search" />
             </div>
-            <DebouncedInput value={url.get("advertiser")} onCommit={(advertiser) => set({ advertiser })} placeholder={t("ads.searchAdvertiser")} aria-label={t("ads.searchAdvertiser")} disabled={locked} title={locked ? t("billing.advancedFilterLocked") : undefined} />
+            <DebouncedInput value={url.get("advertiser")} onCommit={(advertiser) => set({ advertiser })} placeholder={t("ads.searchAdvertiser")} aria-label={t("ads.searchAdvertiser")} disabled={locked} title={locked ? t("billing.advancedFilterLocked") : undefined} list="advertiser-suggestions" />
+            {/* Suggestions rank active advertisers first and flag them. */}
+            <datalist id="advertiser-suggestions" data-testid="advertiser-suggestions">
+              {(suggestions?.items ?? []).map((s) => (
+                <option
+                  key={s.name}
+                  value={s.name}
+                  label={
+                    s.active
+                      ? t("activeAdvertisers.suggestionActive", ruleValues(t, s.activeSinceMinDays, suggestions?.advertiserRule.minDays ?? DEFAULT_THRESHOLDS.minDays))
+                      : t("activeAdvertisers.suggestionInactive", { count: s.ads })
+                  }
+                />
+              ))}
+            </datalist>
             <DebouncedInput value={url.get("domain")} onCommit={(domain) => set({ domain })} placeholder={t("ads.searchDomain")} aria-label={t("ads.searchDomain")} disabled={locked} title={locked ? t("billing.advancedFilterLocked") : undefined} />
             <Select value={url.get("sort") || "newest"} onChange={(e) => set({ sort: e.target.value })} aria-label={t("sort.label")} className="sm:w-auto">
               {AD_SORTS.map((s) => (
@@ -134,15 +199,22 @@ function AdsInner() {
               </Link>
             </div>
           ) : null}
-          <div className="mb-3 text-xs text-subtle" aria-live="polite">
-            {data ? t("ads.resultCount", { count: data.total }) : " "}
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <ActiveAdvertisersSwitch checked={activeAdvertisers} thresholds={rule} onChange={(on) => set({ activeAdvertisers: on ? null : "false" })} />
+            <div className="text-xs text-subtle" aria-live="polite" data-testid="ads-result-count" data-total={data?.total ?? ""}>
+              {data ? (data.advertiserRule?.enabled ? t("activeAdvertisers.resultCount", { count: data.total }) : t("ads.resultCount", { count: data.total })) : null}
+            </div>
           </div>
           {error ? (
             <ErrorState message={error.code === "limit_reached" ? t("billing.limitReached") : undefined} onRetry={reload} />
           ) : loading && !data ? (
             <CardGridSkeleton />
           ) : data && data.items.length === 0 ? (
-            <EmptyState icon={<Radar />} title={t("ads.emptyTitle")} description={t("ads.emptyText")} />
+            data.advertiserRule?.enabled ? (
+              <ActiveAdvertisersEmpty thresholds={data.advertiserRule} onShowAll={() => set({ activeAdvertisers: "false" })} />
+            ) : (
+              <EmptyState icon={<Radar />} title={t("ads.emptyTitle")} description={t("ads.emptyText")} />
+            )
           ) : data ? (
             <div className={cn(loading && "opacity-60")}>
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">

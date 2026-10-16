@@ -5,6 +5,7 @@ import type { SyncContext, SyncResult } from "../connectors/types";
 import type { DemoDataset } from "../demo/generate";
 import { computeMetrics, scoreProduct } from "../scoring";
 import { addDays } from "../dates";
+import { isActiveAd } from "../advertisers";
 import {
   errorCategory,
   errorText,
@@ -195,7 +196,8 @@ async function aggregateAndScore(db: SupabaseClient, today: string): Promise<{ c
     return {
       product_id: p.id,
       date: today,
-      ads_active: pAds.filter((a) => a.firstSeen <= today && a.lastSeen >= addDays(today, -1)).length,
+      // Same "currently running" rule as everywhere else (lib/advertisers.ts).
+      ads_active: pAds.filter((a) => isActiveAd(a, today)).length,
       new_advertisers: new Set(pAds.filter((a) => a.firstSeen === today && !before.has(a.advertiser)).map((a) => a.advertiser)).size,
       stores_observed: new Set(d.storeProducts.filter((s) => s.productId === p.id).map((s) => s.storeId)).size,
       search_interest: null,

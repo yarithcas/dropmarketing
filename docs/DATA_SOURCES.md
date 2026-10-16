@@ -179,6 +179,62 @@ The `stores` row is created (or updated with detected values only) before listin
 never reference a missing store. Demo store profiles are never touched. A snapshot is written only when the
 listing count is reliably known; min/max price only for a complete crawl.
 
+## Active advertisers (default quality bar) — migration 0008
+
+Every list where TrendHunter *finds* ads shows, by default, only ads of **active advertisers**: advertisers
+running at least **5 ads that are currently active and have each been running for at least 7 days**. The
+rule is evaluated on the dataset's `asOf` day (live: today; demo: the rolling snapshot, i.e. yesterday UTC,
+or `DEMO_SNAPSHOT`). One pure definition, `src/lib/advertisers.ts`, is used everywhere in TypeScript, and
+migration `0008_active_advertisers.sql` implements the same rule in Postgres.
+
+| Term | Definition |
+|---|---|
+| Active ad | `first_seen ≤ asOf` and `last_seen ≥ asOf − 2 days` — the same rule as Ad Spy's "Active ads only" filter and the overview's active-ad count (libraries refresh with about a day of delay and connectors sync daily). `ad_observations.active` remains the per-sync flag recorded by the connectors (see the mapping table above). |
+| Advertiser identity | `advertiser_key(advertiser)`: Unicode NFKD, combining accents removed, lower case, whitespace runs collapsed, trimmed — "Maison Éclat", " maison  eclat " and "MAISON ECLAT" are one advertiser. Platforms are not part of the identity. Stored as the generated, indexed column `advertisements.advertiser_key`. |
+| Qualifying advertiser | at least `MIN_ACTIVE_ADS = 5` of its ads are active on `asOf` **and** were first seen at least `MIN_ACTIVE_DAYS = 7` days before it (`first_seen ≤ asOf − 7 days`). |
+| Shown by default | every ad (running or ended) of a qualifying advertiser; ads of other advertisers are hidden, never deleted. |
+
+Per advertiser the app exposes `activeAds`, `activeSinceMinDays` (the count compared to the threshold) and
+`oldestActiveFirstSeen`; the "Active advertiser" badge and its tooltip ("N active ads running for ≥ 7 days")
+come from these values.
+
+Where it applies:
+
+- **Ad Spy** (`/api/ads`, `/app/ads`): `activeAdvertisers` is on unless `activeAdvertisers=false` — on every
+  plan, with a visible switch. Totals and pagination describe the filtered set. Adjusting the thresholds
+  (`minActiveAds` 1–50, `minActiveDays` 0–90) is an advanced filter (Pro and Business; stripped and reported
+  for Free). The parameters are part of the metered search key: toggling or adjusting is a new search, page
+  turns are not. The advertiser field suggests advertisers (`/api/advertisers`), active ones first and flagged.
+- **Creatives** page lists (recent, long-running) — same default and switch.
+- **Global search**: the ads group lists ads of active advertisers only (others are counted, with a link to
+  them in Ad Spy); the advertisers group ranks active advertisers first and flags them.
+- **Product and store pages** receive every ad (evidence is never dropped server-side), show ads of active
+  advertisers by default with the badge, how many of the ads qualify, and a "show all ads" switch.
+
+Live mode (Postgres, service role only, `SECURITY INVOKER`):
+
+- `public.advertiser_activity(as_of date, min_days int default 7, keys text[] default null)` — per-advertiser
+  activity on `as_of` (advertisers with at least one active ad; `keys` restricts it to one result page).
+- `public.ads_of_active_advertisers(as_of date, min_ads int default 5, min_days int default 7)` — the ads of the
+  qualifying advertisers, `setof advertisements`. `listAdsDb` calls it as a PostgREST RPC (arguments in the JSON
+  body, never in a filter string) and applies the usual filters, order (sort column, then `id`, so pages never
+  overlap), range and exact count to it. It has no `SET` clause so the planner inlines it and keeps using the
+  `advertisements` indexes.
+- Indexes: `advertisements (advertiser_key)` and `advertisements (last_seen, advertiser_key, first_seen)`.
+- `supabase/tests/0008_active_advertisers.test.sql` and `tests/active-advertisers.test.ts` check the same
+  boundary fixture (`tests/fixtures/active-advertisers.json`: exactly 5 / 4 ads, exactly 7 / 6 days, an
+  inactive ad, the 2-day grace boundary, an ad starting after `asOf`, case/accent variants, decomposed accents
+  and Unicode spaces) against both implementations.
+
+Demo data: in the synthetic generator, 40 % of the base-window ads still running on the base day whose product
+a store carries, and that the existing 55 % store-linking pass left with a brand advertiser, are run by one of
+those stores (seeded per ad: 71 of 1,522 ads change advertiser and landing domain, plus the daily
+new-advertiser counts derived from them; product ids, ad ids, dates, stores and the ads of later days are
+unchanged). A realistic subset then qualifies every day:
+9 of 179 advertisers / 521 of 1,522 ads on the pinned test date (2026-10-12; 7 / 378 before the change),
+13 / 640 of 1,566 on 2026-10-14, and at least 9 advertisers and 521 ads on every day checked through 2028
+(`tests/active-advertisers.test.ts` checks a full year at ≥ 8 advertisers and ≥ 40 ads).
+
 ## Provenance
 
 `products`, `advertisements`, `stores`, `store_products` (since 0005), `product_observations`, `store_snapshots`
@@ -205,5 +261,6 @@ unknown enum values are stored as `unknown`/null, and `product_id` is kept only 
 
 Free-text search on products and ads builds PostgREST `or=(…)` filters with every value double-quoted
 (backslash and quote escaped) after escaping LIKE metacharacters, so input such as `x,id.neq.zz`, `)` or `}`
-stays inside a single `ilike` value (`tests/postgrest-filter.test.ts`). Database errors return
+stays inside a single `ilike` value (`tests/postgrest-filter.test.ts`). RPC arguments (active-advertiser
+thresholds, advertiser keys) are sent in the JSON body of the call, not as filters. Database errors return
 `500 database_error` without details.

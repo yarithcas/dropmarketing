@@ -1,0 +1,2008 @@
+{
+  "common": {
+    "all": "Todos",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "copied": "Copiado al portapapeles",
+    "copy": "Copiar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "demo": "Demo",
+    "explore": "Explorar",
+    "gridView": "Vista de cuadrícula",
+    "loading": "Cargando…",
+    "next": "Siguiente",
+    "none": "Ninguno",
+    "pageOf": "Página {{page}} de {{pages}} · {{total}} resultados",
+    "previous": "Anterior",
+    "remove": "Quitar",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "tableView": "Vista de tabla",
+    "viewAll": "Ver todo",
+    "info": "Información",
+    "unknown": "Desconocido",
+    "copyFailed": "No se pudo copiar: tu navegador bloqueó el acceso al portapapeles",
+    "analysisReady": "Análisis listo",
+    "firstPage": "Estás en la primera página",
+    "lastPage": "Estás en la última página",
+    "exported": "Exportación {{file}} descargada"
+  },
+  "nav": {
+    "main": "Navegación principal",
+    "openMenu": "Abrir menú",
+    "tools": "Herramientas",
+    "overview": "Resumen",
+    "products": "Productos ganadores",
+    "ads": "Ad Spy",
+    "creatives": "Creatividades publicitarias",
+    "trends": "Productos en tendencia",
+    "competitors": "Análisis de la competencia",
+    "stores": "Inteligencia de tiendas Shopify",
+    "collections": "Colecciones de productos",
+    "analyst": "Analista de productos IA",
+    "reports": "Informes de mercado",
+    "alerts": "Alertas y listas de seguimiento",
+    "settings": "Ajustes y suscripción",
+    "calculator": "Calculadora de rentabilidad"
+  },
+  "demo": {
+    "bannerTitle": "Modo demo",
+    "bannerText": "Datos de demostración, regenerados cada día — no son observaciones reales del mercado. Instantánea del {{date}}.",
+    "connectSources": "Conectar fuentes de datos reales →"
+  },
+  "errors": {
+    "title": "Algo salió mal",
+    "generic": "No se pudo completar la solicitud. Inténtalo de nuevo.",
+    "notFound": "Este registro no existe o ya no está disponible.",
+    "notFoundTitle": "Página no encontrada",
+    "backHome": "Volver al inicio",
+    "codes": {
+      "plan_required": "Esta función no está incluida en tu plan.",
+      "rate_limited": "Demasiadas solicitudes. Inténtalo de nuevo en un momento.",
+      "unauthenticated": "Tu sesión ha caducado. Vuelve a iniciar sesión.",
+      "not_configured": "Este servicio aún no está configurado en el servidor.",
+      "billing_not_configured": "La facturación no está configurada en este despliegue.",
+      "demo_mode": "Acción no disponible en modo demo.",
+      "demo_only": "Acción disponible solo en modo demo.",
+      "database_unavailable": "La base de datos no está disponible temporalmente.",
+      "not_connected": "No hay ninguna tienda conectada.",
+      "sync_failed": "La sincronización ha fallado. Inténtalo más tarde.",
+      "connect_failed": "La conexión con Shopify ha fallado. Inténtalo de nuevo.",
+      "invalid_shop": "Dominio de tienda no válido. Usa el formato mi-tienda.myshopify.com.",
+      "invalid_state": "La solicitud de conexión ha caducado o no es válida. Vuelve a empezar.",
+      "invalid_hmac": "No se pudo verificar la respuesta de Shopify.",
+      "missing_code": "Shopify no devolvió un código de autorización.",
+      "not_found": "Elemento no encontrado.",
+      "invalid_body": "La información enviada no es válida.",
+      "network": "Red no disponible. Comprueba tu conexión.",
+      "no_customer": "No hay ninguna suscripción de pago asociada a esta cuenta.",
+      "delete_failed": "No se pudo eliminar la cuenta. Contacta con soporte.",
+      "interval_unavailable": "La facturación anual no está disponible en este despliegue.",
+      "support_not_configured": "El soporte no está configurado en este despliegue.",
+      "database_error": "Se ha producido un error de base de datos. Inténtalo de nuevo.",
+      "no_workspace": "No hay ningún espacio de trabajo disponible para esta cuenta.",
+      "role_required": "Tu rol en este espacio no permite esta acción.",
+      "owner_required": "Solo un propietario puede hacer esto.",
+      "last_owner": "Un espacio siempre conserva al menos un propietario. Nombra antes a otra persona propietaria.",
+      "last_workspace": "No puedes salir de tu único espacio de trabajo.",
+      "seats_exhausted": "Todos los puestos incluidos en tu plan están ocupados.",
+      "already_member": "Esta persona ya es miembro del espacio.",
+      "limit_workspaces": "Has alcanzado el límite de espacios de trabajo de tu plan.",
+      "invite_invalid": "Este enlace de invitación no es válido o ha sido revocado.",
+      "invite_expired": "Esta invitación ha caducado.",
+      "invite_email_mismatch": "Esta invitación se envió a otra dirección de correo.",
+      "email_unconfirmed": "Confirma tu dirección de correo antes de aceptar una invitación.",
+      "shopify_revoked": "Se revocó el acceso a Shopify. Vuelve a conectar tu tienda para reanudar la sincronización.",
+      "shopify_access_denied": "Shopify denegó el acceso a algunos datos. Vuelve a conectar la tienda y acepta los permisos solicitados.",
+      "shopify_unavailable": "La tienda Shopify no está disponible (en pausa, congelada o cerrada).",
+      "store_limit": "Has alcanzado el límite de tiendas de tu plan. Desconecta una tienda o mejora tu plan."
+    }
+  },
+  "search": {
+    "placeholder": "Buscar productos, marcas, anuncios, tiendas, tendencias…",
+    "noResults": "Sin resultados para «{{q}}»",
+    "noResultsText": "Prueba con una palabra clave más amplia, una categoría o un dominio de tienda.",
+    "seeAll": "Ver todos los resultados de «{{q}}»",
+    "title": "Resultados para «{{q}}»",
+    "subtitle": "Productos, nichos, anunciantes, anuncios y tiendas que coinciden con tu búsqueda.",
+    "tooShort": "Escribe al menos 2 caracteres.",
+    "groups": {
+      "products": "Productos",
+      "niches": "Nichos y tendencias",
+      "advertisers": "Marcas y anunciantes",
+      "ads": "Anuncios",
+      "stores": "Tiendas"
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "Aún no hay notificaciones.",
+    "markAllRead": "Marcar todo como leído",
+    "manage": "Gestionar alertas y listas de seguimiento",
+    "markedRead": "Todas las notificaciones marcadas como leídas"
+  },
+  "auth": {
+    "account": "Cuenta",
+    "visitor": "Visitante demo",
+    "notSignedIn": "Sin sesión iniciada",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "signup": "Crear cuenta",
+    "loginTitle": "Bienvenido de nuevo",
+    "loginText": "Inicia sesión en tu espacio de TrendHunter.",
+    "signupTitle": "Crea tu cuenta",
+    "signupText": "Empieza con el plan Free. Mejora cuando necesites más.",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "passwordHint": "Al menos 10 caracteres.",
+    "noAccount": "¿Aún no tienes cuenta?",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "checkEmail": "Revisa tu bandeja de entrada para confirmar tu correo.",
+    "invalidEmail": "Introduce un correo electrónico válido.",
+    "demoNotice": "Modo demo: la autenticación no está configurada. Tu nombre y correo solo personalizan la demo; no se crea ninguna contraseña ni cuenta.",
+    "legal": "Al continuar aceptas los",
+    "errors": {
+      "invalid_credentials": "Correo o contraseña incorrectos.",
+      "user_already_exists": "Ya existe una cuenta con este correo. Inicia sesión.",
+      "weak_password": "Contraseña demasiado débil: usa al menos 10 caracteres variados.",
+      "email_not_confirmed": "Confirma primero tu dirección de correo (revisa tu bandeja de entrada).",
+      "over_email_send_rate_limit": "Se han enviado demasiados correos. Inténtalo de nuevo en unos minutos.",
+      "signup_disabled": "Los registros están desactivados en este despliegue."
+    }
+  },
+  "overview": {
+    "title": "Resumen",
+    "welcomeName": "Bienvenido, {{name}}",
+    "subtitle": "Tu cabina de investigación: oportunidades, tracción, creatividades, competidores y timing.",
+    "questions": {
+      "q1": "¿Qué productos tienen mayor potencial de venta?",
+      "q2": "¿Qué productos están ganando tracción ahora?",
+      "q3": "¿Qué creatividades publicitarias funcionan bien?",
+      "q4": "¿Qué competidores y tiendas debo analizar?",
+      "q5": "¿Qué oportunidades probar antes de la saturación?"
+    },
+    "stats": {
+      "products": "Productos seguidos",
+      "scored": "{{n}} con puntuación calculada",
+      "activeAds": "Anuncios activos observados",
+      "activeAdsTip": "Anuncios observados en circulación en los últimos 3 días del conjunto de datos. La inversión y las impresiones no son públicas.",
+      "newAdsWeek": "{{n}} nuevos en los últimos 7 días",
+      "newProducts": "Productos nuevos",
+      "last30": "Detectados por primera vez en los últimos 30 días",
+      "stores": "Tiendas seguidas",
+      "storesHint": "Observaciones de escaparates públicos"
+    },
+    "activityTitle": "Actividad publicitaria",
+    "activityDesc": "Anuncios activos y recién observados por día, últimos 60 días hasta el {{date}}",
+    "series": {
+      "activeAds": "Anuncios activos",
+      "newAds": "Anuncios nuevos"
+    },
+    "trendingTitle": "Ganando tracción (7 días)",
+    "trendingDesc": "Crecimiento de anuncios activos frente a los 7 días anteriores",
+    "topTitle": "Mejores puntuaciones de oportunidad",
+    "topDesc": "Puntuación transparente de 0 a 100. No garantiza ventas.",
+    "recentAdsTitle": "Anuncios recién observados"
+  },
+  "products": {
+    "title": "Productos ganadores",
+    "subtitle": "Busca y filtra fichas de producto. Cada métrica muestra su fuente; las puntuaciones se calculan a partir de entradas documentadas.",
+    "searchPlaceholder": "Buscar por producto, palabra clave o etiqueta…",
+    "resultCount_one": "{{count}} producto",
+    "resultCount_other": "{{count}} productos",
+    "emptyTitle": "Ningún producto coincide con estos filtros",
+    "emptyText": "Relaja algún filtro o prueba otra palabra clave.",
+    "product": "Producto",
+    "price": "Precio est.",
+    "margin": "Margen est.",
+    "trend30": "Tendencia 30 d",
+    "ads": "Anuncios",
+    "stores": "Tiendas",
+    "competition": "Competencia",
+    "firstDetected": "Primera detección",
+    "firstDetectedOn": "detectado el {{date}}",
+    "adsStores": "{{ads}} anuncios · {{stores}} tiendas"
+  },
+  "filters": {
+    "title": "Filtros",
+    "reset": "Restablecer ({{count}})",
+    "clear": "Borrar",
+    "clearAll": "Borrar todos los filtros",
+    "any": "Cualquiera",
+    "min": "Mín.",
+    "max": "Máx.",
+    "from": "Desde",
+    "to": "Hasta",
+    "category": "Categoría",
+    "price": "Precio de venta",
+    "priceMin": "Precio mínimo",
+    "priceMax": "Precio máximo",
+    "marginMin": "Margen estimado",
+    "growthMin": "Crecimiento de tendencia (30 d)",
+    "competition": "Competencia",
+    "platform": "Plataforma publicitaria",
+    "country": "País",
+    "language": "Idioma",
+    "format": "Formato creativo",
+    "cta": "Llamada a la acción",
+    "firstDetected": "Primera detección",
+    "firstObserved": "Primera observación",
+    "lastObserved": "Última observación",
+    "productType": "Tipo de producto",
+    "shipping": "Envío / abastecimiento",
+    "shippingVerified": "Solo verificados",
+    "shippingUnverified": "No verificado",
+    "activeOnly": "Solo anuncios activos",
+    "warehouse": "Almacén {{region}}",
+    "maxDelivery": "Plazo de entrega máx.",
+    "deliveryWithin": "≤ {{n}} días",
+    "shippingVerifiedOnly": "Almacén y plazo: solo se tienen en cuenta los datos logísticos verificados."
+  },
+  "sort": {
+    "label": "Ordenar por",
+    "products": {
+      "score": "Mayor puntuación de oportunidad",
+      "newest": "Descubrimientos más recientes",
+      "growth": "Tendencias de mayor crecimiento",
+      "margin": "Mayores márgenes estimados",
+      "competition": "Menor competencia"
+    },
+    "ads": {
+      "newest": "Primera observación más reciente",
+      "recent": "Observados más recientemente",
+      "longest": "Observados durante más tiempo"
+    }
+  },
+  "categories": {
+    "fitness": "Fitness",
+    "home": "Hogar",
+    "kitchen": "Cocina",
+    "beauty": "Belleza",
+    "pets": "Mascotas",
+    "tech": "Tecnología y gadgets",
+    "outdoor": "Aire libre",
+    "baby": "Bebé",
+    "fashion": "Moda",
+    "wellness": "Bienestar",
+    "auto": "Motor",
+    "office": "Oficina"
+  },
+  "countries": {
+    "FR": "Francia",
+    "US": "Estados Unidos",
+    "GB": "Reino Unido",
+    "DE": "Alemania",
+    "ES": "España",
+    "IT": "Italia",
+    "CA": "Canadá",
+    "AU": "Australia",
+    "BE": "Bélgica",
+    "NL": "Países Bajos"
+  },
+  "languages": {
+    "fr": "Francés",
+    "en": "Inglés",
+    "es": "Español",
+    "de": "Alemán",
+    "it": "Italiano"
+  },
+  "platforms": {
+    "meta": "Meta",
+    "tiktok": "TikTok",
+    "pinterest": "Pinterest",
+    "google": "Google",
+    "snapchat": "Snapchat"
+  },
+  "formats": {
+    "video": "Vídeo",
+    "image": "Imagen",
+    "carousel": "Carrusel",
+    "unknown": "Formato desconocido"
+  },
+  "cta": {
+    "shop_now": "Comprar ahora",
+    "learn_more": "Más información",
+    "sign_up": "Registrarse",
+    "get_offer": "Obtener oferta",
+    "order_now": "Pedir ahora",
+    "unknown": "CTA desconocida"
+  },
+  "productTypes": {
+    "physical": "Físico",
+    "digital": "Digital",
+    "subscription": "Suscripción"
+  },
+  "competition": {
+    "low": "Baja",
+    "medium": "Media",
+    "high": "Alta",
+    "tip": "Estimación basada en el número de anunciantes y tiendas distintos observados para este producto."
+  },
+  "confidence": {
+    "title": "Confianza",
+    "label": "Confianza: {{level}}",
+    "high": "alta",
+    "medium": "media",
+    "low": "baja",
+    "tip": "La confianza depende del número de observaciones, anuncios observados, frescura y datos que faltan."
+  },
+  "provenance": {
+    "measured": "Medido",
+    "measuredTip": "Observado directamente en una fuente conectada (p. ej., un anuncio visto por primera vez en una fecha).",
+    "estimate": "Estimación",
+    "estimateTip": "Estimación de terceros o derivada (p. ej., coste del proveedor, saturación). Verifícala antes de confiar en ella.",
+    "ai": "Generado por IA",
+    "aiTip": "Conclusiones producidas por el motor de análisis a partir de las fichas mostradas. No son hechos ni garantías.",
+    "demo": "Datos demo",
+    "demoTip": "Datos sintéticos de ejemplo, regenerados cada día, para explorar el producto. No describen el mercado real.",
+    "sourceLine": "Fuente: {{source}} · actualizado el {{date}}",
+    "measuredShort": "Medido",
+    "estimateShort": "Est."
+  },
+  "ranges": {
+    "24h": "24 horas",
+    "7d": "7 días",
+    "30d": "30 días",
+    "90d": "90 días"
+  },
+  "trend": {
+    "status": {
+      "ok": "OK",
+      "insufficient_history": "Historial insuficiente",
+      "insufficient_historyTip": "No hay suficientes observaciones para comparar este periodo con el anterior.",
+      "new_activity": "Actividad nueva",
+      "new_activityTip": "Sin actividad en el periodo anterior: un porcentaje de crecimiento no tendría sentido.",
+      "no_activity": "Sin actividad",
+      "no_activityTip": "No se observó actividad en ninguno de los dos periodos.",
+      "insufficient_data": "Datos insuficientes",
+      "insufficient_dataTip": "Muestra demasiado pequeña para un porcentaje fiable: se necesitan al menos {{ads}} anuncios de {{products}} productos en la ventana comparada."
+    }
+  },
+  "score": {
+    "title": "Puntuación de oportunidad",
+    "subtitle": "0–100, ponderada a partir de componentes normalizados",
+    "insufficient": "Datos insuficientes",
+    "insufficientTip": "No hay evidencia fiable suficiente para calcular una puntuación.",
+    "insufficientTitle": "Puntuación no calculada",
+    "notGuarantee": "Una heurística de investigación para priorizar pruebas — nunca una garantía de ventas o rentabilidad.",
+    "missing": "falta",
+    "methodology": "¿Cómo se calcula?",
+    "positives": "Señales positivas",
+    "negatives": "Señales negativas",
+    "nextSteps": "Próximos pasos recomendados",
+    "components": {
+      "trend": "Impulso de tendencia",
+      "ads": "Tracción publicitaria",
+      "margin": "Margen bruto estimado",
+      "competition": "Competencia y saturación",
+      "differentiation": "Diferenciación del producto",
+      "freshness": "Frescura y calidad de la evidencia"
+    },
+    "method": {
+      "intro": "Cada componente se normaliza de 0 a 100 con una transformación lineal y luego se combina con pesos fijos:",
+      "trend": "Impulso de tendencia ({{w}} %): crecimiento a 30 días de los anuncios activos, de {{lo}} % → 0 a +{{hi}} % → 100 (crecimiento a 7 días si falta el historial de 30 días).",
+      "ads": "Tracción publicitaria ({{w}} %): 60 % volumen de anuncios activos (escala log, 25+ = 100) y 40 % diversidad de anunciantes (1 → 0, 12+ → 100).",
+      "margin": "Margen bruto estimado ({{w}} %): (precio − coste del proveedor) / precio, de {{lo}} % → 0 a {{hi}} % → 100.",
+      "competition": "Competencia y saturación ({{w}} %): 100 − estimación de saturación (anunciantes y tiendas observados).",
+      "differentiation": "Diferenciación ({{w}} %): estimación del analista sobre lo distintivo que es el producto.",
+      "freshness": "Frescura y evidencia ({{w}} %): días desde la última observación (0 → 100, 30+ → 0) y cantidad de evidencia.",
+      "missing": "Los componentes que faltan se excluyen y los pesos se renormalizan. Con menos de 14 días de observaciones, menos de 3 anuncios o 2 o más componentes ausentes, no se muestra la puntuación."
+    }
+  },
+  "signals": {
+    "trend_strong": "Anuncios activos +{{pct}} % en 30 días",
+    "new_activity": "Nueva actividad publicitaria sin referencia previa",
+    "ads_diverse": "{{n}} anunciantes distintos observados",
+    "margin_high": "Margen bruto estimado del {{pct}} %",
+    "competition_low": "Baja competencia observada",
+    "differentiated": "El producto parece diferenciado",
+    "fresh": "Observado en los últimos 3 días",
+    "shipping_verified": "Características de envío verificadas",
+    "trend_declining": "Anuncios activos {{pct}} % en 30 días",
+    "short_history": "Menos de 60 días de historial",
+    "margin_thin": "Margen estimado reducido ({{pct}} %)",
+    "margin_unknown": "Coste del proveedor desconocido — no se puede estimar el margen",
+    "competition_high": "Competencia alta ({{n}} anunciantes)",
+    "low_differentiation": "Poca diferenciación: fácil de copiar",
+    "stale": "Sin observar desde hace {{days}} días",
+    "few_advertisers": "Menos de 3 anunciantes — validación de mercado débil",
+    "shipping_unverified": "Plazos de envío y abastecimiento sin verificar"
+  },
+  "steps": {
+    "verify_supplier": "Pide presupuestos reales y una muestra — el coste mostrado es una estimación.",
+    "verify_shipping": "Verifica plazos de envío, ubicación del almacén y condiciones de devolución.",
+    "study_creatives": "Estudia las creatividades observadas para entender los ángulos (sin copiarlas).",
+    "check_competitor_pricing": "Compara precios y ofertas de las tiendas competidoras.",
+    "differentiate_offer": "Planifica una oferta diferenciada (pack, diseño, garantía, contenido).",
+    "monitor_trend": "Añádelo a una lista de seguimiento y vigila la tendencia antes de invertir.",
+    "small_budget_test": "Haz una prueba pequeña y acotada en el tiempo con criterios de corte claros."
+  },
+  "insufficient": {
+    "observations": "Solo {{n}} días de observaciones (mínimo {{min}}).",
+    "ads": "Solo {{n}} anuncios observados (mínimo {{min}}).",
+    "components": "Faltan {{n}} componentes de la puntuación."
+  },
+  "product": {
+    "back": "Volver a productos",
+    "openCalculator": "Calculadora de rentabilidad",
+    "facts": "Ficha de producto",
+    "priceEstimate": "Precio de venta estimado",
+    "costEstimate": "Coste estimado del proveedor",
+    "costTip": "Estimación de terceros, no un presupuesto verificado del proveedor.",
+    "marginEstimate": "Margen bruto estimado",
+    "marginTip": "(precio − coste del proveedor) / precio. Excluye envío, comisiones, publicidad y devoluciones — usa la calculadora para la economía unitaria.",
+    "firstDetected": "Primera detección",
+    "lastDetected": "Última detección",
+    "productType": "Tipo de producto",
+    "shipping": "Envío / abastecimiento",
+    "shippingVerified": "Verificado · almacén {{warehouse}} · {{min}}–{{max}} días",
+    "shippingUnverified": "No verificado",
+    "adsObserved": "Anuncios observados",
+    "adsObservedTip": "Anuncios distintos observados en las fuentes conectadas. La inversión, las impresiones y el ROAS no son públicos.",
+    "adsActive": "Activos el último día",
+    "advertisers": "Anunciantes distintos",
+    "storesObserved": "Tiendas observadas",
+    "competition": "Competencia",
+    "saturationTip": "Estimación de saturación: {{n}}/100",
+    "channels": "Canales publicitarios",
+    "countries": "Países objetivo",
+    "history": "Observaciones históricas",
+    "historyDesc": "Observaciones diarias de actividad publicitaria, tiendas e interés de búsqueda",
+    "growthVsPrev": "{{range}} vs anterior",
+    "historySources": "{{n}} observaciones diarias. El interés de búsqueda es un índice (0–100) que solo se muestra si existe una fuente.",
+    "series": {
+      "adsActive": "Anuncios activos",
+      "stores": "Tiendas",
+      "searchInterest": "Interés de búsqueda (índice)"
+    },
+    "aiTitle": "Análisis IA",
+    "aiDesc": "Generado solo a partir de las fichas de este producto. Trátalo como una hipótesis a validar.",
+    "aiGenerate": "Generar análisis",
+    "aiRegenerate": "Regenerar",
+    "aiEmpty": "Genera un análisis de fortalezas, riesgos, información faltante y pruebas de validación para este producto.",
+    "aiQuestion": "Analiza las fortalezas, debilidades y riesgos de {{name}}.",
+    "relatedAds": "Anuncios relacionados ({{n}})",
+    "competitorStores": "Tiendas competidoras ({{n}})",
+    "competitorStoresDesc": "Listados de escaparates públicos — solo precios mostrados",
+    "similar": "Productos similares",
+    "footerNote": "Las fichas enlazan a sus fuentes cuando están disponibles. TrendHunter nunca muestra datos privados de competidores."
+  },
+  "ads": {
+    "title": "Ad Spy",
+    "subtitle": "Descubre creatividades publicitarias de acceso público por palabra clave, anunciante, plataforma, país, idioma, formato y fecha.",
+    "metricsNotice": "No mostramos inversión, impresiones, conversiones ni ROAS: no son públicos. Solo mostramos lo que las fuentes divulgan — creatividad, anunciante, fechas, dominio de destino.",
+    "searchKeyword": "Palabra clave en el texto…",
+    "searchAdvertiser": "Anunciante / marca",
+    "searchDomain": "Dominio de destino",
+    "resultCount_one": "{{count}} anuncio",
+    "resultCount_other": "{{count}} anuncios",
+    "emptyTitle": "No se encontró ningún anuncio",
+    "emptyText": "Quita algún filtro o busca otra palabra clave.",
+    "filteredByProduct": "Mostrando anuncios vinculados a un producto.",
+    "firstSeen": "Primera observación",
+    "lastSeen": "Última observación",
+    "firstSeenOn": "Observado por primera vez el {{date}}",
+    "observedFor": "Observado durante",
+    "days_one": "{{count}} día",
+    "days_other": "{{count}} días",
+    "spend": "Inversión",
+    "notPublic": "No pública",
+    "product": "Producto",
+    "landing": "Página de destino",
+    "landingDemo": "{{domain}} (dominio demo, no es un sitio real)",
+    "analyze": "Analizar",
+    "previewLabel": "Vista previa de la creatividad de {{advertiser}}",
+    "generatedPreview": "Vista previa generada",
+    "languageUnknown": "Idioma desconocido",
+    "noCopy": "La fuente no indica ningún texto del anuncio.",
+    "viewInLibrary": "Ver en la biblioteca de anuncios de {{platform}}",
+    "matchBasis": {
+      "search_term": "Término de búsqueda: la plataforma devolvió el anuncio al buscar el nombre de este producto. Estimación de TrendHunter, no un vínculo indicado por la plataforma.",
+      "token_overlap": "Asociado por TrendHunter por palabras comunes entre el texto del anuncio y el nombre/etiquetas del producto. Estimación, no un vínculo indicado por la plataforma."
+    },
+    "visitSite": "Ver el sitio",
+    "siteDomainOnly": "Dominio mostrado en el anuncio: la fuente no indica la página exacta."
+  },
+  "activeAdvertisers": {
+    "badge": "Anunciante activo",
+    "nAds_one": "{{count}} anuncio activo",
+    "nAds_other": "{{count}} anuncios activos",
+    "nDays_one": "{{count}} día",
+    "nDays_other": "{{count}} días",
+    "badgeTip": "{{ads}} desde hace ≥ {{days}}",
+    "badgeDetail": "{{active}} activos en total · el más antiguo visto el {{date}}",
+    "toggle": "Solo anunciantes activos — ≥ {{ads}} desde hace ≥ {{days}}",
+    "thresholds": "Umbrales de «anunciante activo»",
+    "minAds": "Anuncios activos mín.",
+    "minDays": "Desde hace (días)",
+    "resultCount_one": "{{count}} anuncio de anunciantes activos",
+    "resultCount_other": "{{count}} anuncios de anunciantes activos",
+    "emptyTitle": "Ningún anunciante activo coincide",
+    "emptyText": "Por defecto, TrendHunter solo muestra anuncios de anunciantes activos: al menos {{ads}} ahora mismo, desde hace al menos {{days}}. Los anuncios de otros anunciantes se ocultan, no se eliminan.",
+    "showAll": "Mostrar todos los anuncios",
+    "qualifyingOf": "{{qualifying}} de {{total}} anuncios proceden de anunciantes activos",
+    "suggestionActive": "Anunciante activo · {{ads}} desde hace ≥ {{days}}",
+    "suggestionInactive_one": "{{count}} anuncio observado",
+    "suggestionInactive_other": "{{count}} anuncios observados",
+    "searchHidden_one": "{{count}} anuncio coincidente de otro anunciante está oculto (solo anunciantes activos: ≥ {{ads}} desde hace ≥ {{days}}).",
+    "searchHidden_other": "{{count}} anuncios coincidentes de otros anunciantes están ocultos (solo anunciantes activos: ≥ {{ads}} desde hace ≥ {{days}})."
+  },
+  "creative": {
+    "title": "Analizador de creatividades",
+    "subtitle": "Abre una creatividad, desglosa su gancho y su persuasión y genera conceptos originales. Guarda las mejores en tu swipe file.",
+    "tabs": {
+      "recent": "Recientes",
+      "long": "Larga duración"
+    },
+    "swipeEmpty": "Tu swipe file está vacío",
+    "swipeEmptyText": "Guarda creatividades desde Ad Spy para crear tu swipe file.",
+    "selectTitle": "Selecciona una creatividad",
+    "selectText": "Elige un anuncio de la lista o abre uno desde Ad Spy.",
+    "headline": "Titular",
+    "copy": "Texto del anuncio",
+    "durationNotProof": "Que un anuncio se observe durante mucho tiempo no demuestra que sea rentable.",
+    "analysisTitle": "Análisis de la creatividad",
+    "analysisDesc": "Gancho, problema, beneficio, hipótesis de audiencia, persuasión y variaciones originales.",
+    "analysisEmpty": "Ejecuta el análisis para desglosar esta creatividad.",
+    "analyze": "Analizar creatividad",
+    "hook": "Gancho principal",
+    "hookTypes": {
+      "question": "Gancho de pregunta",
+      "problem": "Gancho de problema",
+      "curiosity": "Gancho de curiosidad",
+      "listicle": "Gancho de lista",
+      "personal": "Gancho de historia personal",
+      "pattern_interrupt": "Ruptura de patrón",
+      "statement": "Gancho de afirmación"
+    },
+    "problem": {
+      "title": "Problema que aborda",
+      "quoted": "Expresado en el texto: «{{quote}}»",
+      "notStated": "El texto no expresa explícitamente ningún problema."
+    },
+    "benefit": {
+      "title": "Beneficio del producto",
+      "unclear": "El beneficio concreto no se expresa con claridad.",
+      "quoted": "Expresado en el anuncio: «{{quote}}»"
+    },
+    "audience": {
+      "title": "Hipótesis de público objetivo",
+      "hypothesis": "Personas interesadas en {{tag}} en {{country}} que quieren una rutina más sencilla. Solo una hipótesis — valídala con datos de segmentación."
+    },
+    "value": {
+      "title": "Propuesta de valor",
+      "promiseWithTerms": "Promesa expresada: «{{promise}}», respaldada por {{terms}}.",
+      "promise": "Promesa expresada: «{{promise}}». No se indica ninguna oferta ni condición de uso.",
+      "termsOnly": "Sin promesa explícita; el texto se apoya en {{terms}}.",
+      "problemOnly": "El texto menciona un problema («{{problem}}») pero no expresa ninguna promesa explícita ni oferta.",
+      "appealsOnly": "No se expresa ninguna promesa explícita; la redacción apela a: {{triggers}}.",
+      "notDeterminable": "No determinable a partir del texto.",
+      "evidence": "Frases citadas del anuncio"
+    },
+    "cta": {
+      "title": "Llamada a la acción",
+      "shop_now": "«Comprar ahora» — respuesta directa, intención de compra.",
+      "learn_more": "«Más información» — CTA suave, adecuado para audiencias frías.",
+      "sign_up": "«Registrarse» — captación de leads.",
+      "get_offer": "«Obtener oferta» — basado en promoción.",
+      "order_now": "«Pedir ahora» — urgente, intención de compra.",
+      "unknown": "La fuente no indica la llamada a la acción."
+    },
+    "triggers": "Disparadores emocionales",
+    "triggerNames": {
+      "frustration": "Frustración",
+      "curiosity": "Curiosidad",
+      "convenience": "Comodidad",
+      "self_improvement": "Superación personal",
+      "fomo": "Urgencia / FOMO",
+      "belonging": "Pertenencia social",
+      "value": "Valor / ahorro",
+      "relief": "Alivio"
+    },
+    "structure": "Estructura persuasiva",
+    "structures": {
+      "PAS": "Problema – Agitación – Solución",
+      "AIDA": "Atención – Interés – Deseo – Acción",
+      "BAB": "Antes – Después – Puente",
+      "listicle": "Lista",
+      "testimonial": "Testimonio",
+      "direct": "Oferta directa"
+    },
+    "strengthsTitle": "Fortalezas",
+    "weaknessesTitle": "Posibles debilidades",
+    "strengths": {
+      "shortHook": "Gancho corto y fácil de escanear.",
+      "problemFirst": "Empieza por el problema, lo que cualifica a la audiencia.",
+      "objection": "Anticipa una objeción con condiciones expresadas (oferta, facilidad de uso).",
+      "videoDemo": "El formato vídeo permite demostrar el producto."
+    },
+    "weaknesses": {
+      "longHook": "El gancho es largo; las primeras palabras pueden cortarse en el feed.",
+      "noSpecifics": "Sin datos concretos (cifras, tiempo, resultado).",
+      "noUrgency": "No hay motivo para actuar ahora.",
+      "softCta": "Un CTA suave puede reducir la intención de compra.",
+      "noLanding": "No se indica página de destino.",
+      "genericClaims": "Afirmaciones genéricas; las pruebas (demo, reseñas) no aparecen en el texto."
+    },
+    "variationsTitle": "Variaciones creativas originales",
+    "variations": {
+      "ugcProblem": "Vídeo estilo UGC: un cliente real muestra su problema de {{tag}} en los 2 primeros segundos y luego la solución.",
+      "splitScreen": "Pantalla dividida antes/después de la rutina de {{tag}}, sin voz en off, solo subtítulos.",
+      "myth": "Carrusel educativo «3 mitos sobre {{tag}}» que termina con el producto como opción práctica.",
+      "threeUses": "Demo de cortes rápidos «3 formas de usar {{name}}» en distintas situaciones.",
+      "founder": "Historia del fundador a cámara: por qué rediseñamos la experiencia de {{tag}}."
+    },
+    "related": "Otras creatividades de este producto",
+    "disclaimer": "Análisis asistido por IA para inspirarte. No reproduzcas contenido publicitario de terceros; crea conceptos originales.",
+    "cues": {
+      "benefit": "Promesa",
+      "offer": "Oferta",
+      "ease": "Facilidad",
+      "problem": "Problema",
+      "proof": "Prueba"
+    },
+    "formatInfo": {
+      "title": "Formato de la creatividad",
+      "recorded": "{{format}} (según el registro de la fuente).",
+      "unknown": "Desconocido: la fuente no indica el formato de este anuncio."
+    },
+    "noCopy": {
+      "banner": "Este anuncio no tiene texto registrado, así que no hay texto que analizar. Solo se describen el titular, la llamada a la acción y el formato registrados.",
+      "hook": "No hay texto que analizar: el registro no contiene texto del anuncio.",
+      "field": "No hay texto que analizar."
+    },
+    "notDeterminable": "No determinable a partir del texto.",
+    "noCopyToAnalyze": "Esta fuente no indica titular ni texto para este anuncio, así que no hay nada que analizar. Ábrelo en la biblioteca de anuncios para revisar la creatividad."
+  },
+  "trends": {
+    "title": "Productos en tendencia",
+    "subtitle": "Productos y nichos que ganan o pierden tracción, según la actividad publicitaria observada, nuevos anunciantes, tiendas e interés de búsqueda.",
+    "chartTitle": "Anuncios activos por categoría",
+    "chartDesc": "Anuncios activos por día, categorías principales, ventana: {{range}}",
+    "trending": "Productos en tendencia",
+    "trendingDesc": "Crecimiento de anuncios activos en {{range}} frente a los {{range}} anteriores",
+    "categories": "Categorías de rápido crecimiento",
+    "categoriesDesc": "Crecimiento de anuncios activos por categoría vs la ventana anterior, mostrado si esta tiene al menos {{ads}} anuncios de {{products}} productos",
+    "newAdvertisers": "{{n}} nuevos anunc.",
+    "emerging": "Nichos emergentes",
+    "emergingDesc": "Categorías y etiquetas que ganan nuevos productos, anunciantes y anuncios activos en {{range}} vs los {{range}} anteriores.",
+    "declining": "Tendencias a la baja",
+    "decliningDesc": "Mayores caídas de anuncios activos",
+    "geo": "Diferencias geográficas",
+    "geoDesc": "Anuncios activos en la ventana de {{range}} frente a la anterior, por país",
+    "adsInRange": "Anuncios en la ventana",
+    "previous": "Ventana anterior",
+    "change": "Variación",
+    "noneInRange": "Nada que mostrar en esta ventana.",
+    "sourcesTitle": "Fuentes de datos y actualidad",
+    "sourcesText": "Fuentes: {{sources}}. Última actualización: {{date}}.",
+    "insufficientNote": "{{n}} productos quedan excluidos de las comparaciones porque su historial es demasiado corto para esta ventana.",
+    "categoriesWithheld": "Crecimiento no calculado",
+    "categoriesNoneMeasured": "Ninguna categoría tiene suficientes observaciones para una comparación fiable en esta ventana.",
+    "previousSample": "Ventana anterior: {{ads}} anuncios de {{products}} productos",
+    "emergingRule": "Regla: al menos {{entrants}} nuevos productos o anunciantes (más que en la ventana anterior), anuncios activos +{{growth}} % o más, y al menos {{ads}} anuncios activos de {{products}} productos ahora.",
+    "nicheKinds": {
+      "category": "Categoría",
+      "tag": "Etiqueta"
+    },
+    "nicheStats": "Nuevos productos {{prevProducts}} → {{products}} · nuevos anunciantes {{prevAdvertisers}} → {{advertisers}}",
+    "nicheAds": "{{previous}} → {{current}} anuncios activos",
+    "nichesNone": "Ningún nicho cumple la regla de emergencia en esta ventana.",
+    "nichesInsufficient": "{{n}} nichos tienen nuevos participantes pero menos de {{ads}} anuncios activos de {{products}} productos, o poco historial: no se muestran.",
+    "newProducts": "Nuevos productos",
+    "newProductsDesc": "Detectados por primera vez en la ventana de {{range}}",
+    "discoveryTitle": "Frecuencia de descubrimiento de productos",
+    "discoveryDesc": "Nuevos productos detectados por semana, en total y en las categorías principales.",
+    "discoveryTotal": "Todas las categorías",
+    "discoveryByCategory": "Nuevos productos en el periodo por categoría: {{list}}",
+    "discoveryGap": "El historial de observación empieza el {{date}}: las semanas anteriores no se observan (sin valor) y los productos ya anunciados entonces se cuentan en la semana en que empezó la recogida.",
+    "discoveryNone": "Ningún producto nuevo detectado en este periodo.",
+    "geoRule": "Solo se muestra un cambio con al menos {{ads}} anuncios de {{products}} productos en la ventana anterior.",
+    "entrySources": "{{sources}} · última observación el {{date}}",
+    "entrySourcesTip": "Conectores que aportaron los registros de esta entrada y su fecha de última observación. Tipo de datos: {{kinds}}.",
+    "noSourceRecords": "Sin registros de origen",
+    "sourcesCol": "Fuentes",
+    "statusCol": "Estado",
+    "signalCol": "Señal",
+    "lastObservedCol": "Última observación",
+    "searchTip": "Cambio del índice de interés de búsqueda en {{range}} vs los {{range}} anteriores. Último índice: {{latest}}/100.",
+    "searchLegend": "El interés de búsqueda (icono de lupa) es el cambio del índice de interés de búsqueda en las mismas ventanas. Fuente: {{sources}}.",
+    "searchConfigured": "Hay una fuente de interés de búsqueda configurada, pero aún no ha aportado datos.",
+    "searchNotConnected": "No hay ninguna fuente de interés de búsqueda conectada, por lo que no se muestra el interés de búsqueda.",
+    "signalsTitle": "Cobertura de señales",
+    "signalsDesc": "Qué señales puede usar esta página, según los conectores configurados y los registros presentes. Una señal sin fuente conectada no se muestra ni se estima.",
+    "signalProviders": "Disponible mediante: {{list}}",
+    "signalNoConnector": "Ningún conector disponible",
+    "signalStatus": {
+      "connected": "Conectado",
+      "configured": "Configurado, sin datos aún",
+      "demo": "Demo",
+      "not_connected": "No conectado"
+    },
+    "signals": {
+      "advertising_activity": {
+        "name": "Actividad publicitaria",
+        "desc": "Anuncios activos por día, de bibliotecas de anuncios o de un conjunto de datos con licencia."
+      },
+      "new_advertisers": {
+        "name": "Nuevos anunciantes",
+        "desc": "Anunciantes vistos por primera vez promocionando un producto."
+      },
+      "stores_observed": {
+        "name": "Tiendas observadas",
+        "desc": "Tiendas públicas que listan el producto."
+      },
+      "search_interest": {
+        "name": "Interés de búsqueda",
+        "desc": "Índice de interés de búsqueda (0–100) de una fuente de tendencias de búsqueda."
+      },
+      "social_engagement": {
+        "name": "Interacción social",
+        "desc": "Me gusta, comentarios y compartidos en publicaciones sociales. Ningún conector aporta aún esta señal."
+      },
+      "source_popularity": {
+        "name": "Popularidad en la fuente",
+        "desc": "Popularidad en el marketplace de origen (pedidos, rankings). Ningún conector aporta aún esta señal."
+      },
+      "discovery_frequency": {
+        "name": "Frecuencia de descubrimiento de productos",
+        "desc": "Cuántos productos nuevos se detectan por semana."
+      }
+    },
+    "aggregateNote": "El crecimiento de categorías, países y nichos solo se muestra si la ventana anterior está dentro del historial observado (desde el {{date}}) y tiene al menos {{ads}} anuncios de {{products}} productos. En esta ventana, {{categories}} categorías y {{countries}} países muestran «Datos insuficientes» o «Historial insuficiente» en lugar de un porcentaje."
+  },
+  "stores": {
+    "title": "Inteligencia de tiendas Shopify",
+    "subtitle": "Analiza escaparates de acceso público: productos listados, precios mostrados, tecnología y anuncios asociados. Conecta tu propia tienda para comparar.",
+    "tabs": {
+      "public": "Tiendas públicas",
+      "mine": "Mi tienda"
+    },
+    "searchPlaceholder": "Nombre, URL, dominio, categoría o palabra clave de producto…",
+    "resultCount_one": "{{count}} tienda",
+    "resultCount_other": "{{count}} tiendas",
+    "compareSelected": "Comparar selección ({{n}})",
+    "emptyTitle": "No se encontró ninguna tienda",
+    "emptyText": "Prueba con otro nombre, dominio o palabra clave de producto.",
+    "select": "Seleccionar",
+    "selectStore": "Seleccionar {{name}} para comparar",
+    "store": "Tienda",
+    "technology": "Tecnología",
+    "listings": "Productos",
+    "adsObserved": "Anuncios observados",
+    "firstSeen": "Primera observación",
+    "techUnknown": "Desconocida",
+    "techVerifiedTip": "Tecnología verificada: el endpoint público de la plataforma (Shopify /products.json o WooCommerce Store API) devolvió una respuesta válida.",
+    "techUnverifiedTip": "Tecnología probable, sin verificar.",
+    "unverified": "sin verificar",
+    "platforms": {
+      "shopify": "Shopify",
+      "woocommerce": "WooCommerce"
+    },
+    "publicOnly": "Solo se recopila información de acceso público de los escaparates, respetando las normas robots y las condiciones de los sitios. Nunca se accede a analíticas privadas, ventas ni tasas de conversión.",
+    "back": "Volver a tiendas",
+    "compare": "Comparar",
+    "profile": "Perfil de la tienda",
+    "domain": "Dominio",
+    "currency": "Moneda",
+    "productCount": "Número de productos",
+    "productCountTip": "Número de productos públicos observados. Solo se muestra cuando es fiable.",
+    "unknown": "No disponible de forma fiable",
+    "firstObserved": "Primera observación en TrendHunter",
+    "socials": "Redes sociales públicas",
+    "networks": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "facebook": "Facebook",
+      "pinterest": "Pinterest",
+      "youtube": "YouTube"
+    },
+    "snapshots": "Instantáneas históricas",
+    "snapshotsDesc": "Número de productos públicos en cada fecha de recopilación",
+    "publicListings": "Productos públicos",
+    "revenueTitle": "Ventas e ingresos: no estimados",
+    "revenueText": "Los datos públicos del escaparate no son evidencia suficiente para estimar las ventas o ingresos de esta tienda, por lo que no se muestra ninguna cifra. Nunca afirmamos tener acceso a las analíticas privadas, tasa de conversión, inversión publicitaria o márgenes de una tienda.",
+    "listingsTitle": "Productos públicos ({{n}})",
+    "listingsDesc": "Títulos y precios mostrados tal como se observaron",
+    "listing": "Producto",
+    "displayedPrice": "Precio mostrado",
+    "listedSince": "Observado desde",
+    "trackedProduct": "Producto seguido",
+    "associatedAds": "Anuncios asociados ({{n}})",
+    "lastObserved": "Última observación",
+    "socialDemo": "Enlace de demostración, no es un perfil real",
+    "compareHint": "Marca al menos 2 tiendas para compararlas",
+    "compareMax": "Puedes comparar hasta 5 tiendas a la vez"
+  },
+  "competitors": {
+    "title": "Análisis de la competencia",
+    "subtitle": "Compara hasta cinco tiendas lado a lado usando solo datos públicos observados.",
+    "selectStores": "Tiendas a comparar",
+    "searchStores": "Buscar tiendas…",
+    "add": "Añadir",
+    "max": "{{n}}/5 seleccionadas",
+    "emptyTitle": "Selecciona tiendas para comparar",
+    "emptyText": "Añade entre dos y cinco tiendas de la lista.",
+    "listingGrowth": "Crecimiento del catálogo",
+    "trackedProducts": "Productos seguidos vendidos",
+    "priceRange": "Rango de precios",
+    "medianPrice": "Precio mediano",
+    "platforms": "Plataformas publicitarias observadas",
+    "topProducts": "Principales productos seguidos",
+    "revenue": "Ingresos",
+    "notEstimated": "No estimados (evidencia insuficiente)",
+    "listingHistory": "Productos públicos a lo largo del tiempo",
+    "listingHistoryDesc": "Número de productos públicos en cada instantánea",
+    "byProduct": "Buscar competidores por producto",
+    "byProductDesc": "Tiendas que venden un producto seguido",
+    "storesSelling": "{{n}} tiendas",
+    "disclaimer": "Comparación basada en observaciones de escaparates públicos. Las analíticas privadas de Shopify, ventas, tasas de conversión e inversión publicitaria no están disponibles ni se estiman."
+  },
+  "shopify": {
+    "title": "Mi tienda Shopify",
+    "desc": "Conecta tu propia tienda mediante OAuth de Shopify para comparar tu rendimiento real con las observaciones del mercado.",
+    "mockMode": "Modo simulado",
+    "liveMode": "API conectada",
+    "connection": "Conexión",
+    "connectedTo": "Conectada a {{shop}}",
+    "notConnected": "No conectada",
+    "lastSync": "Última sincronización correcta",
+    "never": "Nunca",
+    "syncStatus": "Sincronización",
+    "syncOk": "OK",
+    "syncFailed": "La última sincronización falló",
+    "scopes": "Permisos solicitados",
+    "status": {
+      "label": "Estado",
+      "connected": "Conectada",
+      "error": "Error de integración",
+      "revoked": "Acceso revocado"
+    },
+    "mockTitle": "Las credenciales de Shopify no están configuradas",
+    "mockText": "Se muestra una tienda simulada generada con datos demo para que explores la función. Configura estas variables de servidor para conectar una tienda real:",
+    "shopDomain": "Dominio de tu tienda",
+    "connect": "Conectar",
+    "ownStoreOnly": "Solo puedes conectar una tienda de la que seas propietario o administrador. Solicitamos acceso de solo lectura a productos, pedidos e inventario.",
+    "syncNow": "Sincronizar ahora",
+    "synced": "Sincronización completada",
+    "disconnect": "Desconectar",
+    "confirmDisconnect": "¿Desconectar esta tienda y eliminar sus datos sincronizados?",
+    "privacy": "Los tokens de acceso se cifran y se guardan solo en el servidor. Nunca se envían al navegador.",
+    "revenue30": "Ingresos (30 días)",
+    "mockDataHint": "Datos simulados",
+    "fromOrders": "Según tus pedidos",
+    "products": "Productos",
+    "lowStockCount": "{{n}} con poco stock",
+    "declining": "Productos en descenso",
+    "decliningHint": "Unidades −25 % o más frente a los 30 días anteriores",
+    "performanceTitle": "Tus productos frente al mercado",
+    "performanceDesc": "Tus ventas reales junto a las observaciones de mercado del producto seguido más parecido",
+    "inventory": "Inventario",
+    "lowStock": "Bajo",
+    "units30": "Unidades 30 d",
+    "vsPrev": "vs 30 d ant.",
+    "market": "Señal de mercado",
+    "noMatch": "Sin coincidencia",
+    "decliningBadge": "En descenso",
+    "compareNote": "Las señales de mercado proceden de la actividad publicitaria observada, no de las ventas de otros comerciantes.",
+    "noDataTitle": "Aún no hay datos sincronizados",
+    "noDataText": "Ejecuta una sincronización para importar tus productos y pedidos recientes.",
+    "connectedOk": "Tienda conectada. La primera sincronización está en curso.",
+    "selectStore": "Tienda",
+    "storeCount": "Tiendas conectadas: {{n}} / {{max}}",
+    "connectAnother": "Conectar otra tienda",
+    "reconnect": "Volver a conectar",
+    "revokedText": "El acceso a {{shop}} se revocó en Shopify (aplicación desinstalada o permiso retirado). Vuelve a conectar la tienda para reanudar la sincronización.",
+    "overLimitText": "Esta tienda supera el número de tiendas incluidas en tu plan ({{max}}): ya no se sincroniza y sus datos están ocultos. Desconecta una tienda o mejora tu plan.",
+    "overLimitShort": "fuera del plan",
+    "planEndedTitle": "Tiendas conectadas",
+    "planEndedText": "Tu plan ya no incluye la integración con Shopify: la sincronización está en pausa y los datos están ocultos. Puedes desconectar una tienda para eliminar sus datos sincronizados.",
+    "autoSync": "Sincronización automática",
+    "autoSyncDaily": "Diaria",
+    "autoSyncOff": "No programada en este servidor",
+    "stockTrend": "Stock 30 d",
+    "stockTrendTip": "Registros diarios de inventario: {{from}} → {{to}} unidades en {{days}} días",
+    "noStockHistory": "Aún sin historial",
+    "noMarketData": "Aún no hay datos de mercado",
+    "noMarketDataTip": "Aún no hay observaciones de mercado reales, así que tus productos no se comparan con el mercado.",
+    "matchEstimate": "Estimación",
+    "matchEstimateTip": "Coincidencia automática según las palabras comunes de los nombres de producto. Es una estimación: revísala o elige tú el producto.",
+    "matchManual": "Manual",
+    "matchManualTip": "Elegido por ti.",
+    "editMatch": "Cambiar la coincidencia de mercado",
+    "matchTitle": "Coincidencia de mercado",
+    "matchDesc": "¿Qué producto seguido es comparable con «{{title}}»?",
+    "matchCurrent": "Coincidencia actual",
+    "matchSearch": "Buscar productos seguidos",
+    "matchNoResults": "No se encontró ningún producto seguido.",
+    "matchAuto": "Automática (estimación)",
+    "matchNone": "Sin coincidencia",
+    "matchSaved": "Coincidencia guardada",
+    "matchNote": "Las coincidencias de mercado son estimaciones basadas en los nombres de producto, salvo que las definas manualmente.",
+    "disconnected": "Tienda desconectada",
+    "enterDomain": "Introduce primero el dominio de tu tienda (p. ej. my-store.myshopify.com)"
+  },
+  "collections": {
+    "title": "Colecciones de productos",
+    "subtitle": "Guarda productos, anuncios y tiendas, añade notas y etiquetas, compara y exporta tu investigación.",
+    "storedBrowser": "Guardado en este navegador (demo)",
+    "syncedAccount": "Sincronizado con tu cuenta",
+    "new": "Nueva colección",
+    "newPlaceholder": "Nombre de la nueva colección",
+    "name": "Nombre",
+    "description": "Descripción",
+    "rename": "Editar colección",
+    "delete": "Eliminar colección",
+    "confirmDelete": "¿Eliminar «{{name}}» y sus elementos?",
+    "deleted": "Colección eliminada",
+    "created": "Colección creada",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "saveTitle": "Guardar en una colección",
+    "chooseCollection": "Colección",
+    "alreadyIn": "ya guardado",
+    "savedTo": "Guardado en «{{name}}»",
+    "note": "Nota personal",
+    "notePlaceholder": "¿Por qué es interesante? ¿Qué hay que verificar?",
+    "tags": "Etiquetas",
+    "tagsHint": "Separadas por comas",
+    "editNote": "Editar nota y etiquetas",
+    "removed": "Quitado de la colección",
+    "swipeFile": "Swipe file",
+    "swipeDesc": "Creatividades guardadas para inspirarte y analizarlas.",
+    "emptyTitle": "Aún no hay colecciones",
+    "emptyText": "Crea una colección para empezar a guardar tu investigación.",
+    "noItems": "Esta colección está vacía",
+    "noItemsText": "Usa el botón de marcador en productos, anuncios y tiendas.",
+    "types": {
+      "product": "Producto",
+      "ad": "Anuncio",
+      "store": "Tienda"
+    },
+    "compare": "Comparar ({{n}})",
+    "compareHint": "Marca entre 2 y 4 productos para comparar",
+    "compareTitle": "Comparar productos guardados",
+    "selectCompare": "Seleccionar para comparar",
+    "exportNote": "Las exportaciones incluyen tus notas, etiquetas, enlaces y métricas de TrendHunter. Las creatividades de terceros se referencian por enlace, no se copian.",
+    "tagsPlaceholder": "test, T4, fitness",
+    "sharedTitle": "Compartidas por el equipo",
+    "sharedBy": "Compartida por {{name}}",
+    "sharedByUnknown": "Compartida por un compañero",
+    "sharedBadge": "Compartida con el equipo",
+    "shareWithTeam": "Compartir con el equipo",
+    "stopSharing": "Dejar de compartir",
+    "sharedOn": "Colección compartida con el equipo",
+    "sharedOff": "La colección vuelve a ser privada",
+    "readOnly": "Solo lectura: solo su creador puede editarla",
+    "nameRequired": "Primero ponle un nombre a la colección"
+  },
+  "watchlist": {
+    "watch": "Seguir",
+    "unwatch": "Dejar de seguir",
+    "added": "Añadido a la lista de seguimiento",
+    "removed": "Quitado de la lista de seguimiento",
+    "emptyTitle": "Tu lista de seguimiento está vacía",
+    "emptyText": "Sigue productos, tiendas o categorías para crear alertas sobre ellos.",
+    "types": {
+      "product": "Producto",
+      "store": "Tienda",
+      "category": "Categoría"
+    },
+    "locked": "Las listas de seguimiento están incluidas en los planes Pro y Business."
+  },
+  "workspace": {
+    "errors": {
+      "not_found": "Este elemento ya no existe.",
+      "duplicate": "Ya guardado.",
+      "limit_collections": "Se alcanzó el límite de colecciones de tu plan.",
+      "limit_items": "Se alcanzó el límite de elementos guardados de tu plan.",
+      "limit_rules": "Se alcanzó el límite de reglas de alerta de tu plan.",
+      "plan_required": "Esta función requiere un plan superior.",
+      "unauthenticated": "Vuelve a iniciar sesión.",
+      "rate_limited": "Demasiadas solicitudes. Espera un momento.",
+      "limit_reached": "Se alcanzó el límite diario de tu plan.",
+      "no_workspace": "No hay ningún espacio de trabajo activo. Recarga la página."
+    }
+  },
+  "analyst": {
+    "title": "Analista de productos IA",
+    "subtitle": "Haz preguntas sobre los datos de investigación. Las respuestas se basan en las fichas de la plataforma, con evidencia, riesgos, información faltante y nivel de confianza.",
+    "engine": {
+      "claude": "Claude (proveedor de IA)",
+      "rules": "Analista basado en reglas"
+    },
+    "usage": "{{used}}/{{limit}} preguntas hoy",
+    "emptyTitle": "¿Qué quieres averiguar?",
+    "emptyText": "Elige un ejemplo o haz tu propia pregunta. Añade productos como contexto para análisis y comparaciones.",
+    "examples": {
+      "fitness": "¿Qué productos están ganando tracción en el nicho fitness?",
+      "moderate": "Encuentra productos con tendencia prometedora y competencia moderada.",
+      "analyze": "Analiza las fortalezas y debilidades de este producto.",
+      "compare": "Compara estos tres productos.",
+      "angles": "Sugiere cinco ángulos publicitarios originales para este producto.",
+      "risks": "¿Qué riesgos debo considerar antes de lanzar este producto?",
+      "checklist": "Crea una checklist de lanzamiento para mi tienda Shopify."
+    },
+    "intents": {
+      "find": "Descubrimiento",
+      "analyze": "Análisis de producto",
+      "compare": "Comparación",
+      "angles": "Ángulos publicitarios",
+      "risks": "Revisión de riesgos",
+      "checklist": "Checklist de lanzamiento"
+    },
+    "placeholder": "Pregunta sobre productos, nichos, riesgos, ángulos…",
+    "send": "Enviar",
+    "thinking": "Analizando fichas…",
+    "withProducts": "Contexto: {{list}}",
+    "contextTitle": "Contexto de producto",
+    "contextDesc": "Añade hasta 5 productos para analizar o comparar",
+    "howTitle": "Cómo se generan las respuestas",
+    "howText": "El analista solo usa las fichas de producto disponibles en TrendHunter. Nunca inventa cifras de ventas ni fuentes. Si no hay un proveedor de IA configurado, un analista determinista basado en reglas reformula la evidencia.",
+    "rulesNotice": "Análisis basado en reglas: no hay ningún proveedor de IA configurado. Las afirmaciones se derivan directamente de los campos de las fichas.",
+    "aiFailedNotice": "El proveedor de IA no respondió; se muestra el análisis basado en reglas.",
+    "disclaimer": "Conclusiones generadas por IA a partir de las fichas indicadas. No es asesoramiento financiero ni garantía de resultados. Valida con pruebas pequeñas.",
+    "labels": {
+      "why": "Por qué se identificó",
+      "evidence": "Evidencia",
+      "risks": "Riesgos potenciales",
+      "missing": "Información faltante",
+      "validation": "Pruebas de validación recomendadas",
+      "sources": "Fichas"
+    },
+    "summary": {
+      "find": "{{n}} productos coinciden con tu pregunta, ordenados por puntuación de oportunidad y tendencia reciente.",
+      "findCategory": "{{n}} productos de {{categories}} coinciden con tu pregunta, ordenados por puntuación de oportunidad y tendencia reciente.",
+      "findNone": "Ningún producto con datos suficientes coincide con esta pregunta. Prueba con un nicho más amplio.",
+      "analyze": "Análisis de {{name}} a partir de sus observaciones y estimaciones.",
+      "compare": "{{best}} ocupa el primer lugar de {{n}} productos con una puntuación de {{score}}/100. Compara evidencia y riesgos abajo.",
+      "compareInsufficient": "Los productos seleccionados no tienen datos suficientes para una comparación fiable.",
+      "angles": "Ángulos publicitarios originales para {{n}} producto(s). Adáptalos; no copies anuncios de la competencia.",
+      "risks": "Principales riesgos a revisar antes del lanzamiento.",
+      "checklist": "Una checklist práctica de lanzamiento para una tienda Shopify.",
+      "compareNeedsProducts": "Para comparar productos, selecciona primero entre {{min}} y {{max}}. No se ha hecho ninguna comparación.",
+      "compareNeedsMore": "Una comparación necesita entre {{min}} y {{max}} productos y solo está seleccionado {{name}}. No se ha hecho ninguna comparación."
+    },
+    "rules": {
+      "noStrongSignal": "Sin señales positivas fuertes — considéralo un candidato exploratorio."
+    },
+    "evidence": {
+      "ads": "{{ads}} anuncios observados de {{advertisers}} anunciantes ({{active}} activos el último día)",
+      "stores": "{{n}} tiendas observadas vendiéndolo",
+      "trend": "Anuncios activos {{pct}} % en 30 días",
+      "trendUnknown": "Tendencia a 30 días aún no medible (historial corto)",
+      "margin": "Margen bruto estimado del {{pct}} % (precio {{price}} vs coste {{cost}}, estimaciones)",
+      "marginUnknown": "Coste del proveedor desconocido",
+      "window": "Observado del {{first}} al {{last}} ({{n}} observaciones diarias)"
+    },
+    "missing": {
+      "shipping": "Plazos de envío y abastecimiento verificados",
+      "supplierQuote": "Un presupuesto real del proveedor (el coste es estimado)",
+      "cost": "Cualquier estimación de coste del proveedor",
+      "salesData": "Datos reales de ventas o conversión (no públicos)",
+      "differentiation": "Una evaluación de la diferenciación"
+    },
+    "angles": {
+      "title": "Ángulos publicitarios — {{name}}",
+      "problem": "Primero el problema: abre con la frustración diaria de {{tag}} y muestra la solución en menos de 3 segundos.",
+      "demo": "Demostración: un plano continuo de {{name}} funcionando, solo con subtítulos.",
+      "oldWay": "Antes vs ahora: contrasta la rutina habitual de {{tag}} con la más sencilla.",
+      "routine": "Un día cualquiera: integra el producto en una rutina realista de {{tag}}.",
+      "gift": "Regalo: posiciona {{name}} como un regalo útil para una persona concreta.",
+      "proofNote": "Usa solo reseñas reales y afirmaciones demostrables; nunca inventes testimonios."
+    },
+    "risks": {
+      "title": "Riesgos generales a revisar",
+      "supplier": "Fiabilidad del proveedor, constancia de la calidad y roturas de stock.",
+      "ip": "Marcas, patentes y diseños registrados sobre el producto o su nombre.",
+      "adPolicy": "Políticas de las plataformas publicitarias (declaraciones de salud, antes/después, categorías restringidas).",
+      "returns": "Tasa de devoluciones y coste de los reembolsos para este tipo de producto.",
+      "saturation": "Saturación del mercado: muchos vendedores pueden competir en precio.",
+      "compliance": "Seguridad del producto, marcado CE/UKCA, etiquetado y normativa de consumo en los países objetivo.",
+      "fallback": {
+        "none": "No se ha detectado ninguna señal de riesgo específica en los datos disponibles: valida proveedor, envío y costes publicitarios antes de probar.",
+        "confidenceLow": "Confianza baja en los datos: pocas observaciones o anuncios, o faltan datos clave.",
+        "confidenceMedium": "Confianza media en los datos: historial, muestra de anuncios o actualidad por debajo del nivel de confianza alta.",
+        "shippingUnverified": "Plazos de envío y aprovisionamiento no verificados.",
+        "marginEstimate": "El margen bruto del {{pct}} % es una estimación (precio y coste de proveedor estimados), no un presupuesto del proveedor.",
+        "shortHistory": "Historial corto: solo {{n}} observaciones diarias.",
+        "fewAds": "Muestra de anuncios pequeña: {{n}} anuncios observados.",
+        "trendUnknown": "La tendencia a 30 días aún no es medible.",
+        "demo": "Registro de demostración: datos sintéticos que no describen el mercado real."
+      }
+    },
+    "checklist": {
+      "title": "Checklist de lanzamiento",
+      "sample": "Pide y prueba una muestra; hazle tú mismo las fotos.",
+      "unitEconomics": "Valida la economía unitaria en la calculadora con presupuestos reales.",
+      "legal": "Publica aviso legal, condiciones de venta, política de privacidad y de cookies.",
+      "shippingPolicy": "Redacta políticas claras de envío, plazos de entrega y devoluciones.",
+      "productPage": "Crea una ficha de producto con fotos originales, beneficios honestos y FAQ.",
+      "payments": "Configura pagos, impuestos y monedas para los países objetivo.",
+      "tracking": "Instala analítica y píxeles publicitarios con gestión del consentimiento.",
+      "creatives": "Produce de 3 a 5 creatividades originales con distintos ángulos.",
+      "testBudget": "Fija un presupuesto de prueba limitado y una duración por ángulo.",
+      "kpis": "Define KPI y criterios de corte (CPA vs CPA de equilibrio, CTR, añadir al carrito).",
+      "support": "Prepara plantillas de atención al cliente y tiempos de respuesta."
+    },
+    "needsProducts": {
+      "title": "Selecciona entre {{min}} y {{max}} productos para comparar",
+      "textNone": "No hay ningún producto seleccionado. El analista solo compara los productos que eliges: añádelos en el panel Contexto de producto o parte de los candidatos de abajo.",
+      "textSome_one": "Solo hay {{count}} producto seleccionado. Añade al menos otro en el panel Contexto de producto.",
+      "textSome_other": "Solo hay {{count}} productos seleccionados. Añade más en el panel Contexto de producto.",
+      "choose": "Elegir productos",
+      "suggestionsTitle": "Candidatos que puedes añadir",
+      "suggestionsNote": "Sugeridos porque tienen las puntuaciones de oportunidad más altas (con un extra por una tendencia positiva a 30 días) entre los productos puntuados que encajan con tu pregunta. Aún no es una comparación.",
+      "added": "Añadido",
+      "compareSuggested_one": "Comparar este {{count}} candidato",
+      "compareSuggested_other": "Comparar estos {{count}} candidatos",
+      "compareWith_one": "Añadir {{count}} candidato y comparar",
+      "compareWith_other": "Añadir {{count}} candidatos y comparar"
+    },
+    "suggest": {
+      "reason": "Puntuación {{score}}/100, entre los productos mejor puntuados",
+      "reasonCategory": "Puntuación {{score}}/100, entre los productos mejor puntuados de {{category}}"
+    },
+    "context": {
+      "autoPicked": "Ningún producto seleccionado: esta respuesta usa {{names}}, elegido(s) por la mayor puntuación de oportunidad (con preferencia por una tendencia reciente positiva). Añade productos en el panel Contexto de producto para elegir tú.",
+      "autoPickedCategory": "Ningún producto seleccionado: esta respuesta usa {{names}}, elegido(s) por la mayor puntuación de oportunidad en {{categories}} (con preferencia por una tendencia reciente positiva). Añade productos en el panel Contexto de producto para elegir tú.",
+      "candidatesAi": "Ningún producto seleccionado: la IA respondió con los mejores candidatos de TrendHunter para esta pregunta (mayores puntuaciones de oportunidad, tendencias recientes). Los registros usados se indican abajo."
+    },
+    "typeQuestion": "Escribe primero una pregunta",
+    "alreadyAdded": "Ya añadido",
+    "contextFull": "Hasta {{n}} elementos: quita uno para añadir otro"
+  },
+  "calculator": {
+    "title": "Calculadora de rentabilidad",
+    "subtitle": "Modela la economía unitaria con tus propias hipótesis. Los resultados se actualizan al instante.",
+    "forProduct": "Economía unitaria de {{name}} — rellenada con estimaciones; sustitúyelas por presupuestos reales.",
+    "reset": "Restablecer",
+    "assumptions": "Hipótesis",
+    "assumptionsDesc": "Por pedido, en la moneda seleccionada",
+    "inputs": {
+      "price": "Precio de venta",
+      "productCost": "Coste de adquisición del producto",
+      "shippingCost": "Coste de envío",
+      "paymentFeePct": "Comisión de pago (%)",
+      "paymentFeeFixed": "Comisión de pago (fija)",
+      "platformCostPerOrder": "Shopify y apps por pedido",
+      "cpa": "CPA publicitario",
+      "refundRatePct": "Provisión de devoluciones y reembolsos",
+      "otherCostPerOrder": "Otros costes por pedido",
+      "fixedMonthlyCosts": "Costes fijos mensuales",
+      "orders": "Volumen de pedidos"
+    },
+    "tips": {
+      "price": "Precio que paga el cliente, sin los impuestos que recaudas.",
+      "productCost": "Coste unitario según el presupuesto de tu proveedor.",
+      "shippingCost": "Coste de preparación y entrega por pedido.",
+      "paymentFeePct": "Porcentaje que cobra la pasarela de pago.",
+      "paymentFeeFixed": "Comisión fija por transacción.",
+      "platformCostPerOrder": "Plan mensual de Shopify y apps dividido entre los pedidos previstos.",
+      "cpa": "Coste publicitario medio para conseguir un pedido.",
+      "refundRatePct": "Parte de los ingresos que prevés reembolsar.",
+      "otherCostPerOrder": "Embalaje, insertos, atención al cliente…",
+      "fixedMonthlyCosts": "Costes que no varían con los pedidos (herramientas, suscripciones)."
+    },
+    "perOrder": "Por pedido",
+    "forVolume": "Para {{n}} pedidos",
+    "out": {
+      "grossMargin": "Margen bruto antes de publicidad",
+      "contribution": "Margen de contribución (antes de publicidad)",
+      "breakEvenCpa": "CPA de equilibrio",
+      "breakEvenRoas": "ROAS de equilibrio",
+      "netContribution": "Contribución neta por pedido",
+      "impliedRoas": "ROAS con este CPA",
+      "revenue": "Ingresos",
+      "totalContribution": "Contribución neta total",
+      "operatingProfit": "Beneficio operativo estimado",
+      "breakEvenOrders": "Pedidos para cubrir costes fijos"
+    },
+    "def": {
+      "grossMargin": "Precio − coste del producto − envío − comisiones de pago.",
+      "contribution": "Precio − todos los costes variables por pedido (incl. plataforma, devoluciones y otros), antes de publicidad. Equivale al CPA de equilibrio.",
+      "breakEvenCpa": "Lo máximo que puedes pagar en publicidad por pedido sin perder dinero en él.",
+      "breakEvenRoas": "Precio ÷ margen de contribución. Por debajo de este ROAS cada pedido pierde dinero.",
+      "netContribution": "Margen de contribución − CPA publicitario.",
+      "impliedRoas": "Precio ÷ CPA.",
+      "operatingProfit": "Contribución neta × pedidos − costes fijos mensuales. No es el beneficio neto: excluye impuestos, salarios y financiación.",
+      "breakEvenOrders": "Costes fijos mensuales ÷ contribución neta por pedido."
+    },
+    "notReachable": "Inalcanzable",
+    "sensitivity": "Análisis de sensibilidad",
+    "sensitivityDesc": "Contribución neta por pedido cuando cambian el precio y el CPA",
+    "priceVsCpa": "Precio ↓ / CPA →",
+    "price": "Precio",
+    "note1": "El margen de contribución no es el beneficio neto. El beneficio neto también descuenta impuestos, salarios, financiación y costes puntuales.",
+    "note2": "Los márgenes estimados de las fichas de investigación no son presupuestos verificados de proveedores ni resultados operativos reales.",
+    "note3": "Cambiar el idioma de la interfaz solo cambia el formato de los números, nunca los cálculos.",
+    "resetDone": "Supuestos restablecidos a los valores predeterminados"
+  },
+  "alerts": {
+    "title": "Alertas y listas de seguimiento",
+    "subtitle": "Reglas que te avisan cuando cambian los productos, categorías o competidores que sigues.",
+    "tabs": {
+      "rules": "Reglas",
+      "watchlist": "Seguimiento",
+      "history": "Historial"
+    },
+    "monitoring": "Monitorización programada",
+    "notScheduled": "No conectada — no hay ninguna tarea en segundo plano ni fuente de datos real configurada, así que nada se monitoriza automáticamente.",
+    "noConnector": "Planificador activo, pero no hay ningún conector de datos configurado: no se recopilan datos de investigación automáticamente.",
+    "noIngestionYet": "Conectores configurados — aún no se han ingerido datos.",
+    "lastIngestion": "Última ingesta de datos: {{date}} ({{source}}, {{n}} registros)",
+    "evaluation": "Evaluación de reglas",
+    "evaluationManualOnly": "No programada: las reglas solo se comprueban cuando lanzas una comprobación.",
+    "noEvaluationYet": "Ninguna ejecución programada ha evaluado todavía tus reglas.",
+    "lastEvaluation": "Última evaluación programada: {{date}}, con datos reales a {{asOf}}",
+    "evaluationRunning": "Evaluación programada en curso (iniciada el {{date}})",
+    "lastEvaluationNotRun": "Última comprobación programada ({{date}}): {{status}} — {{reason}}",
+    "lastSuccessfulEvaluation": "Última evaluación correcta: {{date}}",
+    "scheduleNote": "Las reglas se comprueban cada vez que se ejecuta la tarea en segundo plano, como máximo una vez por periodo de la regla (hora, día, semana). Con una sola ejecución diaria, las reglas horarias se comprueban una vez al día.",
+    "emailDelivery": "Envío por correo",
+    "emailOn": "Configurado",
+    "emailNotConfigured": "Correo no configurado",
+    "runCheck": "Comprobar ahora",
+    "runDemoCheck": "Comprobar con la instantánea demo",
+    "checkDone": "Comprobación terminada: {{n}} coincidencia(s).",
+    "checkNotRun": "Comprobación no realizada: {{reason}}",
+    "failures": "Fuentes cuya última sincronización falló",
+    "demoNote": "Demo: las comprobaciones se ejecutan bajo demanda sobre la instantánea demo del día (últimos 7 días), regenerada cada día. No es monitorización en vivo.",
+    "rules": "Reglas de alerta",
+    "rulesUsage": "{{n}} de {{max}} reglas usadas",
+    "newRule": "Nueva regla",
+    "ruleName": "Nombre de la regla",
+    "ruleNamePlaceholder": "p. ej., Productos fitness +30 %",
+    "type": "Disparador",
+    "types": {
+      "trend_increase": "La puntuación de tendencia sube notablemente",
+      "new_advertiser": "Un nuevo anunciante promociona un producto seguido",
+      "new_product_in_category": "Aparece un producto nuevo en una categoría",
+      "competitor_new_products": "Un competidor seguido añade productos nuevos",
+      "daily_summary": "Resumen diario de nuevas oportunidades"
+    },
+    "categoryOrProduct": "Elige una categoría o déjalo vacío y elige un producto.",
+    "allCategories": "Todas las categorías",
+    "watchedProduct": "Producto seguido",
+    "watchFirst": "Sigue primero un producto para seleccionarlo aquí.",
+    "anyProduct": "Cualquier producto de la categoría",
+    "chooseProduct": "Elige un producto",
+    "store": "Tienda competidora",
+    "chooseStore": "Elige una tienda",
+    "threshold": "Umbral de crecimiento (%)",
+    "thresholdHint": "Crecimiento a 7 días de los anuncios activos frente a los 7 días anteriores.",
+    "frequency": "Frecuencia",
+    "frequencies": {
+      "hourly": "Cada hora",
+      "daily": "Diaria",
+      "weekly": "Semanal"
+    },
+    "channels": "Canales",
+    "inApp": "En la app",
+    "email": "Correo",
+    "inAppEmail": "App + correo",
+    "created": "Regla de alerta creada",
+    "deleted": "Regla de alerta eliminada",
+    "active": "Activa",
+    "paused": "En pausa",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "pausedToast": "Regla en pausa",
+    "resumedToast": "Regla reanudada",
+    "lastEvaluated": "Última evaluación: {{date}}",
+    "neverEvaluated": "Aún no evaluada",
+    "emptyTitle": "Aún no hay reglas de alerta",
+    "emptyText": "Crea una regla para recibir avisos sobre tendencias, anunciantes, productos nuevos o competidores.",
+    "watchlistDesc": "Productos, tiendas y categorías que sigues.",
+    "createFromWatch": "Crear alerta",
+    "presetAdvertiser": "Nuevos anunciantes de {{name}}",
+    "presetStore": "Productos nuevos en {{name}}",
+    "presetCategory": "Productos nuevos en {{name}}",
+    "notificationHistory": "Historial de notificaciones",
+    "clear": "Borrar",
+    "runHistory": "Historial de comprobaciones",
+    "noRuns": "Aún no se ha ejecutado ninguna comprobación.",
+    "runSummary": "{{rules}} reglas · {{matches}} coincidencias",
+    "runStatus": {
+      "success": "Correcta",
+      "failed": "Fallida",
+      "skipped": "Omitida",
+      "running": "En curso",
+      "partial": "Parcial"
+    },
+    "runReasons": {
+      "no_live_data": "no hay datos de investigación reales (la base de datos está vacía o solo contiene datos demo)",
+      "data_unavailable": "no se pudieron cargar los datos de investigación",
+      "rule_limit": "algunas reglas superan el límite de tu plan y no se evaluaron",
+      "email_failed": "algunos correos de alerta no se pudieron enviar",
+      "evaluation_failed": "un error interrumpió la evaluación",
+      "interrupted": "la ejecución se interrumpió antes de terminar (tiempo límite)",
+      "unknown": "motivo desconocido"
+    },
+    "origins": {
+      "demo": "Comprobación demo",
+      "scheduled": "Programada",
+      "manual": "Manual"
+    },
+    "match": {
+      "trend_increase": "{{name}}: anuncios activos {{pct}} en 7 días",
+      "new_advertiser": "{{advertiser}} empezó a anunciar {{name}}",
+      "new_product": "Producto nuevo en {{category}}: {{name}}",
+      "competitor_products": "{{store}} añadió {{n}} producto(s) nuevo(s)",
+      "daily_summary": "{{n}} oportunidades actualizadas: {{top}}"
+    },
+    "refresh": {
+      "title": "Actualización de datos",
+      "demo_daily": "Datos de demostración, regenerados cada día (instantánea del {{date}}). Próxima regeneración: {{next}}. No son observaciones reales del mercado.",
+      "cron_daily": "Tarea en segundo plano diaria a las 05:15 UTC: ingesta de conectores, recálculo de puntuaciones, evaluación de alertas y purga. Datos del {{date}} · próxima ejecución: {{next}}.",
+      "none": "Sin actualización automática: la tarea diaria en segundo plano (05:15 UTC) no está configurada (CRON_SECRET). Datos del {{date}}."
+    },
+    "ruleIncomplete": "Indica un nombre y el objetivo necesario para crear la regla",
+    "cleared": "Historial de notificaciones borrado"
+  },
+  "reports": {
+    "title": "Informes de mercado",
+    "subtitle": "Informes de investigación generados automáticamente con fuentes y fechas de recopilación. Exporta a PDF o CSV.",
+    "marketTitle": "Informe de mercado — {{category}}",
+    "kinds": {
+      "weekly": "Oportunidades de la semana",
+      "competitive": "Panorama competitivo",
+      "market": "Informe de mercado"
+    },
+    "kindDesc": {
+      "weekly": "Oportunidades observadas en los últimos 7 días, todas las categorías.",
+      "competitive": "Tiendas, catálogos y presencia publicitaria en todo el mercado.",
+      "market": "Resumen, oportunidades, tendencias, anuncios, competidores, márgenes, riesgos."
+    },
+    "back": "Volver a informes",
+    "exportPdf": "Exportar PDF",
+    "generatedMeta": "Generado el {{date}} · datos a {{asOf}}",
+    "demoWarning": "Este informe se basa en datos demo de ejemplo y no describe el mercado real.",
+    "sections": {
+      "overview": "Panorama del mercado",
+      "opportunities": "Oportunidades de producto emergentes",
+      "trends": "Gráficos de tendencia",
+      "ads": "Ejemplos publicitarios",
+      "competitors": "Observaciones de la competencia",
+      "margins": "Análisis de márgenes estimados",
+      "risks": "Riesgos y limitaciones",
+      "experiments": "Experimentos de validación recomendados",
+      "sources": "Fuentes de datos y fechas de recopilación"
+    },
+    "adExamplesActive": "Anuncios más duraderos de anunciantes activos (≥ {{ads}} desde hace ≥ {{days}}).",
+    "adExamplesFallback": "Ningún anunciante de este informe es activo (≥ {{ads}} desde hace ≥ {{days}}): ejemplos de todos los anunciantes.",
+    "ov": {
+      "products": "Productos seguidos",
+      "scored": "{{n}} con puntuación",
+      "ads": "Anuncios observados",
+      "active": "{{n}} activos",
+      "advertisers": "Anunciantes",
+      "stores": "Tiendas",
+      "summary": "Margen bruto estimado mediano: {{margin}}. Crecimiento de anuncios activos en 30 días: {{growth}}."
+    },
+    "relevantListings": "Productos relevantes",
+    "productsCount": "Productos",
+    "marginNote": "Distribución de márgenes brutos estimados (precio vs coste estimado del proveedor). Estimaciones, no presupuestos de proveedores.",
+    "risks": {
+      "estimates": "Precios, costes y márgenes son estimaciones que deben verificarse.",
+      "saturation": "El número de anunciantes observados puede subestimar la competencia (no todos los anuncios son públicos).",
+      "supplier": "La calidad del proveedor y los plazos de entrega no están garantizados.",
+      "policy": "Las políticas publicitarias y la normativa de productos varían según el país.",
+      "sample": "Las observaciones solo cubren las fuentes conectadas y pueden no representar todo el mercado."
+    },
+    "experiments": {
+      "sample": "Pide muestras a dos proveedores y compara calidad y plazos.",
+      "creativeTest": "Prueba 3 ángulos originales con un presupuesto limitado por ángulo.",
+      "landing": "Mide la tasa de añadir al carrito de la página antes de escalar.",
+      "price": "Prueba dos niveles de precio frente al CPA de equilibrio.",
+      "killCriteria": "Define de antemano los criterios de corte (p. ej., CPA > equilibrio tras N pedidos)."
+    },
+    "source": "Fuente",
+    "dataKind": "Tipo de datos",
+    "collected": "Periodo de recopilación",
+    "disclaimer": "Generado automáticamente a partir de observaciones almacenadas en TrendHunter. No es asesoramiento de inversión. Las puntuaciones y estimaciones no son garantías.",
+    "records": "Registros usados",
+    "recordTypes": {
+      "products": "Productos: {{n}}",
+      "ads": "Anuncios: {{n}}",
+      "observations": "Observaciones diarias: {{n}}",
+      "stores": "Tiendas: {{n}}"
+    },
+    "noSources": "Ningún registro respalda este informe.",
+    "sourcesNote": "Calculado a partir de los registros usados en este informe: cada fuente muestra su propio tipo de datos y las fechas de primera y última observación de sus registros."
+  },
+  "billing": {
+    "currentPlan": "Plan actual",
+    "demoBillingShort": "Facturación demo — no se cobra nada.",
+    "demoMode": "Modo de facturación demo: Stripe no está configurado. Cambiar de plan aquí solo simula los derechos; no se cobra nada.",
+    "demoSwitched": "Plan demo cambiado a {{plan}}",
+    "notConfigured": "Los pagos aún no están configurados.",
+    "checkoutSuccess": "Pago recibido — tu plan se actualizará en cuanto Stripe lo confirme.",
+    "checkoutCancelled": "Pago cancelado.",
+    "manage": "Gestionar facturación",
+    "upgrade": "Ver planes",
+    "usage": "Uso",
+    "usageDesc": "Los límites diarios se reinician a medianoche UTC.",
+    "meters": {
+      "product_search": "Búsquedas de productos hoy",
+      "ad_search": "Búsquedas de anuncios hoy",
+      "ai_query": "Preguntas a la IA hoy",
+      "saved": "Elementos guardados",
+      "collections": "Colecciones",
+      "alerts": "Reglas de alerta"
+    },
+    "gateTitle": "{{feature}} no está incluido en tu plan",
+    "gateText": "Pasa a Pro o Business para desbloquear esta función.",
+    "advancedFilterLocked": "Filtro avanzado — plan Pro",
+    "filtersIgnored": "Algunos filtros avanzados no se aplicaron con el plan Free.",
+    "limitReached": "Has alcanzado el límite diario de tu plan.",
+    "exportLocked": "Las exportaciones están disponibles en los planes Pro y Business.",
+    "status": "Estado",
+    "interval": "Facturación",
+    "renewsOn": "Se renueva el",
+    "endsOn": "Finaliza el",
+    "statuses": {
+      "active": "Activa",
+      "trialing": "Prueba",
+      "past_due": "Pago atrasado",
+      "canceled": "Cancelada",
+      "unpaid": "Impagada",
+      "incomplete": "Incompleta",
+      "incomplete_expired": "Caducada",
+      "paused": "En pausa"
+    },
+    "roleRequired": "Solo los propietarios y administradores del espacio que tiene la suscripción pueden cambiar de plan o acceder a la facturación."
+  },
+  "plans": {
+    "free": {
+      "name": "Free",
+      "tagline": "Explora la plataforma con búsquedas limitadas y un panel básico de tendencias."
+    },
+    "pro": {
+      "name": "Pro",
+      "tagline": "Para emprendedores que prueban productos cada semana."
+    },
+    "business": {
+      "name": "Business",
+      "tagline": "Para equipos y agencias que investigan a escala."
+    }
+  },
+  "pricing": {
+    "title": "Precios simples y transparentes",
+    "subtitle": "Todos los límites están indicados. Nada se anuncia como ilimitado.",
+    "monthly": "Mensual",
+    "yearly": "Anual (−20 %)",
+    "perMonth": "mes",
+    "perYear": "año",
+    "vat": "IVA no incluido. Cancela cuando quieras.",
+    "popular": "El más popular",
+    "current": "Plan actual",
+    "switchDemo": "Cambiar (demo)",
+    "downgrade": "Bajar de plan",
+    "upgradeTo": "Pasar a {{plan}}",
+    "startFree": "Empezar gratis",
+    "choose": "Elegir {{plan}}",
+    "limitsNote": "Los límites se aplican por usuario y día salvo que se indique lo contrario. Las integraciones adicionales dependen de la disponibilidad de los proveedores.",
+    "f": {
+      "productSearches": "{{n}} búsquedas de productos / día",
+      "adSearches": "{{n}} búsquedas de anuncios / día",
+      "ai": "{{n}} preguntas al analista IA / día",
+      "saved": "Hasta {{n}} elementos guardados",
+      "collections": "{{n}} colecciones",
+      "alerts": "Listas de seguimiento y hasta {{n}} reglas de alerta",
+      "basicFilters": "Filtros básicos (categoría, precio, orden)",
+      "advancedFilters": "Todos los filtros avanzados",
+      "creative": "Análisis de creatividades publicitarias",
+      "calculator": "Calculadora de rentabilidad",
+      "exports": "Exportaciones CSV / JSON / PDF",
+      "shopify": "Integración con tienda Shopify",
+      "basicTrends": "Panel de tendencias e informes de mercado",
+      "advancedReports": "Informes avanzados (panorama competitivo)",
+      "workspaces": "{{n}} espacios de trabajo · {{seats}} puestos",
+      "support": "Soporte prioritario",
+      "shopifyStores": "Hasta {{n}} tiendas Shopify conectadas"
+    },
+    "faq": {
+      "q1": "¿Los datos son reales?",
+      "a1": "En modo demo, los datos son de ejemplo generados y están claramente etiquetados. Con los conectores configurados, proceden de API oficiales, proveedores con licencia o páginas públicas, siempre con fuente y fecha.",
+      "q2": "¿Mostráis las ventas de los competidores?",
+      "a2": "No. Las analíticas privadas, ventas, tasas de conversión e inversión publicitaria no son públicas. Nunca las presentamos como hechos conocidos.",
+      "q3": "¿Puedo cancelar en cualquier momento?",
+      "a3": "Sí. Las suscripciones se gestionan desde el portal de clientes de Stripe y se pueden cancelar en cualquier momento."
+    },
+    "currentReason": "Este es tu plan actual"
+  },
+  "settings": {
+    "title": "Ajustes y suscripción",
+    "subtitle": "Preferencias, plan y uso, integraciones, equipo y privacidad.",
+    "tabs": {
+      "profile": "Perfil",
+      "billing": "Plan y facturación",
+      "integrations": "Integraciones",
+      "team": "Equipo",
+      "privacy": "Privacidad y datos"
+    },
+    "preferences": "Preferencias",
+    "language": "Idioma",
+    "currency": "Moneda de visualización",
+    "currencyHint": "La usa la calculadora de rentabilidad. Los precios de investigación mantienen su moneda original (sin conversión).",
+    "theme": "Tema",
+    "themeDark": "Oscuro",
+    "themeLight": "Claro",
+    "profile": "Perfil",
+    "profileDemo": "Modo demo: estos datos solo personalizan la demo y se guardan en una cookie."
+  },
+  "integrations": {
+    "services": "Servicios de la plataforma",
+    "servicesDesc": "Servicios del lado del servidor. Los valores secretos nunca se muestran.",
+    "serviceNames": {
+      "supabase": "Base de datos y autenticación",
+      "anthropic": "Proveedor de IA",
+      "stripe": "Pagos",
+      "email": "Envío de correos",
+      "cron": "Tareas programadas"
+    },
+    "serviceDesc": {
+      "supabase": "Supabase · PostgreSQL",
+      "anthropic": "Anthropic Claude",
+      "stripe": "Stripe Billing",
+      "email": "Resend",
+      "cron": "Análisis en segundo plano"
+    },
+    "configured": "Configurado",
+    "notConfigured": "No configurado",
+    "connectors": "Conectores de datos",
+    "connectorsDesc": "Cada conector documenta su autenticación, acceso permitido, límites de frecuencia, campos, periodicidad y conservación.",
+    "categories": {
+      "ads": "Publicidad",
+      "trends": "Tendencias de búsqueda",
+      "stores": "Escaparates",
+      "commerce": "Comercio",
+      "licensed": "Datos con licencia",
+      "demo": "Demo"
+    },
+    "auth": "Autenticación",
+    "authKinds": {
+      "none": "Ninguna",
+      "api_key": "Clave API",
+      "oauth_client": "Credenciales de cliente OAuth",
+      "access_token": "Token de acceso",
+      "oauth_user": "OAuth (comerciante)"
+    },
+    "rateLimit": "Límite de frecuencia",
+    "rate": "{{n}} solicitudes / {{per}}",
+    "per": {
+      "second": "segundo",
+      "minute": "minuto",
+      "hour": "hora",
+      "day": "día"
+    },
+    "frequency": "Frecuencia de sincronización",
+    "frequencies": {
+      "hourly": "Cada hora",
+      "every6h": "Cada 6 horas",
+      "daily": "Diaria",
+      "weekly": "Semanal",
+      "on_demand": "Bajo demanda"
+    },
+    "retention": "Conservación de datos brutos",
+    "days": "{{n}} días",
+    "errorCategories": {
+      "rate_limited": "Límite de solicitudes del proveedor alcanzado",
+      "auth": "Autenticación rechazada",
+      "provider_error": "Error del proveedor",
+      "network": "Error de red",
+      "database": "Error de almacenamiento",
+      "unknown": "Error desconocido"
+    },
+    "fields": "Campos",
+    "setup": "Variables necesarias",
+    "docs": "Docs",
+    "shopifyHint": "Conecta tu propia tienda Shopify desde",
+    "notAvailable": "Aún no disponible"
+  },
+  "connectors": {
+    "names": {
+      "demo": "Conjunto de datos demo",
+      "none": "Aún no hay fuentes",
+      "aggregate": "Agregados de TrendHunter",
+      "meta_ad_library": "API de Meta Ad Library",
+      "tiktok_commercial_content": "API de TikTok Commercial Content",
+      "pinterest_ads_repository": "Repositorio de anuncios de Pinterest",
+      "search_trends": "Proveedor de tendencias de búsqueda",
+      "public_storefronts": "Escaparates públicos",
+      "licensed_dataset": "Proveedor de datos con licencia",
+      "shopify_admin": "API Shopify Admin (tu tienda)"
+    },
+    "permitted": {
+      "meta": "API oficial de Ad Library. Datos publicitarios tal como los divulga Meta; sujetos a las condiciones de la plataforma de Meta y a la verificación de identidad.",
+      "tiktok": "API TikTok Commercial Content para investigadores aprobados; metadatos de anuncios tal como los divulga TikTok.",
+      "pinterest": "Aún no disponible: no hay integración de transparencia publicitaria de Pinterest implementada; configurar un token no tiene efecto.",
+      "trends": "Aún no disponible: no hay integración con un proveedor de tendencias de búsqueda implementada; configurar una clave API no tiene efecto.",
+      "storefronts": "Solo fichas de acceso público (Shopify products.json/meta.json, WooCommerce Store API), respetando robots.txt, las condiciones de los sitios y un límite de 1 solicitud por segundo.",
+      "licensed": "Conjunto de datos de terceros con licencia contractual; campos acordados con el proveedor.",
+      "shopify": "Solo tu propia tienda, mediante OAuth con permisos de solo lectura que tú apruebas.",
+      "demo": "Datos sintéticos de ejemplo para la demostración, regenerados cada día. Nunca se presentan como observaciones reales."
+    }
+  },
+  "team": {
+    "title": "Equipo y espacios de trabajo",
+    "desc": "Tu plan incluye {{workspaces}} espacio(s) de trabajo y {{seats}} puesto(s).",
+    "businessOnly": "La colaboración en equipo y los espacios múltiples están disponibles en el plan Business.",
+    "demoText": "Modo demo: los miembros del equipo, las invitaciones y los espacios múltiples requieren una base de datos configurada (Supabase) y cuentas reales. Tu espacio demo se queda en este navegador y eres su único miembro.",
+    "membersTitle": "Miembros de {{workspace}}",
+    "membersDesc": "Los miembros comparten el plan del espacio y pueden consultar las colecciones compartidas con el equipo.",
+    "seats": "{{used}} / {{limit}} puestos",
+    "seatsHint": "Los puestos cuentan los miembros distintos de todos los espacios facturados con esta suscripción, más las invitaciones pendientes.",
+    "seatsFull": "Todos los puestos están ocupados. Quita a un miembro o revoca una invitación para invitar a otra persona.",
+    "you": "Tú",
+    "unnamed": "Sin nombre",
+    "joined": "se unió el {{date}}",
+    "roleLabel": "Rol",
+    "roles": {
+      "owner": "Propietario",
+      "admin": "Administrador",
+      "member": "Miembro"
+    },
+    "roleChanged": "Rol actualizado",
+    "leave": "Salir",
+    "confirmRemove": "¿Quitar a {{name}} de {{workspace}}? Sus datos privados siguen siendo suyos; las colecciones que compartió siguen visibles para el equipo.",
+    "confirmLeave": "¿Salir de {{workspace}}? Perderás el acceso a sus colecciones compartidas.",
+    "removed": "Miembro eliminado",
+    "left": "Has salido del espacio de trabajo",
+    "managersOnly": "Solo los propietarios y administradores pueden invitar o gestionar miembros.",
+    "inviteEmail": "Correo electrónico a invitar",
+    "inviteBtn": "Invitar",
+    "inviteSent": "Invitación creada para {{email}}",
+    "inviteEmailed": "Se ha enviado un correo con el enlace a {{email}}. También puedes compartir el enlace tú mismo.",
+    "inviteNotEmailed": "El envío de correos no está configurado: copia el enlace de abajo y envíaselo tú mismo a tu compañero.",
+    "inviteLinkLabel": "Enlace de invitación (un solo uso, válido {{days}} días)",
+    "inviteLinkHint": "Solo se guarda una huella de cada enlace, así que no podrá mostrarse de nuevo más tarde. Puedes generar un enlace nuevo en cualquier momento.",
+    "pendingTitle": "Invitaciones pendientes",
+    "pendingEmpty": "No hay invitaciones pendientes.",
+    "expires": "Caduca el {{date}}",
+    "expired": "Caducada",
+    "newLink": "Copiar un enlace nuevo",
+    "newLinkDone": "Nuevo enlace para {{email}}: el enlace anterior ya no funciona.",
+    "revoke": "Revocar",
+    "revoked": "Invitación revocada",
+    "confirmRevoke": "¿Revocar la invitación enviada a {{email}}?",
+    "inviteEmailFirst": "Introduce un correo electrónico para enviar una invitación"
+  },
+  "privacy": {
+    "exportTitle": "Exportar mis datos",
+    "exportDesc": "Descarga tu perfil, colecciones, listas de seguimiento, alertas y notificaciones en JSON.",
+    "exportBtn": "Exportar JSON",
+    "deleteTitle": "Eliminar mi cuenta",
+    "deleteDesc": "Elimina de forma permanente tu cuenta, colecciones, alertas, notificaciones, integraciones e historial de uso. Las suscripciones activas se cancelan.",
+    "deleteDemoDesc": "Modo demo: borra tu perfil demo, tu plan y el espacio de trabajo guardado en el navegador.",
+    "typeDelete": "Escribe DELETE para confirmar",
+    "deleteBtn": "Eliminar definitivamente",
+    "deleted": "Tus datos se han eliminado.",
+    "infoTitle": "Cómo tratamos los datos",
+    "info1": "Solo recopilamos lo que cada función necesita: datos de la cuenta, tu investigación guardada y contadores de uso para los límites del plan.",
+    "info2": "Los datos de investigación proceden de API oficiales, proveedores con licencia o páginas de acceso público, con la fuente y la fecha guardadas para cada métrica importante.",
+    "info3": "Los tokens de integración se cifran en el servidor. Nunca accedemos a datos privados de otros comerciantes ni eludimos restricciones técnicas.",
+    "exported": "Se ha descargado la exportación de tus datos",
+    "typeDeleteReason": "Escribe DELETE en el campo de arriba para confirmar"
+  },
+  "landing": {
+    "nav": {
+      "features": "Funciones",
+      "scoring": "Puntuación",
+      "pricing": "Precios",
+      "faq": "FAQ"
+    },
+    "badge": "Datos transparentes · ninguna métrica inventada",
+    "heroTitle1": "Encuentra tu próximo producto ganador",
+    "heroTitle2": "antes que el mercado.",
+    "heroText": "TrendHunter reúne investigación de productos, inteligencia publicitaria, detección de tendencias y análisis de la competencia en un solo espacio — con puntuaciones transparentes y cada dato vinculado a su fuente.",
+    "ctaDemo": "Explorar la demo",
+    "ctaPricing": "Ver precios",
+    "noCard": "Sin tarjeta de crédito · Datos demo claramente etiquetados",
+    "preview": {
+      "tracked": "Productos seguidos",
+      "activeAds": "Anuncios activos",
+      "newWeek": "Nuevos esta semana",
+      "chart": "Actividad publicitaria",
+      "top": "Mejores puntuaciones de oportunidad",
+      "note": "Ilustración creada con datos demo."
+    },
+    "questionsTitle": "Responde a las cinco preguntas que deciden un lanzamiento",
+    "featuresTitle": "Todo lo necesario para investigar, decidir y lanzar",
+    "featuresText": "Un espacio de análisis serio para dropshippers, comerciantes Shopify, media buyers y marketers.",
+    "features": {
+      "products": {
+        "title": "Descubrimiento de productos ganadores",
+        "text": "Busca fichas con filtros avanzados de precio, margen, país, plataforma, crecimiento y competencia."
+      },
+      "adspy": {
+        "title": "Ad Spy",
+        "text": "Explora creatividades de acceso público por palabra clave, anunciante, formato, idioma, país y fechas."
+      },
+      "creatives": {
+        "title": "Analizador de creatividades",
+        "text": "Desglosa ganchos, disparadores y estructura, y genera conceptos originales para tus anuncios."
+      },
+      "trends": {
+        "title": "Detección de tendencias",
+        "text": "Detecta productos en alza, nichos emergentes y tendencias a la baja en 24 h, 7, 30 y 90 días."
+      },
+      "stores": {
+        "title": "Inteligencia de tiendas",
+        "text": "Analiza escaparates públicos, compara hasta cinco competidores y conecta tu propia tienda Shopify."
+      },
+      "analyst": {
+        "title": "Analista de productos IA",
+        "text": "Pregunta en lenguaje natural y obtén evidencia, riesgos, datos faltantes y pruebas de validación."
+      },
+      "calculator": {
+        "title": "Calculadora de rentabilidad",
+        "text": "CPA y ROAS de equilibrio, margen de contribución y análisis de sensibilidad al instante."
+      },
+      "alerts": {
+        "title": "Alertas y seguimiento",
+        "text": "Recibe avisos cuando una tendencia se dispara, aparecen nuevos anunciantes o un competidor añade productos."
+      },
+      "reports": {
+        "title": "Informes de mercado",
+        "text": "Informes generados con gráficos, ejemplos, riesgos y fuentes — exporta a PDF o CSV."
+      }
+    },
+    "scoringTitle": "Una puntuación que puedes explicar a tu equipo",
+    "scoringText": "La puntuación de oportunidad de 0 a 100 combina seis componentes normalizados con pesos publicados. Cuando la evidencia es escasa, mostramos «Datos insuficientes» en lugar de un número.",
+    "scoringNote": "Los pesos mostrados son los predeterminados de la plataforma. La puntuación prioriza pruebas; nunca garantiza ventas.",
+    "transparent": "Transparente",
+    "integrityTitle": "Basado en la integridad de los datos",
+    "integrityText": "Cada métrica se etiqueta como medida, estimada, generada por IA o demo — siempre sabes lo que estás viendo.",
+    "integrity": {
+      "sources": {
+        "title": "Fuentes trazables",
+        "text": "Cada ficha guarda su conector de origen y la marca temporal de observación. Los informes listan fuentes y fechas de recopilación."
+      },
+      "noFake": {
+        "title": "Ninguna métrica inventada",
+        "text": "Nunca inventamos inversión, impresiones, conversiones ni ingresos de la competencia. Si no es público, lo decimos."
+      },
+      "compliance": {
+        "title": "Recopilación lícita",
+        "text": "API oficiales, proveedores con licencia y páginas públicas que respetan las normas robots. Sin eludir controles de acceso."
+      }
+    },
+    "faqTitle": "Preguntas frecuentes",
+    "faq": {
+      "q1": "¿De dónde vienen los datos?",
+      "a1": "De conectores a API oficiales (como la API de Meta Ad Library), proveedores de datos con licencia y páginas públicas de tiendas. La demo usa datos sintéticos, etiquetados en todas partes.",
+      "q2": "¿Una puntuación alta significa que el producto se venderá?",
+      "a2": "No. La puntuación es una heurística de investigación para priorizar qué probar. Valida siempre con muestras, presupuestos reales y pequeñas pruebas publicitarias.",
+      "q3": "¿Puedo ver los ingresos de la competencia?",
+      "a3": "No a partir de analíticas privadas: esos datos no son públicos. Cualquier estimación se etiquetaría con su método y nivel de confianza, y se omitiría si la evidencia es débil.",
+      "q4": "¿Qué idiomas están disponibles?",
+      "a4": "Francés, inglés, español, alemán e italiano, con fechas, números y monedas formateados según tu idioma.",
+      "q5": "¿Puedo conectar mi tienda Shopify?",
+      "a5": "Sí, en los planes Pro y Business, mediante OAuth de Shopify con permisos de solo lectura, para comparar tu rendimiento con el mercado."
+    },
+    "finalTitle": "Investiga con evidencia, no con humo",
+    "finalText": "Explora la demo completa en segundos y conecta tus fuentes de datos cuando estés listo.",
+    "footer": {
+      "tagline": "Inteligencia e-commerce para investigación de productos, análisis publicitario, tendencias y competencia.",
+      "product": "Producto",
+      "legal": "Legal",
+      "disclaimer": "Las puntuaciones y estimaciones no garantizan resultados."
+    }
+  },
+  "legal": {
+    "privacyTitle": "Política de privacidad",
+    "termsTitle": "Condiciones del servicio",
+    "updated": "Última actualización: octubre de 2026",
+    "template": "Plantilla incluida con el software TrendHunter. Haz que la revise un asesor jurídico y complétala con los datos de tu empresa antes de usarla en producción.",
+    "privacy": {
+      "sections": [
+        {
+          "title": "1. Quiénes somos",
+          "body": "TrendHunter («nosotros») opera el servicio TrendHunter. El responsable del tratamiento es la empresa identificada en el aviso legal del despliegue."
+        },
+        {
+          "title": "2. Datos que recopilamos",
+          "body": "Datos de la cuenta (nombre, correo), datos del espacio de trabajo que creas (colecciones, notas, alertas), contadores de uso necesarios para aplicar los límites del plan, datos de facturación gestionados por Stripe y registros técnicos de seguridad."
+        },
+        {
+          "title": "3. Finalidades y bases jurídicas",
+          "body": "Prestación del servicio (contrato), seguridad de la plataforma y prevención de abusos (interés legítimo), facturación (obligación legal y contrato) y correos opcionales que actives (consentimiento)."
+        },
+        {
+          "title": "4. Datos de investigación",
+          "body": "Los datos de estudios de mercado proceden de API oficiales, proveedores con licencia y páginas web de acceso público, recopilados respetando las normas robots y las condiciones de los sitios. No recopilamos datos privados de otros comerciantes."
+        },
+        {
+          "title": "5. Encargados del tratamiento",
+          "body": "El alojamiento, la base de datos (Supabase), los pagos (Stripe), el correo (Resend) y el análisis IA (Anthropic) actúan como encargados del tratamiento en virtud de acuerdos de tratamiento de datos."
+        },
+        {
+          "title": "6. Conservación",
+          "body": "Los datos de la cuenta se conservan mientras la cuenta esté activa. Los eventos de uso se conservan hasta 13 meses. Los datos brutos de los conectores se conservan durante el periodo documentado para cada conector."
+        },
+        {
+          "title": "7. Tus derechos",
+          "body": "Puedes acceder, exportar y eliminar tus datos en cualquier momento desde Ajustes → Privacidad y datos, y contactarnos para ejercer tus derechos de rectificación, limitación, oposición o portabilidad. También puedes reclamar ante la AEPD o tu autoridad de protección de datos."
+        },
+        {
+          "title": "8. Cookies",
+          "body": "Usamos cookies estrictamente necesarias para la autenticación, el idioma y la seguridad. Las cookies analíticas o publicitarias solo se instalan con tu consentimiento."
+        }
+      ]
+    },
+    "terms": {
+      "sections": [
+        {
+          "title": "1. Servicio",
+          "body": "TrendHunter ofrece herramientas de investigación para el comercio electrónico. La información se ofrece con fines de investigación y no constituye asesoramiento financiero, jurídico ni empresarial."
+        },
+        {
+          "title": "2. Sin garantía de resultados",
+          "body": "Las puntuaciones de oportunidad, las estimaciones y los análisis generados por IA son heurísticas. No garantizan ventas, rentabilidad ni ningún resultado."
+        },
+        {
+          "title": "3. Uso aceptable",
+          "body": "No debes usar el servicio para infringir la propiedad intelectual, copiar literalmente contenido publicitario de terceros, eludir restricciones técnicas ni recopilar datos personales de forma ilícita."
+        },
+        {
+          "title": "4. Contenido de terceros",
+          "body": "Los anuncios y contenidos de los escaparates pertenecen a sus propietarios. Se muestran para su análisis; tú eres responsable de crear materiales originales."
+        },
+        {
+          "title": "5. Suscripciones",
+          "body": "Los planes de pago se renuevan automáticamente hasta su cancelación. Los límites de cada plan se indican en la página de precios. Las cuotas no son reembolsables salvo que la ley lo exija."
+        },
+        {
+          "title": "6. Responsabilidad",
+          "body": "En la medida permitida por la ley, nuestra responsabilidad se limita a las cuotas pagadas en los 12 meses anteriores a la reclamación."
+        },
+        {
+          "title": "7. Resolución",
+          "body": "Puedes eliminar tu cuenta en cualquier momento. Podemos suspender las cuentas que incumplan estas condiciones."
+        }
+      ]
+    }
+  },
+  "seed": {
+    "collections": {
+      "test": {
+        "name": "Productos para probar",
+        "description": "Preselección para pruebas de validación con poco presupuesto."
+      },
+      "fitness": {
+        "name": "Productos fitness en tendencia",
+        "description": "Productos fitness con actividad publicitaria observada en aumento."
+      },
+      "ads": {
+        "name": "Inspiración publicitaria de la competencia",
+        "description": "Creatividades de larga duración para estudiar (la duración observada no demuestra rentabilidad)."
+      },
+      "margin": {
+        "name": "Oportunidades de alto margen",
+        "description": "Margen bruto estimado ≥ 75 % (estimaciones, no presupuestos de proveedores)."
+      }
+    },
+    "note": "Verificar el presupuesto del proveedor antes de probar.",
+    "ruleFitness": "Tendencia fitness +30 %",
+    "ruleSummary": "Resumen diario de oportunidades",
+    "ruleStore": "Productos nuevos en {{name}}"
+  },
+  "meta": {
+    "title": "TrendHunter — Inteligencia e-commerce",
+    "description": "Investigación de productos, inteligencia publicitaria, tendencias y análisis de la competencia para equipos de e-commerce."
+  },
+  "email": {
+    "subject": "TrendHunter · {{rule}}",
+    "intro": "Nuevos resultados para tu alerta «{{rule}}»:",
+    "manage": "Gestiona tus alertas: {{url}}",
+    "footer": "Los valores estimados o generados por IA no son hechos medidos. Recibes este correo porque las notificaciones por correo están activadas para esta alerta.",
+    "inviteSubject": "{{inviter}} te invita a {{workspace}} en TrendHunter",
+    "inviteIntro": "{{inviter}} te ha invitado a unirte al espacio de trabajo «{{workspace}}» en TrendHunter como {{role}}.",
+    "inviteSteps": "Inicia sesión o crea una cuenta con {{email}} y abre este enlace para aceptar:",
+    "inviteExpiry": "El enlace solo puede usarse una vez y caduca en {{days}} días. Si no esperabas esta invitación, puedes ignorar este correo."
+  },
+  "support": {
+    "title": "Ayuda y soporte",
+    "standardText": "¿Una pregunta, un error o un problema con los datos? Escríbenos y te responderemos por correo.",
+    "priorityText": "Tu plan Business incluye soporte prioritario: tus solicitudes se atienden primero.",
+    "priority": "Prioritario",
+    "category": "Categoría",
+    "subject": "Asunto",
+    "message": "Mensaje",
+    "send": "Enviar",
+    "sent": "Solicitud enviada. Te responderemos por correo.",
+    "unavailable": "El formulario de soporte no está configurado en este despliegue (se requieren bandeja de soporte y envío de correos, solo cuentas con sesión iniciada).",
+    "categories": {
+      "question": "Pregunta",
+      "bug": "Error",
+      "billing": "Facturación",
+      "data": "Datos",
+      "other": "Otro"
+    }
+  },
+  "workspaces": {
+    "title": "Espacios de trabajo",
+    "desc": "Cada espacio tiene sus propias colecciones, lista de seguimiento y alertas. Cambia de espacio cuando quieras desde la barra lateral.",
+    "members_one": "{{count}} miembro",
+    "members_other": "{{count}} miembros",
+    "active": "Activo",
+    "switch": "Abrir",
+    "switched": "Ahora trabajas en {{name}}",
+    "switcherLabel": "Espacio de trabajo activo",
+    "rename": "Renombrar espacio",
+    "renamed": "Espacio renombrado",
+    "name": "Nombre del espacio",
+    "createTitle": "Nuevo espacio de trabajo",
+    "created": "Espacio «{{name}}» creado",
+    "usage": "{{used}} / {{limit}} espacios",
+    "billedHint": "El nuevo espacio se factura con la suscripción del espacio activo y tú pasas a ser su propietario.",
+    "blocked": {
+      "plan_required": "Los espacios de trabajo múltiples están disponibles en el plan Business.",
+      "role_required": "Solo los propietarios y administradores del espacio que tiene la suscripción pueden añadir espacios.",
+      "limit_workspaces": "Has alcanzado el límite de espacios de trabajo de tu plan."
+    },
+    "nameRequired": "Introduce primero un nombre de espacio de trabajo"
+  },
+  "invite": {
+    "title": "Invitación",
+    "cardTitle": "Unirse a un espacio de trabajo",
+    "invited": "{{inviter}} te ha invitado a unirte a {{workspace}} como {{role}}.",
+    "invitedAnon": "Te han invitado a unirte a {{workspace}} como {{role}}.",
+    "expiresOn": "Esta invitación caduca el {{date}}.",
+    "accept": "Aceptar y unirme",
+    "welcome": "Te damos la bienvenida a {{workspace}}",
+    "invalid": "Este enlace de invitación no es válido o ha sido revocado. Pide un enlace nuevo a la persona que te invitó.",
+    "status": {
+      "expired": "Esta invitación ha caducado. Pide un enlace nuevo a un propietario o administrador del espacio.",
+      "accepted": "Esta invitación ya se ha utilizado.",
+      "email_mismatch": "Esta invitación se envió a {{email}}, pero has iniciado sesión como {{current}}. Inicia sesión con la dirección invitada para aceptarla.",
+      "already_member": "Ya eres miembro de este espacio de trabajo."
+    },
+    "switchAccount": "Iniciar sesión con otra cuenta",
+    "open": "Abrir el espacio",
+    "demo": "Las invitaciones requieren una base de datos configurada (Supabase) y cuentas reales, por lo que no están disponibles en modo demo.",
+    "backToApp": "Volver a la aplicación"
+  },
+  "placements": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "messenger": "Messenger",
+    "audience_network": "Audience Network",
+    "whatsapp": "WhatsApp",
+    "threads": "Threads",
+    "oculus": "Oculus"
+  },
+  "player": {
+    "watch": "Ver el vídeo",
+    "watchAria": "Ver el vídeo de {{advertiser}}",
+    "dialogTitle": "Vídeo de {{advertiser}}",
+    "loading": "Cargando el vídeo…",
+    "error": "No se pudo cargar el vídeo (puede que el enlace proporcionado por la fuente haya caducado).",
+    "noMedia": "La fuente no proporciona ningún vídeo reproducible para este anuncio.",
+    "officialLink": "Ver el vídeo en la biblioteca oficial",
+    "noOfficialLink": "No hay ningún enlace a una biblioteca de anuncios oficial.",
+    "mediaSource": "Medio proporcionado para su visualización por {{source}}",
+    "videoLabel": "Vídeo publicitario de {{advertiser}}",
+    "imageAlt": "Imagen publicitaria de {{advertiser}}",
+    "videos": "Vídeos del anuncio",
+    "videoN": "Vídeo {{n}}",
+    "demo": {
+      "badge": "Vista previa de vídeo generada — demostración",
+      "roleDescription": "vista previa de vídeo generada",
+      "label": "Vista previa de vídeo animada generada para el anuncio de demostración de {{advertiser}}",
+      "disclaimer": "Animación creada por TrendHunter a partir del texto de este anuncio de demostración. No es el vídeo real de un anunciante.",
+      "play": "Reproducir la vista previa",
+      "pause": "Pausar la vista previa",
+      "restart": "Reiniciar la vista previa",
+      "scene": "Escena {{n}} de {{total}}",
+      "progress": "Progreso de la vista previa",
+      "keyboard": "Teclado: Espacio para reproducir/pausar, ← → para cambiar de escena.",
+      "reducedMotion": "Movimiento reducido (preferencia del sistema): inicie la reproducción manualmente."
+    }
+  }
+}

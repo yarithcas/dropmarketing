@@ -1,0 +1,132 @@
+import { z } from "zod";
+import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, LANGUAGES, PLATFORMS, TIME_RANGES } from "./types";
+import { THRESHOLD_LIMITS, resolveThresholds, type AdvertiserThresholds } from "./advertisers";
+
+/** Query schemas shared by API routes (validation) and the client (URL building). */
+
+const csv = <T extends readonly [string, ...string[]]>(values: T) =>
+  z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .transform((v) => (v == null ? [] : Array.isArray(v) ? v : v.split(",")).filter(Boolean))
+    .pipe(z.array(z.enum(values)));
+
+const num = z.coerce.number().finite().optional();
+const day = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .optional();
+const text = z.string().trim().max(120).optional();
+/**
+ * Optional bounded integer from a query string. A blank value ("", " ") means "not set": z.coerce.number()
+ * would read it as 0 and silently change a threshold (e.g. minActiveDays= → 0 days).
+ */
+const optionalInt = (min: number, max: number) =>
+  z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), z.coerce.number().int().min(min).max(max).optional());
+const bool = z
+  .enum(["true", "false"])
+  .optional()
+  .transform((v) => (v == null ? undefined : v === "true"));
+
+export const PRODUCT_SORTS = ["score", "newest", "growth", "margin", "competition"] as const;
+
+export const productQuerySchema = z.object({
+  q: text,
+  category: csv(CATEGORIES),
+  country: csv(COUNTRIES),
+  platform: csv(PLATFORMS),
+  competition: csv(["low", "medium", "high"] as const),
+  productType: csv(["physical", "digital", "subscription"] as const),
+  priceMin: num,
+  priceMax: num,
+  marginMin: num, // percent
+  growthMin: num, // percent
+  firstFrom: day,
+  firstTo: day,
+  shippingVerified: bool,
+  /** Verified sourcing characteristics: warehouse region and maximum delivery days. */
+  warehouse: csv(["EU", "US", "CN"] as const),
+  maxDeliveryDays: z.coerce.number().int().min(1).max(60).optional(),
+  sort: z.enum(PRODUCT_SORTS).optional().default("score"),
+  page: z.coerce.number().int().min(1).max(1000).optional().default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).optional().default(24),
+});
+export type ProductQuery = z.infer<typeof productQuerySchema>;
+
+export const AD_SORTS = ["newest", "longest", "recent"] as const;
+
+export const adQuerySchema = z.object({
+  q: text,
+  advertiser: text,
+  domain: text,
+  productId: text,
+  platform: csv(PLATFORMS),
+  country: csv(COUNTRIES),
+  language: csv(LANGUAGES),
+  format: csv(CREATIVE_FORMATS),
+  category: csv(CATEGORIES),
+  cta: csv(CALLS_TO_ACTION),
+  firstFrom: day,
+  firstTo: day,
+  lastFrom: day,
+  lastTo: day,
+  activeOnly: bool,
+  /**
+   * Only ads of active advertisers (lib/advertisers.ts). ON unless explicitly "false": it is the
+   * product's default quality bar, on every plan.
+   */
+  activeAdvertisers: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v !== "false"),
+  /** Adjusted thresholds of the active-advertiser rule (advanced filters; defaults 5 ads / 7 days). */
+  minActiveAds: optionalInt(THRESHOLD_LIMITS.minAds.min, THRESHOLD_LIMITS.minAds.max),
+  minActiveDays: optionalInt(THRESHOLD_LIMITS.minDays.min, THRESHOLD_LIMITS.minDays.max),
+  sort: z.enum(AD_SORTS).optional().default("newest"),
+  page: z.coerce.number().int().min(1).max(1000).optional().default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).optional().default(24),
+});
+export type AdQuery = z.infer<typeof adQuerySchema>;
+
+/** Thresholds of the active-advertiser rule for an ad query (defaults when not adjusted). */
+export function adThresholds(q: Pick<AdQuery, "minActiveAds" | "minActiveDays">): AdvertiserThresholds {
+  return resolveThresholds({ minAds: q.minActiveAds, minDays: q.minActiveDays });
+}
+
+export const storeQuerySchema = z.object({
+  q: text, // name, domain, url, or product keyword
+  category: csv(CATEGORIES),
+  country: csv(COUNTRIES),
+  platform: csv(["shopify", "woocommerce", "unknown"] as const),
+  page: z.coerce.number().int().min(1).max(1000).optional().default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).optional().default(24),
+});
+export type StoreQuery = z.infer<typeof storeQuerySchema>;
+
+export const trendQuerySchema = z.object({
+  range: z.enum(TIME_RANGES as [string, ...string[]]).optional().default("30d"),
+  category: csv(CATEGORIES),
+  country: csv(COUNTRIES),
+});
+export type TrendQuery = z.infer<typeof trendQuerySchema>;
+
+/** Converts URLSearchParams to a plain object (repeated keys become arrays). */
+export function paramsToObject(sp: URLSearchParams): Record<string, string | string[]> {
+  const out: Record<string, string | string[]> = {};
+  for (const key of new Set(sp.keys())) {
+    const all = sp.getAll(key);
+    out[key] = all.length > 1 ? all : all[0];
+  }
+  return out;
+}
+
+/** Normalizes a pasted store URL ("https://www.shop.com/products/x") to a bare domain. */
+export function normalizeDomain(input: string): string {
+  const s = input.trim().toLowerCase();
+  try {
+    const u = new URL(s.includes("://") ? s : `https://${s}`);
+    return u.hostname.replace(/^www\./, "");
+  } catch {
+    return s.replace(/^www\./, "");
+  }
+}

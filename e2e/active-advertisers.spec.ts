@@ -52,7 +52,7 @@ test("when no active advertiser matches, the empty state explains the rule and s
   // Pro (default demo plan) can tighten the thresholds; nobody runs 50 ads for 90 days.
   await page.goto("/app/ads?minActiveAds=50&minActiveDays=90");
   await expect(page.getByText("No active advertiser matches")).toBeVisible();
-  await expect(page.getByText(/at least 50 ads currently active and running for at least 90 days/)).toBeVisible();
+  await expect(page.getByText(/at least 50 active ads currently running for at least 90 days/)).toBeVisible();
   await page.getByTestId("show-all-ads").click();
   await expect(page).toHaveURL(/activeAdvertisers=false/);
   await expect(page.getByTestId("ad-card").first()).toBeVisible();

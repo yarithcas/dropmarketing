@@ -502,7 +502,9 @@
     "matchBasis": {
       "search_term": "Suchbegriff: Die Plattform hat die Anzeige bei der Suche nach dem Namen dieses Produkts geliefert. TrendHunter-Schätzung, keine von der Plattform angegebene Verknüpfung.",
       "token_overlap": "Von TrendHunter über gemeinsame Wörter in Anzeigentext und Produktname/-tags zugeordnet. Schätzung, keine von der Plattform angegebene Verknüpfung."
-    }
+    },
+    "visitSite": "Website ansehen",
+    "siteDomainOnly": "In der Anzeige gezeigte Domain: Die Quelle liefert die genaue Seite nicht."
   },
   "activeAdvertisers": {
     "badge": "Aktiver Werbetreibender",

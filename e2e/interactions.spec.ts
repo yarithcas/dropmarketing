@@ -88,3 +88,15 @@ test("icon-only buttons have an accessible name and a tooltip", async ({ page })
     await expect(b).toHaveAttribute("title", name);
   }
 });
+
+test("ad cards show the advertiser's site; demo sites are explained, not linked", async ({ page }) => {
+  await page.goto("/app/ads");
+  const site = page.getByTestId("ad-site-link").first();
+  await expect(site).toBeVisible();
+  await expect(site).toContainText("Visit site");
+  // Demo advertisers and their sites are invented: the button says so instead of opening a fake site.
+  await expect(site).toBeDisabled();
+  await expect(site).toHaveAttribute("title", /demo domain/);
+  await site.click({ force: true });
+  await expect(page).toHaveURL(/\/app\/ads/);
+});

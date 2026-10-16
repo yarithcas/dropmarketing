@@ -502,7 +502,9 @@
     "matchBasis": {
       "search_term": "Search term: the ad was returned by the platform's search for this product's name. TrendHunter estimate, not a link disclosed by the platform.",
       "token_overlap": "Matched by TrendHunter from words shared by the ad text and the product name/tags. Estimate, not a link disclosed by the platform."
-    }
+    },
+    "visitSite": "Visit site",
+    "siteDomainOnly": "Domain shown in the ad: the source does not provide the exact page."
   },
   "activeAdvertisers": {
     "badge": "Active advertiser",

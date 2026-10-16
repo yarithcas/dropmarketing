@@ -502,7 +502,9 @@
     "matchBasis": {
       "search_term": "Termine di ricerca: la piattaforma ha restituito l'annuncio cercando il nome di questo prodotto. Stima di TrendHunter, non un collegamento indicato dalla piattaforma.",
       "token_overlap": "Associato da TrendHunter tramite parole in comune tra il testo dell'annuncio e il nome/i tag del prodotto. Stima, non un collegamento indicato dalla piattaforma."
-    }
+    },
+    "visitSite": "Vedi il sito",
+    "siteDomainOnly": "Dominio mostrato nell'annuncio: la fonte non fornisce la pagina esatta."
   },
   "activeAdvertisers": {
     "badge": "Inserzionista attivo",

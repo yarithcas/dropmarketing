@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, FileQuestion, Image as ImageIcon, Images, PlayCircle, ScanSearch } from "lucide-react";
+import { ExternalLink, FileQuestion, Globe, Image as ImageIcon, Images, PlayCircle, ScanSearch } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Advertisement } from "@/lib/types";
 import { daysBetween } from "@/lib/dates";
 import { useFormat } from "@/lib/format";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip } from "@/components/ui/tooltip";
 import { PlatformBadge, ProvenanceBadge, SourceLine } from "./bits";
@@ -14,6 +14,7 @@ import { SaveButton } from "./save";
 import { isWatchable, WatchAdButton } from "./ad-player";
 import { ActiveAdvertiserBadge } from "./active-advertiser";
 import type { AdvertiserActivity } from "@/lib/advertisers";
+import { adSite } from "@/lib/ad-links";
 import { cn } from "@/lib/cn";
 import { useCardNavigation } from "./card-link";
 
@@ -37,8 +38,38 @@ export function AdLibraryLink({ ad, className }: { ad: Advertisement; className?
   const { t } = useTranslation();
   if (!ad.snapshotUrl?.startsWith("https://")) return null;
   return (
-    <a href={ad.snapshotUrl} target="_blank" rel="noopener noreferrer nofollow" className={cn("inline-flex items-center gap-1 text-xs text-accent hover:underline", className)} data-testid="ad-library-link">
-      <ExternalLink className="size-3" /> {t("ads.viewInLibrary", { platform: t(`platforms.${ad.platform}`) })}
+    <a href={ad.snapshotUrl} target="_blank" rel="noopener noreferrer nofollow" className={cn(buttonVariants({ variant: "secondary", size: "sm" }), className)} data-testid="ad-library-link">
+      <ExternalLink /> {t("ads.viewInLibrary", { platform: t(`platforms.${ad.platform}`) })}
+    </a>
+  );
+}
+
+/** "Visit site": the advertiser's landing page or domain (lib/ad-links.ts); explained, not linked, for demo ads. */
+export function AdSiteLink({ ad, className }: { ad: Advertisement; className?: string }) {
+  const { t } = useTranslation();
+  const site = adSite(ad);
+  if (!site) return null;
+  const label = (
+    <>
+      <Globe /> {t("ads.visitSite")} <span className="min-w-0 max-w-[11rem] truncate font-normal text-muted">{site.domain}</span>
+    </>
+  );
+  if (!site.href)
+    return (
+      <Button size="sm" variant="secondary" disabled disabledReason={t("ads.landingDemo", { domain: site.domain })} className={className} data-testid="ad-site-link">
+        {label}
+      </Button>
+    );
+  return (
+    <a
+      href={site.href}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      title={site.precision === "domain" ? t("ads.siteDomainOnly") : site.href}
+      className={cn(buttonVariants({ variant: "secondary", size: "sm" }), className)}
+      data-testid="ad-site-link"
+    >
+      {label}
     </a>
   );
 }
@@ -122,23 +153,10 @@ export function AdCard({ ad, productName }: { ad: Advertisement & { advertiserAc
             <ProvenanceBadge kind={ad.source.kind} />
             <SourceLine connector={ad.source.connector} observedAt={ad.source.observedAt} />
           </div>
-          <AdLibraryLink ad={ad} />
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 truncate text-[11px] text-subtle">
-              {ad.landingDomain ? (
-                ad.source.kind !== "demo" && ad.landingUrl ? (
-                  <a href={ad.landingUrl} target="_blank" rel="noopener noreferrer nofollow" className="inline-flex items-center gap-1 hover:text-accent">
-                    <ExternalLink className="size-3" /> {ad.landingDomain}
-                  </a>
-                ) : (
-                  // Domain only (e.g. a Meta link caption): shown, not linked.
-                  <span title={ad.source.kind === "demo" ? t("ads.landingDemo", { domain: ad.landingDomain }) : undefined}>
-                    {t("ads.landing")}: {ad.landingDomain}
-                  </span>
-                )
-              ) : null}
-            </div>
-            <Link href={`/app/creatives?ad=${ad.id}`} className={buttonVariants({ variant: "secondary", size: "sm" })} data-testid="analyze-ad">
+          <div className="flex flex-wrap items-center gap-2">
+            <AdLibraryLink ad={ad} />
+            <AdSiteLink ad={ad} />
+            <Link href={`/app/creatives?ad=${ad.id}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "ml-auto")} data-testid="analyze-ad">
               <ScanSearch /> {t("ads.analyze")}
             </Link>
           </div>

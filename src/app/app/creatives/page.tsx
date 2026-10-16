@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { Clapperboard, Copy, Lightbulb, Sparkles, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { AdLibraryLink, CreativePreview, MatchEstimateTag } from "@/components/app/ad-card";
+import { AdLibraryLink, AdSiteLink, CreativePreview, MatchEstimateTag } from "@/components/app/ad-card";
 import { useText } from "@/components/app/analyst-result";
 import { AdMediaViewer, isWatchable } from "@/components/app/ad-player";
 import { PageHeader, PlanGate, PlatformBadge, ProvenanceBadge, ScoreBadge, SourceLine } from "@/components/app/bits";
@@ -163,7 +163,10 @@ function Viewer({ adId }: { adId: string }) {
               <ProvenanceBadge kind={ad.source.kind} />
               <SourceLine connector={ad.source.connector} observedAt={ad.source.observedAt} />
             </div>
-            <AdLibraryLink ad={ad} />
+            <div className="flex flex-wrap gap-2">
+              <AdLibraryLink ad={ad} />
+              <AdSiteLink ad={ad} />
+            </div>
             <p className="text-[11px] text-subtle">{t("creative.durationNotProof")}</p>
           </div>
         </div>

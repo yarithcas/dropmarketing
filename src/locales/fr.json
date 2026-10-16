@@ -502,7 +502,9 @@
     "matchBasis": {
       "search_term": "Terme de recherche : la publicité a été renvoyée par la recherche de la plateforme sur le nom de ce produit. Estimation TrendHunter, pas un lien communiqué par la plateforme.",
       "token_overlap": "Associé par TrendHunter à partir de mots communs au texte de la publicité et au nom/aux tags du produit. Estimation, pas un lien communiqué par la plateforme."
-    }
+    },
+    "visitSite": "Voir le site",
+    "siteDomainOnly": "Domaine affiché dans la publicité : la source ne fournit pas la page exacte."
   },
   "activeAdvertisers": {
     "badge": "Annonceur actif",

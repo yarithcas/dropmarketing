@@ -16,6 +16,8 @@ import { useSession } from "@/lib/client/session";
 import { useApi } from "@/lib/client/use-api";
 import { useFormat } from "@/lib/format";
 import type { Category, CompetitionLevel, Confidence, Platform, ProvenanceKind } from "@/lib/types";
+import { ruleValues, type AdvertiserActivity, type AdvertiserRule } from "@/lib/advertisers";
+import { ActiveAdvertiserBadge } from "@/components/app/active-advertiser";
 
 interface Report {
   id: string;
@@ -27,7 +29,9 @@ interface Report {
   overview: { products: number; scored: number; adsObserved: number; adsActive: number; advertisers: number; stores: number; medianMargin: number | null; growth: number | null };
   opportunities: { id: string; name: string; score: number | null; confidence: Confidence; trendGrowth: number | null; grossMargin: number | null; price: number | null; cost: number | null; currency: string; ads: number; competition: CompetitionLevel }[];
   trendSeries: Record<string, string | number>[];
-  adExamples: { id: string; advertiser: string; platform: Platform; format: string; headline: string; excerpt: string; firstSeen: string; lastSeen: string }[];
+  adExamples: { id: string; advertiser: string; platform: Platform; format: string; headline: string; excerpt: string; firstSeen: string; lastSeen: string; advertiserActivity?: AdvertiserActivity }[];
+  /** enabled: the examples are ads of active advertisers; false: none qualifies, examples from all advertisers. */
+  adExamplesRule?: AdvertiserRule & { qualifyingAds: number; totalAds: number };
   competitors: { id: string; name: string; domain: string; listings: number; relevantListings: number; ads: number }[];
   margins: { buckets: { label: string; count: number }[] };
   risks: string[];
@@ -162,11 +166,19 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
       </Section>
 
       <Section n={4} title={t("reports.sections.ads")}>
-        <ul className="grid gap-3 sm:grid-cols-2">
+        {data.adExamplesRule ? (
+          <p className="mb-3 text-xs text-muted" data-testid="report-ads-rule">
+            {t(data.adExamplesRule.enabled ? "reports.adExamplesActive" : "reports.adExamplesFallback", ruleValues(t, data.adExamplesRule.minAds, data.adExamplesRule.minDays))}
+          </p>
+        ) : null}
+        <ul className="grid gap-3 sm:grid-cols-2" data-testid="report-ad-examples">
           {data.adExamples.map((a) => (
             <li key={a.id} className="rounded-lg border border-border p-3 text-sm">
               <div className="flex justify-between gap-2 font-medium">
-                <span>{a.advertiser}</span>
+                <span className="flex min-w-0 flex-wrap items-center gap-2">
+                  <span>{a.advertiser}</span>
+                  <ActiveAdvertiserBadge activity={a.advertiserActivity} />
+                </span>
                 <span className="text-xs text-subtle">{t(`platforms.${a.platform}`)} · {t(`formats.${a.format}`)}</span>
               </div>
               <p className="mt-1 text-xs text-muted">{a.excerpt}</p>

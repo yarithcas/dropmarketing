@@ -95,6 +95,8 @@ async function main() {
       category: a.category,
       first_seen: a.firstSeen,
       last_seen: a.lastSeen,
+      // Ads that stopped before the snapshot (active-ad rule, migration 0008).
+      ended: a.ended === true,
       source_kind: "demo",
       observed_at: a.source.observedAt,
       is_demo: true,

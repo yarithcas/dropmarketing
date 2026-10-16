@@ -3,6 +3,7 @@ import { z } from "zod";
 import { apiError, json, parseQuery } from "@/lib/server/api";
 import { guard } from "@/lib/server/guard";
 import { getStore, meta } from "@/lib/server/repository";
+import { isActiveAd } from "@/lib/advertisers";
 
 /** Data depends on the request and on the current (demo or live) snapshot day: never prerendered or cached. */
 export const dynamic = "force-dynamic";
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
         priceMax: prices.length ? Math.max(...prices) : null,
         priceMedian: prices.length ? [...prices].sort((a, b) => a - b)[Math.floor(prices.length / 2)] : null,
         adsObserved: d.ads.length,
-        activeAds: d.ads.filter((a) => a.lastSeen >= meta().asOf.slice(0, 10)).length,
+        activeAds: d.ads.filter((a) => isActiveAd(a, meta().asOf.slice(0, 10))).length,
         platforms: Array.from(new Set(d.ads.map((a) => a.platform))),
         listingGrowth: first && last && first.productCount > 0 ? Math.round(((last.productCount - first.productCount) / first.productCount) * 100) : null,
         snapshots: d.snapshots,

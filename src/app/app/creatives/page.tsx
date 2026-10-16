@@ -25,7 +25,7 @@ import { useFormat } from "@/lib/format";
 import { useLocale } from "@/lib/i18n/provider";
 import { daysBetween } from "@/lib/dates";
 import { formatInfo, type CreativeAnalysis } from "@/lib/analyst/creative";
-import type { Advertisement, ProductWithMetrics, Store } from "@/lib/types";
+import type { ProductWithMetrics, Store } from "@/lib/types";
 import type { AdvertiserActivity, AdvertiserRule, AdWithActivity } from "@/lib/advertisers";
 import { ActiveAdvertiserBadge, ActiveAdvertiserFlag, ActiveAdvertisersEmpty, ActiveAdvertisersSwitch } from "@/components/app/active-advertiser";
 import { cn } from "@/lib/cn";
@@ -34,7 +34,11 @@ interface AdDetail {
   ad: AdWithActivity;
   product: ProductWithMetrics | null;
   store: Store | null;
-  related: Advertisement[];
+  /** Other ads of the product: of active advertisers (default) and all of them, up to 6 each. */
+  related: AdWithActivity[];
+  relatedAll: AdWithActivity[];
+  relatedCounts: { qualifying: number; total: number };
+  advertiserRule: AdvertiserRule;
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -56,6 +60,8 @@ function Viewer({ adId }: { adId: string }) {
   const { data, error, loading, reload } = useApi<AdDetail>(`/api/ads/${adId}`);
   const [analysis, setAnalysis] = useState<CreativeAnalysis | null>(null);
   const [busy, setBusy] = useState(false);
+  // Related ads default to active advertisers, like every ad list; one switch shows them all.
+  const [allRelated, setAllRelated] = useState(false);
   useEffect(() => setAnalysis(null), [adId]);
 
   if (error) return <ErrorState message={error.status === 404 ? t("errors.notFound") : undefined} onRetry={reload} />;
@@ -282,22 +288,37 @@ function Viewer({ adId }: { adId: string }) {
         </Card>
       </PlanGate>
 
-      {data.related.length > 0 && (
-        <Card>
+      {data.relatedCounts.total > 0 && (
+        <Card data-testid="creative-related">
           <CardHeader title={t("creative.related")} />
-          <ul className="grid gap-px sm:grid-cols-2 lg:grid-cols-3">
-            {data.related.map((r) => (
-              <li key={r.id}>
-                <Link href={`/app/creatives?ad=${r.id}`} className="block p-4 hover:bg-surface-2">
-                  <div className="flex items-center justify-between text-sm font-medium">
-                    <span className="truncate">{r.advertiser}</span>
-                    <PlatformBadge platform={r.platform} />
-                  </div>
-                  <p className="mt-1 line-clamp-2 text-xs text-muted">{r.headline}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/70 px-4 py-2.5">
+            <ActiveAdvertisersSwitch checked={!allRelated} thresholds={data.advertiserRule} onChange={(on) => setAllRelated(!on)} className="text-xs" testId="creative-related-toggle" />
+            <span className="text-[11px] text-subtle" data-testid="creative-related-count">
+              {t("activeAdvertisers.qualifyingOf", { qualifying: data.relatedCounts.qualifying, total: data.relatedCounts.total })}
+            </span>
+          </div>
+          {(allRelated ? data.relatedAll : data.related).length === 0 ? (
+            <CardBody>
+              <ActiveAdvertisersEmpty thresholds={data.advertiserRule} onShowAll={() => setAllRelated(true)} />
+            </CardBody>
+          ) : (
+            <ul className="grid gap-px sm:grid-cols-2 lg:grid-cols-3">
+              {(allRelated ? data.relatedAll : data.related).map((r) => (
+                <li key={r.id}>
+                  <Link href={`/app/creatives?ad=${r.id}`} className="focus-ring block p-4 hover:bg-surface-2">
+                    <div className="flex items-center justify-between gap-2 text-sm font-medium">
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span className="truncate">{r.advertiser}</span>
+                        {r.advertiserActivity?.qualifies ? <ActiveAdvertiserFlag count={r.advertiserActivity.activeSinceMinDays} days={r.advertiserActivity.minDays} /> : null}
+                      </span>
+                      <PlatformBadge platform={r.platform} />
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-xs text-muted">{r.headline}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
     </div>

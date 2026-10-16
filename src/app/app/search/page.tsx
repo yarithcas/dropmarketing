@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/states";
 import { useApi } from "@/lib/client/use-api";
 import { useUrlState } from "@/lib/client/use-url-state";
-import { DEFAULT_THRESHOLDS } from "@/lib/advertisers";
+import { DEFAULT_THRESHOLDS, ruleValues } from "@/lib/advertisers";
 
 const GROUPS = ["products", "niches", "advertisers", "ads", "stores"] as const;
 
@@ -24,7 +24,7 @@ function SearchInner() {
   // Ads of advertisers that do not qualify as active are counted, not listed: say so and link to them.
   const hidden = data?.hiddenAds ? (
     <p className="mt-4 text-xs text-subtle" data-testid="search-hidden-ads">
-      {t("activeAdvertisers.searchHidden", { count: data.hiddenAds, ads: (data.advertiserRule ?? DEFAULT_THRESHOLDS).minAds, days: (data.advertiserRule ?? DEFAULT_THRESHOLDS).minDays })}{" "}
+      {t("activeAdvertisers.searchHidden", { count: data.hiddenAds, ...ruleValues(t, (data.advertiserRule ?? DEFAULT_THRESHOLDS).minAds, (data.advertiserRule ?? DEFAULT_THRESHOLDS).minDays) })}{" "}
       <Link href={`/app/ads?q=${encodeURIComponent(q)}&activeAdvertisers=false`} className="text-accent hover:underline">
         {t("activeAdvertisers.showAll")}
       </Link>

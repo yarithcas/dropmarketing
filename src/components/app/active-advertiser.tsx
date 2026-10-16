@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/states";
 import { useFormat } from "@/lib/format";
-import { DEFAULT_THRESHOLDS, type AdvertiserActivity, type AdvertiserThresholds } from "@/lib/advertisers";
+import { DEFAULT_THRESHOLDS, ruleValues, type AdvertiserActivity, type AdvertiserThresholds } from "@/lib/advertisers";
 import { cn } from "@/lib/cn";
 
 /** "Active advertiser" badge (lib/advertisers.ts), with the counts that make the advertiser qualify. */
@@ -16,7 +16,7 @@ export function ActiveAdvertiserBadge({ activity, className, focusable = true }:
   const f = useFormat();
   const tipId = useId();
   if (!activity?.qualifies) return null;
-  const tip = t("activeAdvertisers.badgeTip", { count: activity.activeSinceMinDays, days: activity.minDays });
+  const tip = t("activeAdvertisers.badgeTip", ruleValues(t, activity.activeSinceMinDays, activity.minDays));
   // Left-aligned tooltip (hover + keyboard focus): the badge often sits at the left edge of a clipped card.
   // data-card-ignore: inside a clickable card a tap shows the explanation instead of opening the ad.
   return (
@@ -42,7 +42,7 @@ export function ActiveAdvertiserBadge({ activity, className, focusable = true }:
 export function ActiveAdvertiserFlag({ count, days, className }: { count: number; days: number; className?: string }) {
   const { t } = useTranslation();
   return (
-    <Badge tone="good" className={cn("shrink-0", className)} title={t("activeAdvertisers.badgeTip", { count, days })} data-testid="active-advertiser-flag">
+    <Badge tone="good" className={cn("shrink-0", className)} title={t("activeAdvertisers.badgeTip", ruleValues(t, count, days))} data-testid="active-advertiser-flag">
       <BadgeCheck /> {t("activeAdvertisers.badge")}
     </Badge>
   );
@@ -74,7 +74,7 @@ export function ActiveAdvertisersSwitch({
         onChange={(e) => onChange(e.target.checked)}
         data-testid={testId}
       />
-      <span>{t("activeAdvertisers.toggle", { ads: thresholds.minAds, days: thresholds.minDays })}</span>
+      <span>{t("activeAdvertisers.toggle", ruleValues(t, thresholds.minAds, thresholds.minDays))}</span>
     </label>
   );
 }
@@ -87,7 +87,7 @@ export function ActiveAdvertisersEmpty({ thresholds = DEFAULT_THRESHOLDS, onShow
       className={className}
       icon={<UsersRound />}
       title={t("activeAdvertisers.emptyTitle")}
-      description={t("activeAdvertisers.emptyText", { ads: thresholds.minAds, days: thresholds.minDays })}
+      description={t("activeAdvertisers.emptyText", ruleValues(t, thresholds.minAds, thresholds.minDays))}
       action={
         <Button variant="secondary" size="sm" onClick={onShowAll} data-testid="show-all-ads">
           {t("activeAdvertisers.showAll")}

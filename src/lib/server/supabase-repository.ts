@@ -98,6 +98,8 @@ export function rowToAd(r: Row): Advertisement {
     media: rowToMedia(r.media),
     firstSeen: r.first_seen as string,
     lastSeen: r.last_seen as string,
+    // Latest connector flag (migration 0008); only set when the source reported the ad as ended.
+    ...(r.ended === true ? { ended: true } : {}),
     source: { connector: r.connector as string, kind: r.is_demo ? "demo" : (r.source_kind as Advertisement["source"]["kind"]), observedAt: r.observed_at as string },
     hue: Number(r.hue ?? 0),
   };
@@ -230,8 +232,17 @@ function applyAdFilters<Q>(builder: Q, q: AdQuery, asOf: string): Q {
   if (q.firstTo) query = query.lte("first_seen", q.firstTo);
   if (q.lastFrom) query = query.gte("last_seen", q.lastFrom);
   if (q.lastTo) query = query.lte("last_seen", q.lastTo);
-  if (q.activeOnly) query = query.gte("last_seen", activeSince(asOf));
+  if (q.activeOnly) query = query.lte("first_seen", asOf).or(activeAdFilter(asOf));
   return query as unknown as Q;
+}
+
+/**
+ * or() condition: the ad is running on `asOf` (lib/advertisers.ts `isActiveAd`): an ended ad runs through its
+ * last day, any other ad last seen at most ACTIVE_GRACE_DAYS before `asOf` still runs. `asOf` is a server-side
+ * YYYY-MM-DD day, never user input.
+ */
+export function activeAdFilter(asOf: string): string {
+  return `last_seen.gte.${asOf},and(last_seen.gte.${activeSince(asOf)},ended.is.false)`;
 }
 
 type ActivityRow = { advertiser_key: string; active_ads: number; active_since_min_days: number; oldest_active_first_seen: string | null };

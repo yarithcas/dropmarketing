@@ -1,6 +1,7 @@
 import "server-only";
-import { allProducts, datasetForEngines, meta, trendReport } from "./repository";
+import { advertisersOf, allProducts, datasetForEngines, meta, trendReport } from "./repository";
 import { addDays, daysBetween } from "../dates";
+import { DEFAULT_THRESHOLDS, activityOf, type AdvertiserActivity, type AdvertiserRule } from "../advertisers";
 import { csvRow } from "../csv";
 import { CATEGORIES, type Advertisement, type Category, type Product, type ProductObservation, type ProvenanceKind, type SourceRef, type Store } from "../types";
 
@@ -90,7 +91,20 @@ export function buildReport(id: ReportId) {
     }))
     .sort((a, b) => b.relevantListings - a.relevantListings || b.ads - a.ads)
     .slice(0, id === "competitive-landscape" ? 12 : 6);
-  const longAds = [...ads].sort((a, b) => daysBetween(b.firstSeen, b.lastSeen) - daysBetween(a.firstSeen, a.lastSeen)).slice(0, 4);
+  // Ad examples follow the default quality bar (lib/advertisers.ts): the longest-running ads of advertisers that
+  // qualify on asOf. Only when none of the report's ads comes from one do they fall back to every ad, and say so.
+  const activity = advertisersOf();
+  const activityOfAd = (a: Advertisement): AdvertiserActivity => activityOf(activity, a.advertiser);
+  const qualifyingAds = ads.filter((a) => activityOfAd(a).qualifies);
+  const examplePool = qualifyingAds.length ? qualifyingAds : ads;
+  const longAds = [...examplePool].sort((a, b) => daysBetween(b.firstSeen, b.lastSeen) - daysBetween(a.firstSeen, a.lastSeen) || a.id.localeCompare(b.id)).slice(0, 4);
+  const adExamplesRule: AdvertiserRule & { qualifyingAds: number; totalAds: number } = {
+    enabled: qualifyingAds.length > 0,
+    ...DEFAULT_THRESHOLDS,
+    asOf: m.asOf,
+    qualifyingAds: qualifyingAds.length,
+    totalAds: ads.length,
+  };
   const weekly = id === "weekly-opportunities";
   const opportunities = (weekly ? scored.filter((p) => p.lastDetected >= addDays(m.asOf, -7)) : scored).slice(0, weekly ? 8 : 5);
 
@@ -135,7 +149,10 @@ export function buildReport(id: ReportId) {
       excerpt: a.copy.length > 140 ? `${a.copy.slice(0, 137)}…` : a.copy,
       firstSeen: a.firstSeen,
       lastSeen: a.lastSeen,
+      advertiserActivity: activityOfAd(a),
     })),
+    /** enabled = examples are ads of active advertisers; false = none qualifies, examples from all advertisers. */
+    adExamplesRule,
     competitors: stores,
     margins: { buckets, note: "estimate" },
     risks: ["reports.risks.estimates", "reports.risks.saturation", "reports.risks.supplier", "reports.risks.policy", "reports.risks.sample"],

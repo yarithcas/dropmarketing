@@ -19,7 +19,7 @@ import { useApi } from "@/lib/client/use-api";
 import { useUrlState } from "@/lib/client/use-url-state";
 import { AD_SORTS } from "@/lib/queries";
 import { CALLS_TO_ACTION, CATEGORIES, COUNTRIES, CREATIVE_FORMATS, LANGUAGES, PLATFORMS, type Advertisement } from "@/lib/types";
-import { DEFAULT_THRESHOLDS, THRESHOLD_LIMITS, type AdvertiserRule, type AdWithActivity } from "@/lib/advertisers";
+import { DEFAULT_THRESHOLDS, THRESHOLD_LIMITS, ruleValues, type AdvertiserRule, type AdWithActivity } from "@/lib/advertisers";
 import { cn } from "@/lib/cn";
 
 interface AdsResponse {
@@ -162,7 +162,11 @@ function AdsInner() {
                 <option
                   key={s.name}
                   value={s.name}
-                  label={s.active ? t("activeAdvertisers.suggestionActive", { count: s.activeSinceMinDays, days: suggestions?.advertiserRule.minDays }) : t("activeAdvertisers.suggestionInactive", { count: s.ads })}
+                  label={
+                    s.active
+                      ? t("activeAdvertisers.suggestionActive", ruleValues(t, s.activeSinceMinDays, suggestions?.advertiserRule.minDays ?? DEFAULT_THRESHOLDS.minDays))
+                      : t("activeAdvertisers.suggestionInactive", { count: s.ads })
+                  }
                 />
               ))}
             </datalist>

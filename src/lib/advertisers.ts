@@ -1,30 +1,37 @@
+import type { TFunction } from "i18next";
 import { addDays } from "./dates";
 import type { Advertisement } from "./types";
 
 /**
  * "Active advertisers": the default quality bar of every list where TrendHunter finds ads
- * (Ad Spy, creatives, global search, product and store pages).
+ * (Ad Spy, creatives, global search, dashboard, reports, product and store pages).
  *
- * - **Active ad** (same rule as the Ad Spy "active ads only" filter and the overview counts): an ad
- *   is active on `asOf` when it was first seen on or before `asOf` and last seen at most
- *   `ACTIVE_GRACE_DAYS` (2) days before it. Ad libraries refresh with about a day of delay and the
- *   connectors sync daily, so an ad last seen the day before yesterday is still running.
+ * - **Active ad** = an ad currently running on `asOf` (also the Ad Spy "active ads only" filter and the
+ *   overview's active-ad count): first seen on or before `asOf`, and
+ *   - if the source reported it as ended (`ended`: Meta stop date before the sync day, a library that
+ *     stopped showing it, a demo ad that stopped before the snapshot), last seen on or after `asOf`
+ *     (an ended ad runs through its last delivery day, never after it);
+ *   - otherwise last seen at most `ACTIVE_GRACE_DAYS` (1) day before `asOf`: libraries refresh with
+ *     about a day of delay and the connectors sync once a day, so a running ad observed yesterday
+ *     still runs (the `ad_observations.active` rule of the connectors).
+ *   An ad that stopped yesterday is therefore not active today.
  * - **Advertiser identity**: `advertiserKey(name)` — Unicode NFKD, combining accents removed, lower
- *   case, runs of whitespace collapsed to one space, trimmed. "Maison Éclat", " maison  eclat " and
- *   "MAISON ECLAT" are one advertiser. Platforms are not part of the identity.
+ *   case, Greek final sigma folded (ς → σ), runs of whitespace collapsed to one space, trimmed.
+ *   "Maison Éclat", " maison  eclat " and "MAISON ECLAT" are one advertiser; so are "ΟΔΟΣ" and "Οδος".
+ *   Platforms are not part of the identity.
  * - **Qualifying advertiser**: at least `MIN_ACTIVE_ADS` (5) of its ads are active on `asOf` AND were
  *   first seen at least `MIN_ACTIVE_DAYS` (7) days before it (`firstSeen <= asOf - 7 days`).
  *   Every ad of a qualifying advertiser is shown; ads of other advertisers are hidden by default.
  *
- * The Postgres side (migration 0008: `advertiser_key()`, `advertiser_activity()`,
+ * The Postgres side (migration 0008: `advertiser_key()`, `advertisements.ended`, `advertiser_activity()`,
  * `ads_of_active_advertisers()`) implements exactly the same rule; keep both in sync
  * (tests/active-advertisers.test.ts and supabase/tests/0008_active_advertisers.test.sql share fixtures).
  */
 
 export const MIN_ACTIVE_ADS = 5;
 export const MIN_ACTIVE_DAYS = 7;
-/** An ad last seen up to this many days before `asOf` is still active. */
-export const ACTIVE_GRACE_DAYS = 2;
+/** A running ad (not reported ended) last seen up to this many days before `asOf` is still active. */
+export const ACTIVE_GRACE_DAYS = 1;
 /** Bounds of the adjustable thresholds (Pro advanced filters). */
 export const THRESHOLD_LIMITS = { minAds: { min: 1, max: 50 }, minDays: { min: 0, max: 90 } } as const;
 
@@ -57,23 +64,29 @@ export interface AdvertiserActivity extends AdvertiserThresholds {
 /** Ad as returned by ad lists: with its advertiser's activity. */
 export type AdWithActivity<T extends Advertisement = Advertisement> = T & { advertiserActivity: AdvertiserActivity };
 
-/** Normalized advertiser identity (case-, accent- and spacing-insensitive). Mirrors SQL `public.advertiser_key()`. */
+/**
+ * Normalized advertiser identity (case-, accent- and spacing-insensitive). Mirrors SQL `public.advertiser_key()`.
+ * `toLowerCase()` maps a word-final Σ to ς (context-sensitive) while Postgres `lower()` always gives σ:
+ * folding ς to σ afterwards makes both sides agree ("ΟΔΟΣ", "Οδος" → "οδοσ").
+ */
 export function advertiserKey(name: string): string {
   return name
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
+    .replace(/\u03c2/g, "\u03c3")
     .replace(/[\t\n\v\f\r ]+/g, " ")
     .replace(/^ | $/g, "");
 }
 
-/** Earliest last-seen day for an ad to count as active on `asOf`. */
+/** Earliest last-seen day for an ad that the source still reports as running to count as active on `asOf`. */
 export function activeSince(asOf: string): string {
   return addDays(asOf, -ACTIVE_GRACE_DAYS);
 }
 
-export function isActiveAd(ad: Pick<Advertisement, "firstSeen" | "lastSeen">, asOf: string): boolean {
-  return ad.firstSeen <= asOf && ad.lastSeen >= activeSince(asOf);
+/** Whether the ad is currently running on `asOf` (see "Active ad" above). */
+export function isActiveAd(ad: Pick<Advertisement, "firstSeen" | "lastSeen" | "ended">, asOf: string): boolean {
+  return ad.firstSeen <= asOf && ad.lastSeen >= (ad.ended ? asOf : activeSince(asOf));
 }
 
 /** Clamps user-supplied thresholds to the allowed range; missing values take the defaults. */
@@ -99,8 +112,11 @@ export interface AdvertiserSummary extends AdvertiserActivity {
 }
 
 /** Activity of every advertiser present in `ads`, keyed by `advertiserKey`. Pure and deterministic. */
-export function advertiserActivity(ads: readonly Pick<Advertisement, "advertiser" | "firstSeen" | "lastSeen">[], asOf: string, thresholds: AdvertiserThresholds = DEFAULT_THRESHOLDS): Map<string, AdvertiserSummary> {
-  const since = activeSince(asOf);
+export function advertiserActivity(
+  ads: readonly Pick<Advertisement, "advertiser" | "firstSeen" | "lastSeen" | "ended">[],
+  asOf: string,
+  thresholds: AdvertiserThresholds = DEFAULT_THRESHOLDS,
+): Map<string, AdvertiserSummary> {
   const longRunning = addDays(asOf, -thresholds.minDays);
   const acc = new Map<string, { names: Map<string, number>; total: number; active: number; old: number; oldest: string | null }>();
   for (const ad of ads) {
@@ -109,7 +125,7 @@ export function advertiserActivity(ads: readonly Pick<Advertisement, "advertiser
     if (!a) acc.set(key, (a = { names: new Map(), total: 0, active: 0, old: 0, oldest: null }));
     a.names.set(ad.advertiser, (a.names.get(ad.advertiser) ?? 0) + 1);
     a.total++;
-    if (ad.firstSeen <= asOf && ad.lastSeen >= since) {
+    if (isActiveAd(ad, asOf)) {
       a.active++;
       if (ad.firstSeen <= longRunning) a.old++;
       if (a.oldest == null || ad.firstSeen < a.oldest) a.oldest = ad.firstSeen;
@@ -135,4 +151,12 @@ export function rankAdvertisers<T extends AdvertiserSummary>(list: T[]): T[] {
   return [...list].sort(
     (a, b) => Number(b.qualifies) - Number(a.qualifies) || b.activeSinceMinDays - a.activeSinceMinDays || b.activeAds - a.activeAds || b.totalAds - a.totalAds || a.name.localeCompare(b.name),
   );
+}
+
+/**
+ * Interpolation values of every rule text ("≥ {{ads}} for ≥ {{days}}"): "5 active ads" / "1 active ad" and
+ * "7 days" / "1 day", pluralized per language (activeAdvertisers.nAds / nDays plural keys).
+ */
+export function ruleValues(t: TFunction, ads: number, days: number): { ads: string; days: string } {
+  return { ads: t("activeAdvertisers.nAds", { count: ads }), days: t("activeAdvertisers.nDays", { count: days }) };
 }

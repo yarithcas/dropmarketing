@@ -4,10 +4,10 @@ import type { AdQuery, ProductQuery, StoreQuery } from "../queries";
 import { adThresholds, normalizeDomain } from "../queries";
 import {
   DEFAULT_THRESHOLDS,
-  activeSince,
   activityOf,
   advertiserActivity,
   advertiserKey,
+  isActiveAd,
   rankAdvertisers,
   type AdvertiserRule,
   type AdvertiserSummary,
@@ -324,7 +324,7 @@ export function listAds(q: AdQuery): AdPage {
     if (q.firstTo && a.firstSeen > q.firstTo) return false;
     if (q.lastFrom && a.lastSeen < q.lastFrom) return false;
     if (q.lastTo && a.lastSeen > q.lastTo) return false;
-    if (q.activeOnly && a.lastSeen < activeSince(d.snapshot)) return false;
+    if (q.activeOnly && !isActiveAd(a, d.snapshot)) return false;
     // Default quality bar: only ads of advertisers that qualify on the snapshot day (totals follow).
     if (q.activeAdvertisers && !activity.get(advertiserKey(a.advertiser))?.qualifies) return false;
     return true;
@@ -343,6 +343,9 @@ export function listAds(q: AdQuery): AdPage {
   };
 }
 
+/** Related ads shown in the creative viewer. */
+const RELATED_ADS = 6;
+
 export function getAd(id: string) {
   const d = ds();
   const found = d.ads.find((a) => a.id === id);
@@ -351,8 +354,19 @@ export function getAd(id: string) {
   const product = ad.productId ? allProducts().find((p) => p.id === ad.productId) ?? null : null;
   const store = d.stores.find((s) => s.domain === ad.landingDomain) ?? null;
   // Ads without a product link are not "related" to each other.
-  const related = ad.productId ? d.ads.filter((a) => a.productId === ad.productId && a.id !== ad.id).slice(0, 6) : [];
-  return { ad, product, store, related, advertiserRule: ruleOf(true) };
+  const sameProduct = ad.productId ? d.ads.filter((a) => a.productId === ad.productId && a.id !== ad.id) : [];
+  // Default: ads of active advertisers only (like every ad list); the viewer can switch to every ad.
+  const activity = advertisersOf();
+  const qualifying = sameProduct.filter((a) => activity.get(advertiserKey(a.advertiser))?.qualifies);
+  return {
+    ad,
+    product,
+    store,
+    related: withActivity(qualifying.slice(0, RELATED_ADS)),
+    relatedAll: withActivity(sameProduct.slice(0, RELATED_ADS)),
+    relatedCounts: { qualifying: qualifying.length, total: sameProduct.length },
+    advertiserRule: ruleOf(true),
+  };
 }
 
 export function listStores(q: StoreQuery): Page<Store & { adsCount: number; trackedProducts: number }> {
@@ -555,7 +569,7 @@ export function overview() {
   const week = addDays(asOf, -6);
   const top = [...scored].sort((a, b) => (b.score.overall as number) - (a.score.overall as number)).slice(0, 6);
   const newProducts = products.filter((p) => p.firstDetected >= addDays(asOf, -29)).length;
-  const activeAds = d.ads.filter((a) => a.lastSeen >= activeSince(asOf)).length;
+  const activeAds = d.ads.filter((a) => isActiveAd(a, asOf)).length;
   const newAdsWeek = d.ads.filter((a) => a.firstSeen >= week).length;
   const series = [];
   for (let i = 59; i >= 0; i--) {
@@ -566,13 +580,21 @@ export function overview() {
       newAds: d.ads.filter((a) => a.firstSeen === date).length,
     });
   }
-  const recentAds = [...d.ads].sort((a, b) => b.firstSeen.localeCompare(a.firstSeen)).slice(0, 4);
+  // Same default and order as its "View all" target (Ad Spy, newest first): ads of active advertisers only.
+  const activity = advertisersOf();
+  const recentAds = withActivity(
+    d.ads
+      .filter((a) => activity.get(advertiserKey(a.advertiser))?.qualifies)
+      .sort((a, b) => b.firstSeen.localeCompare(a.firstSeen) || a.id.localeCompare(b.id))
+      .slice(0, 4),
+  );
   return {
     asOf,
     counts: { products: products.length, scored: scored.length, activeAds, newAdsWeek, newProducts, stores: d.stores.length },
     top,
     series,
     recentAds,
+    advertiserRule: ruleOf(true),
     trends: trendReport("7d").trending.slice(0, 5),
   };
 }

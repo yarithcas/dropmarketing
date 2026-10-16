@@ -26,9 +26,9 @@ select pg_temp.check(public.advertiser_key(c ->> 0) = c ->> 1, format('advertise
 from fx, jsonb_array_elements(j -> 'keyCases') c;
 
 -- 2. Fixture ads (as the table owner) --------------------------------------------------------------
-insert into public.advertisements (id, connector, external_id, advertiser, platform, country, language, format, category, first_seen, last_seen, source_kind, observed_at)
+insert into public.advertisements (id, connector, external_id, advertiser, platform, country, language, format, category, first_seen, last_seen, ended, source_kind, observed_at)
 select 'fixture-' || (e ->> 'id'), 'fixture', e ->> 'id', e ->> 'advertiser', 'meta', 'FR', 'fr', 'video', 'home',
-       (e ->> 'firstSeen')::date, (e ->> 'lastSeen')::date, 'measured', now()
+       (e ->> 'firstSeen')::date, (e ->> 'lastSeen')::date, coalesce((e ->> 'ended')::boolean, false), 'measured', now()
 from fx, jsonb_array_elements(j -> 'ads') e;
 
 -- Unrelated rows must not leak into the fixture's results.
@@ -39,7 +39,7 @@ from generate_series(1, 70) g;
 select pg_temp.check(a.advertiser_key = public.advertiser_key(a.advertiser), format('generated advertiser_key for %L', a.advertiser))
 from public.advertisements a;
 
-select pg_temp.check(count(distinct advertiser_key) = 9, 'fixture advertisers grouped into 9 identities')
+select pg_temp.check(count(distinct advertiser_key) = 13, 'fixture advertisers grouped into 13 identities')
 from public.advertisements where connector = 'fixture';
 
 -- 3. Activity and qualifying ads, per threshold case ----------------------------------------------
@@ -80,9 +80,16 @@ begin
   perform pg_temp.check(not exists (select 1 from public.advertiser_activity(as_of, 7, keys) s where s.advertiser_key = any (array(select jsonb_array_elements_text(fixture -> 'withoutActiveAds')))),
     'advertisers without active ads are absent');
   -- Without `keys`, every active advertiser is returned (fixture + noise).
-  perform pg_temp.check((select count(*) from public.advertiser_activity(as_of)) = 8 + 7, 'unrestricted activity covers all active advertisers');
+  perform pg_temp.check((select count(*) from public.advertiser_activity(as_of)) = 11 + 7, 'unrestricted activity covers all active advertisers');
 end;
 $$;
+
+-- 3b. advertisements.ended: a plain boolean defaulting to false (the ingestion writes it with every sync).
+select pg_temp.check(not a.ended, 'ended defaults to false') from public.advertisements a where a.connector = 'noise';
+select pg_temp.check(
+  (select data_type = 'boolean' and is_nullable = 'NO' and column_default = 'false'
+     from information_schema.columns where table_schema = 'public' and table_name = 'advertisements' and column_name = 'ended'),
+  'advertisements.ended is boolean not null default false');
 
 -- 4. Access: server (service role) only; invoker rights -------------------------------------------
 select pg_temp.check(not has_function_privilege(r, 'public.advertiser_activity(date, integer, text[])', 'execute'), format('%s cannot call advertiser_activity', r))

@@ -348,6 +348,8 @@ export function generateDemoDataset(snapshot: string = demoSnapshot()): DemoData
         category: a.category,
         firstSeen: addDays(start, so),
         lastSeen,
+        // Stopped before the snapshot: the demo "source" knows its last delivery day exactly.
+        ...(end < S ? { ended: true } : {}),
         source: demoSource(lastSeen),
         hue: (idx * 37 + i * 11) % 360,
       });
@@ -475,10 +477,10 @@ export function generateDemoDataset(snapshot: string = demoSnapshot()): DemoData
       linkToStore(ad, pick(arand, carriers));
     } else if (carriers.length && ad.lastSeen >= addDays(B, -2) && prng(hashString(`store-ad-${ad.id}`))() < 0.4) {
       // Active-advertiser rule (lib/advertisers.ts): stores keep advertising what they sell, so 40 % of the
-      // ads still running on the base day that the pass above left with a brand advertiser are run by a
-      // store carrying the product. Seeded per ad (the stream above is untouched) and independent of the
-      // snapshot (an ad running on the base day has lastSeen >= B - 2 on every snapshot): 71 ads change
-      // advertiser and 9 advertisers instead of 7 qualify on the base day (>= 9 every day through 2028).
+      // ads seen in the last days of the base window (lastSeen >= B - 2) that the pass above left with a
+      // brand advertiser are run by a store carrying the product. Seeded per ad (the stream above is
+      // untouched) and independent of the snapshot (lastSeen = min(end, S) and S >= B): 71 ads change
+      // advertiser and 8 advertisers instead of 6 qualify on the base day (>= 8 every day through 2028).
       linkToStore(ad, pick(prng(hashString(`store-ad-pick-${ad.id}`)), carriers));
     }
   }
@@ -542,6 +544,7 @@ export function generateDemoDataset(snapshot: string = demoSnapshot()): DemoData
           category: a.category,
           firstSeen: d,
           lastSeen,
+          ...(end < S ? { ended: true } : {}),
           source: demoSource(lastSeen),
           hue: hashString(adId) % 360,
         };

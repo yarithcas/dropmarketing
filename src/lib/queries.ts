@@ -17,6 +17,12 @@ const day = z
   .regex(/^\d{4}-\d{2}-\d{2}$/)
   .optional();
 const text = z.string().trim().max(120).optional();
+/**
+ * Optional bounded integer from a query string. A blank value ("", " ") means "not set": z.coerce.number()
+ * would read it as 0 and silently change a threshold (e.g. minActiveDays= → 0 days).
+ */
+const optionalInt = (min: number, max: number) =>
+  z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), z.coerce.number().int().min(min).max(max).optional());
 const bool = z
   .enum(["true", "false"])
   .optional()
@@ -74,8 +80,8 @@ export const adQuerySchema = z.object({
     .optional()
     .transform((v) => v !== "false"),
   /** Adjusted thresholds of the active-advertiser rule (advanced filters; defaults 5 ads / 7 days). */
-  minActiveAds: z.coerce.number().int().min(THRESHOLD_LIMITS.minAds.min).max(THRESHOLD_LIMITS.minAds.max).optional(),
-  minActiveDays: z.coerce.number().int().min(THRESHOLD_LIMITS.minDays.min).max(THRESHOLD_LIMITS.minDays.max).optional(),
+  minActiveAds: optionalInt(THRESHOLD_LIMITS.minAds.min, THRESHOLD_LIMITS.minAds.max),
+  minActiveDays: optionalInt(THRESHOLD_LIMITS.minDays.min, THRESHOLD_LIMITS.minDays.max),
   sort: z.enum(AD_SORTS).optional().default("newest"),
   page: z.coerce.number().int().min(1).max(1000).optional().default(1),
   pageSize: z.coerce.number().int().min(1).max(100).optional().default(24),

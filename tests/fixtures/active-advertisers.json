@@ -1,5 +1,5 @@
 {
-  "description": "Shared boundary fixture for the active-advertiser rule. Checked against src/lib/advertisers.ts (tests/active-advertisers.test.ts) and against migration 0008 (supabase/tests/0008_active_advertisers.test.sql). asOf - 7 days = 2026-10-05, asOf - 6 = 2026-10-06, asOf - 2 = 2026-10-10 (last active day), asOf - 3 = 2026-10-09 (inactive).",
+  "description": "Shared boundary fixture for the active-advertiser rule. Checked against src/lib/advertisers.ts (tests/active-advertisers.test.ts) and against migration 0008 (supabase/tests/0008_active_advertisers.test.sql). asOf - 7 days = 2026-10-05, asOf - 6 = 2026-10-06. Running ads: asOf - 1 = 2026-10-11 is the last active day (grace), asOf - 2 = 2026-10-10 is inactive. Ended ads (\"ended\": true, the source reported them stopped): active only when last seen on asOf — an ad that stopped yesterday (2026-10-11) is not active.",
   "asOf": "2026-10-12",
   "keyCases": [
     ["Maison Éclat", "maison eclat"],
@@ -11,107 +11,312 @@
     ["Zoë Shop", "zoe shop"],
     ["ñandú Çà", "nandu ca"],
     ["Straße", "straße"],
-    ["Cafe\u0301 Lumie\u0300re", "cafe lumiere"],
-    ["\u00c9CLAT\u2009Store", "eclat store"],
-    ["", ""]
+    ["Café Lumière", "cafe lumiere"],
+    ["ÉCLAT Store", "eclat store"],
+    ["", ""],
+    ["ΟΔΟΣ", "οδοσ"],
+    ["Οδος", "οδοσ"],
+    ["ΣΟΦΙΑΣ", "σοφιασ"],
+    ["Σοφίας", "σοφιασ"],
+    ["ϹΟΦΙϹ", "σοφισ"],
+    ["οδός", "οδοσ"]
   ],
   "ads": [
-    { "id": "ef-1", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12" },
-    { "id": "ef-2", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12" },
-    { "id": "ef-3", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12" },
-    { "id": "ef-4", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12" },
-    { "id": "ef-5", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12" },
-    { "id": "ef-old", "advertiser": "Exactly Five", "firstSeen": "2026-08-01", "lastSeen": "2026-09-01" },
-
-    { "id": "fo-1", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12" },
-    { "id": "fo-2", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12" },
-    { "id": "fo-3", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12" },
-    { "id": "fo-4", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12" },
-    { "id": "fo-5", "advertiser": "Four Only", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12" },
-
-    { "id": "sd-1", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12" },
-    { "id": "sd-2", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12" },
-    { "id": "sd-3", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12" },
-    { "id": "sd-4", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12" },
-    { "id": "sd-5", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12" },
-
-    { "id": "ge-1", "advertiser": "Grace Edge", "firstSeen": "2026-09-01", "lastSeen": "2026-10-10" },
-    { "id": "ge-2", "advertiser": "Grace Edge", "firstSeen": "2026-09-02", "lastSeen": "2026-10-10" },
-    { "id": "ge-3", "advertiser": "Grace Edge", "firstSeen": "2026-09-03", "lastSeen": "2026-10-10" },
-    { "id": "ge-4", "advertiser": "Grace Edge", "firstSeen": "2026-09-04", "lastSeen": "2026-10-10" },
-    { "id": "ge-5", "advertiser": "Grace Edge", "firstSeen": "2026-09-05", "lastSeen": "2026-10-10" },
-
-    { "id": "lc-1", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "lc-2", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "lc-3", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "lc-4", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "lc-5", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-09" },
-
-    { "id": "me-1", "advertiser": "Maison Éclat", "firstSeen": "2026-09-15", "lastSeen": "2026-10-12" },
-    { "id": "me-2", "advertiser": "maison eclat", "firstSeen": "2026-09-16", "lastSeen": "2026-10-12" },
-    { "id": "me-3", "advertiser": "MAISON  ÉCLAT ", "firstSeen": "2026-09-17", "lastSeen": "2026-10-11" },
-    { "id": "me-4", "advertiser": " Maison\tEclat", "firstSeen": "2026-09-18", "lastSeen": "2026-10-12" },
-    { "id": "me-5", "advertiser": "maison éclat", "firstSeen": "2026-09-19", "lastSeen": "2026-10-12" },
-
-    { "id": "fl-1", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "fl-2", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "fl-3", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "fl-4", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12" },
-    { "id": "fl-5", "advertiser": "Future Labs", "firstSeen": "2026-10-13", "lastSeen": "2026-10-14" },
-
-    { "id": "ft-1", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12" },
-    { "id": "ft-2", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12" },
-    { "id": "ft-3", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12" },
-    { "id": "ft-4", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12" },
-    { "id": "ft-5", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12" },
-
-    { "id": "gs-1", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01" },
-    { "id": "gs-2", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01" },
-    { "id": "gs-3", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01" },
-    { "id": "gs-4", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01" },
-    { "id": "gs-5", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01" },
-    { "id": "gs-6", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01" }
+    {"id": "ef-1", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12"},
+    {"id": "ef-2", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12"},
+    {"id": "ef-3", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12"},
+    {"id": "ef-4", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12"},
+    {"id": "ef-5", "advertiser": "Exactly Five", "firstSeen": "2026-10-05", "lastSeen": "2026-10-12"},
+    {"id": "ef-old", "advertiser": "Exactly Five", "firstSeen": "2026-08-01", "lastSeen": "2026-09-01"},
+    {"id": "fo-1", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12"},
+    {"id": "fo-2", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12"},
+    {"id": "fo-3", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12"},
+    {"id": "fo-4", "advertiser": "Four Only", "firstSeen": "2026-09-20", "lastSeen": "2026-10-12"},
+    {"id": "fo-5", "advertiser": "Four Only", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12"},
+    {"id": "sd-1", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12"},
+    {"id": "sd-2", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12"},
+    {"id": "sd-3", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12"},
+    {"id": "sd-4", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12"},
+    {"id": "sd-5", "advertiser": "Six Days", "firstSeen": "2026-10-06", "lastSeen": "2026-10-12"},
+    {"id": "ge-1", "advertiser": "Grace Edge", "firstSeen": "2026-09-01", "lastSeen": "2026-10-11"},
+    {"id": "ge-2", "advertiser": "Grace Edge", "firstSeen": "2026-09-02", "lastSeen": "2026-10-11"},
+    {"id": "ge-3", "advertiser": "Grace Edge", "firstSeen": "2026-09-03", "lastSeen": "2026-10-11"},
+    {"id": "ge-4", "advertiser": "Grace Edge", "firstSeen": "2026-09-04", "lastSeen": "2026-10-11"},
+    {"id": "ge-5", "advertiser": "Grace Edge", "firstSeen": "2026-09-05", "lastSeen": "2026-10-11"},
+    {"id": "lc-1", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "lc-2", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "lc-3", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "lc-4", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "lc-5", "advertiser": "Lapsed Co", "firstSeen": "2026-09-01", "lastSeen": "2026-10-09"},
+    {"id": "me-1", "advertiser": "Maison Éclat", "firstSeen": "2026-09-15", "lastSeen": "2026-10-12"},
+    {"id": "me-2", "advertiser": "maison eclat", "firstSeen": "2026-09-16", "lastSeen": "2026-10-12"},
+    {"id": "me-3", "advertiser": "MAISON  ÉCLAT ", "firstSeen": "2026-09-17", "lastSeen": "2026-10-11"},
+    {"id": "me-4", "advertiser": " Maison\tEclat", "firstSeen": "2026-09-18", "lastSeen": "2026-10-12"},
+    {"id": "me-5", "advertiser": "maison éclat", "firstSeen": "2026-09-19", "lastSeen": "2026-10-12"},
+    {"id": "fl-1", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "fl-2", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "fl-3", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "fl-4", "advertiser": "Future Labs", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "fl-5", "advertiser": "Future Labs", "firstSeen": "2026-10-13", "lastSeen": "2026-10-14"},
+    {"id": "ft-1", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12"},
+    {"id": "ft-2", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12"},
+    {"id": "ft-3", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12"},
+    {"id": "ft-4", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12"},
+    {"id": "ft-5", "advertiser": "Fresh Today", "firstSeen": "2026-10-12", "lastSeen": "2026-10-12"},
+    {"id": "gs-1", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01"},
+    {"id": "gs-2", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01"},
+    {"id": "gs-3", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01"},
+    {"id": "gs-4", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01"},
+    {"id": "gs-5", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01"},
+    {"id": "gs-6", "advertiser": "Gone Shop", "firstSeen": "2026-06-01", "lastSeen": "2026-08-01"},
+    {"id": "td-1", "advertiser": "Two Days Ago", "firstSeen": "2026-09-01", "lastSeen": "2026-10-10"},
+    {"id": "td-2", "advertiser": "Two Days Ago", "firstSeen": "2026-09-01", "lastSeen": "2026-10-10"},
+    {"id": "td-3", "advertiser": "Two Days Ago", "firstSeen": "2026-09-01", "lastSeen": "2026-10-10"},
+    {"id": "td-4", "advertiser": "Two Days Ago", "firstSeen": "2026-09-01", "lastSeen": "2026-10-10"},
+    {"id": "td-5", "advertiser": "Two Days Ago", "firstSeen": "2026-09-01", "lastSeen": "2026-10-10"},
+    {"id": "ss-1", "advertiser": "Stopped Shop", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "ss-2", "advertiser": "Stopped Shop", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "ss-3", "advertiser": "Stopped Shop", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "ss-4", "advertiser": "Stopped Shop", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "ss-5", "advertiser": "Stopped Shop", "firstSeen": "2026-09-01", "lastSeen": "2026-10-11", "ended": true},
+    {"id": "ld-1", "advertiser": "Last Day Co", "firstSeen": "2026-09-10", "lastSeen": "2026-10-12", "ended": true},
+    {"id": "ld-2", "advertiser": "Last Day Co", "firstSeen": "2026-09-10", "lastSeen": "2026-10-12", "ended": true},
+    {"id": "ld-3", "advertiser": "Last Day Co", "firstSeen": "2026-09-10", "lastSeen": "2026-10-12", "ended": true},
+    {"id": "ld-4", "advertiser": "Last Day Co", "firstSeen": "2026-09-10", "lastSeen": "2026-10-12", "ended": true},
+    {"id": "ld-5", "advertiser": "Last Day Co", "firstSeen": "2026-09-10", "lastSeen": "2026-10-12", "ended": true},
+    {"id": "gk-1", "advertiser": "ΟΔΟΣ", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "gk-2", "advertiser": "ΟΔΟΣ", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "gk-3", "advertiser": "ΟΔΟΣ", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "gk-4", "advertiser": "Οδος", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"},
+    {"id": "gk-5", "advertiser": "Οδος", "firstSeen": "2026-09-01", "lastSeen": "2026-10-12"}
   ],
-  "withoutActiveAds": ["gone shop"],
+  "withoutActiveAds": ["gone shop", "two days ago"],
   "cases": [
     {
       "name": "default (5 ads, 7 days)",
       "minAds": 5,
       "minDays": 7,
       "activity": {
-        "exactly five": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-10-05", "qualifies": true },
-        "four only": { "activeAds": 5, "activeSinceMinDays": 4, "oldestActiveFirstSeen": "2026-09-20", "qualifies": false },
-        "six days": { "activeAds": 5, "activeSinceMinDays": 0, "oldestActiveFirstSeen": "2026-10-06", "qualifies": false },
-        "grace edge": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-01", "qualifies": true },
-        "lapsed co": { "activeAds": 4, "activeSinceMinDays": 4, "oldestActiveFirstSeen": "2026-09-01", "qualifies": false },
-        "maison eclat": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-15", "qualifies": true },
-        "future labs": { "activeAds": 4, "activeSinceMinDays": 4, "oldestActiveFirstSeen": "2026-09-01", "qualifies": false },
-        "fresh today": { "activeAds": 5, "activeSinceMinDays": 0, "oldestActiveFirstSeen": "2026-10-12", "qualifies": false }
+        "exactly five": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-10-05",
+          "qualifies": true
+        },
+        "four only": {
+          "activeAds": 5,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-20",
+          "qualifies": false
+        },
+        "six days": {
+          "activeAds": 5,
+          "activeSinceMinDays": 0,
+          "oldestActiveFirstSeen": "2026-10-06",
+          "qualifies": false
+        },
+        "grace edge": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        },
+        "lapsed co": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": false
+        },
+        "maison eclat": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-15",
+          "qualifies": true
+        },
+        "future labs": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": false
+        },
+        "fresh today": {
+          "activeAds": 5,
+          "activeSinceMinDays": 0,
+          "oldestActiveFirstSeen": "2026-10-12",
+          "qualifies": false
+        },
+        "stopped shop": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": false
+        },
+        "last day co": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-10",
+          "qualifies": true
+        },
+        "οδοσ": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        }
       },
-      "qualifyingAdIds": ["ef-1", "ef-2", "ef-3", "ef-4", "ef-5", "ef-old", "ge-1", "ge-2", "ge-3", "ge-4", "ge-5", "me-1", "me-2", "me-3", "me-4", "me-5"]
+      "qualifyingAdIds": [
+        "ef-1",
+        "ef-2",
+        "ef-3",
+        "ef-4",
+        "ef-5",
+        "ef-old",
+        "ge-1",
+        "ge-2",
+        "ge-3",
+        "ge-4",
+        "ge-5",
+        "gk-1",
+        "gk-2",
+        "gk-3",
+        "gk-4",
+        "gk-5",
+        "ld-1",
+        "ld-2",
+        "ld-3",
+        "ld-4",
+        "ld-5",
+        "me-1",
+        "me-2",
+        "me-3",
+        "me-4",
+        "me-5"
+      ]
     },
     {
       "name": "adjusted (4 ads, 6 days)",
       "minAds": 4,
       "minDays": 6,
       "activity": {
-        "exactly five": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-10-05", "qualifies": true },
-        "four only": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-20", "qualifies": true },
-        "six days": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-10-06", "qualifies": true },
-        "grace edge": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-01", "qualifies": true },
-        "lapsed co": { "activeAds": 4, "activeSinceMinDays": 4, "oldestActiveFirstSeen": "2026-09-01", "qualifies": true },
-        "maison eclat": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-15", "qualifies": true },
-        "future labs": { "activeAds": 4, "activeSinceMinDays": 4, "oldestActiveFirstSeen": "2026-09-01", "qualifies": true },
-        "fresh today": { "activeAds": 5, "activeSinceMinDays": 0, "oldestActiveFirstSeen": "2026-10-12", "qualifies": false }
+        "exactly five": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-10-05",
+          "qualifies": true
+        },
+        "four only": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-20",
+          "qualifies": true
+        },
+        "six days": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-10-06",
+          "qualifies": true
+        },
+        "grace edge": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        },
+        "lapsed co": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        },
+        "maison eclat": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-15",
+          "qualifies": true
+        },
+        "future labs": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        },
+        "fresh today": {
+          "activeAds": 5,
+          "activeSinceMinDays": 0,
+          "oldestActiveFirstSeen": "2026-10-12",
+          "qualifies": false
+        },
+        "stopped shop": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        },
+        "last day co": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-10",
+          "qualifies": true
+        },
+        "οδοσ": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        }
       },
       "qualifyingAdIds": [
-        "ef-1", "ef-2", "ef-3", "ef-4", "ef-5", "ef-old",
-        "fo-1", "fo-2", "fo-3", "fo-4", "fo-5",
-        "sd-1", "sd-2", "sd-3", "sd-4", "sd-5",
-        "ge-1", "ge-2", "ge-3", "ge-4", "ge-5",
-        "lc-1", "lc-2", "lc-3", "lc-4", "lc-5",
-        "me-1", "me-2", "me-3", "me-4", "me-5",
-        "fl-1", "fl-2", "fl-3", "fl-4", "fl-5"
+        "ef-1",
+        "ef-2",
+        "ef-3",
+        "ef-4",
+        "ef-5",
+        "ef-old",
+        "fl-1",
+        "fl-2",
+        "fl-3",
+        "fl-4",
+        "fl-5",
+        "fo-1",
+        "fo-2",
+        "fo-3",
+        "fo-4",
+        "fo-5",
+        "ge-1",
+        "ge-2",
+        "ge-3",
+        "ge-4",
+        "ge-5",
+        "gk-1",
+        "gk-2",
+        "gk-3",
+        "gk-4",
+        "gk-5",
+        "lc-1",
+        "lc-2",
+        "lc-3",
+        "lc-4",
+        "lc-5",
+        "ld-1",
+        "ld-2",
+        "ld-3",
+        "ld-4",
+        "ld-5",
+        "me-1",
+        "me-2",
+        "me-3",
+        "me-4",
+        "me-5",
+        "sd-1",
+        "sd-2",
+        "sd-3",
+        "sd-4",
+        "sd-5",
+        "ss-1",
+        "ss-2",
+        "ss-3",
+        "ss-4",
+        "ss-5"
       ]
     },
     {
@@ -119,22 +324,115 @@
       "minAds": 5,
       "minDays": 0,
       "activity": {
-        "exactly five": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-10-05", "qualifies": true },
-        "four only": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-20", "qualifies": true },
-        "six days": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-10-06", "qualifies": true },
-        "grace edge": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-01", "qualifies": true },
-        "lapsed co": { "activeAds": 4, "activeSinceMinDays": 4, "oldestActiveFirstSeen": "2026-09-01", "qualifies": false },
-        "maison eclat": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-09-15", "qualifies": true },
-        "future labs": { "activeAds": 4, "activeSinceMinDays": 4, "oldestActiveFirstSeen": "2026-09-01", "qualifies": false },
-        "fresh today": { "activeAds": 5, "activeSinceMinDays": 5, "oldestActiveFirstSeen": "2026-10-12", "qualifies": true }
+        "exactly five": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-10-05",
+          "qualifies": true
+        },
+        "four only": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-20",
+          "qualifies": true
+        },
+        "six days": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-10-06",
+          "qualifies": true
+        },
+        "grace edge": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        },
+        "lapsed co": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": false
+        },
+        "maison eclat": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-15",
+          "qualifies": true
+        },
+        "future labs": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": false
+        },
+        "fresh today": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-10-12",
+          "qualifies": true
+        },
+        "stopped shop": {
+          "activeAds": 4,
+          "activeSinceMinDays": 4,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": false
+        },
+        "last day co": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-10",
+          "qualifies": true
+        },
+        "οδοσ": {
+          "activeAds": 5,
+          "activeSinceMinDays": 5,
+          "oldestActiveFirstSeen": "2026-09-01",
+          "qualifies": true
+        }
       },
       "qualifyingAdIds": [
-        "ef-1", "ef-2", "ef-3", "ef-4", "ef-5", "ef-old",
-        "fo-1", "fo-2", "fo-3", "fo-4", "fo-5",
-        "sd-1", "sd-2", "sd-3", "sd-4", "sd-5",
-        "ge-1", "ge-2", "ge-3", "ge-4", "ge-5",
-        "me-1", "me-2", "me-3", "me-4", "me-5",
-        "ft-1", "ft-2", "ft-3", "ft-4", "ft-5"
+        "ef-1",
+        "ef-2",
+        "ef-3",
+        "ef-4",
+        "ef-5",
+        "ef-old",
+        "fo-1",
+        "fo-2",
+        "fo-3",
+        "fo-4",
+        "fo-5",
+        "ft-1",
+        "ft-2",
+        "ft-3",
+        "ft-4",
+        "ft-5",
+        "ge-1",
+        "ge-2",
+        "ge-3",
+        "ge-4",
+        "ge-5",
+        "gk-1",
+        "gk-2",
+        "gk-3",
+        "gk-4",
+        "gk-5",
+        "ld-1",
+        "ld-2",
+        "ld-3",
+        "ld-4",
+        "ld-5",
+        "me-1",
+        "me-2",
+        "me-3",
+        "me-4",
+        "me-5",
+        "sd-1",
+        "sd-2",
+        "sd-3",
+        "sd-4",
+        "sd-5"
       ]
     }
   ]

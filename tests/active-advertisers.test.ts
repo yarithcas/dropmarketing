@@ -12,18 +12,21 @@ import {
   isActiveAd,
   rankAdvertisers,
   resolveThresholds,
+  ruleValues,
   type AdvertiserThresholds,
 } from "@/lib/advertisers";
+import { createI18n } from "@/lib/i18n/i18n";
 import { addDays } from "@/lib/dates";
-import { adQuerySchema, adThresholds } from "@/lib/queries";
+import { adQuerySchema, adThresholds, paramsToObject } from "@/lib/queries";
 import { ADVANCED_AD_FILTERS } from "@/lib/plans";
 import { stripFilters } from "@/lib/server/plan-filters";
 import { searchKey } from "@/lib/server/usage";
-import { advertisersOf, getAd, getProduct, getStore, globalSearch, listAds, searchAdvertisers } from "@/lib/server/repository";
+import { advertisersOf, datasetForEngines, getAd, getProduct, getStore, globalSearch, listAds, overview, searchAdvertisers } from "@/lib/server/repository";
+import { buildReport, reportCatalog } from "@/lib/server/reports";
 import { listAdsDb } from "@/lib/server/supabase-repository";
 import { DEMO_BASE_SNAPSHOT, demoSnapshot, generateDemoDataset } from "@/lib/demo/generate";
 
-type FixtureAd = { id: string; advertiser: string; firstSeen: string; lastSeen: string };
+type FixtureAd = { id: string; advertiser: string; firstSeen: string; lastSeen: string; ended?: boolean };
 type Expected = { activeAds: number; activeSinceMinDays: number; oldestActiveFirstSeen: string | null; qualifies: boolean };
 const fixture = JSON.parse(fs.readFileSync("tests/fixtures/active-advertisers.json", "utf8")) as {
   asOf: string;
@@ -33,7 +36,7 @@ const fixture = JSON.parse(fs.readFileSync("tests/fixtures/active-advertisers.js
   cases: { name: string; minAds: number; minDays: number; activity: Record<string, Expected>; qualifyingAdIds: string[] }[];
 };
 
-const ad = (advertiser: string, firstSeen: string, lastSeen: string) => ({ advertiser, firstSeen, lastSeen });
+const ad = (advertiser: string, firstSeen: string, lastSeen: string, ended?: boolean) => ({ advertiser, firstSeen, lastSeen, ...(ended ? { ended } : {}) });
 const AS_OF = "2026-10-12";
 const days = (n: number) => addDays(AS_OF, -n);
 
@@ -41,7 +44,7 @@ describe("active-advertiser definition", () => {
   it("uses the documented constants", () => {
     expect(MIN_ACTIVE_ADS).toBe(5);
     expect(MIN_ACTIVE_DAYS).toBe(7);
-    expect(ACTIVE_GRACE_DAYS).toBe(2);
+    expect(ACTIVE_GRACE_DAYS).toBe(1);
     expect(DEFAULT_THRESHOLDS).toEqual({ minAds: 5, minDays: 7 });
   });
 
@@ -49,12 +52,29 @@ describe("active-advertiser definition", () => {
     expect(advertiserKey(input)).toBe(key);
   });
 
-  it("an ad is active when last seen up to 2 days before asOf and first seen by asOf", () => {
+  it("a running ad is active when last seen up to 1 day before asOf and first seen by asOf", () => {
     expect(isActiveAd(ad("x", days(30), AS_OF), AS_OF)).toBe(true);
-    expect(isActiveAd(ad("x", days(30), days(2)), AS_OF)).toBe(true); // asOf boundary (grace)
-    expect(isActiveAd(ad("x", days(30), days(3)), AS_OF)).toBe(false); // inactive
+    expect(isActiveAd(ad("x", days(30), days(1)), AS_OF)).toBe(true); // grace boundary (synced yesterday)
+    expect(isActiveAd(ad("x", days(30), days(2)), AS_OF)).toBe(false); // inactive
     expect(isActiveAd(ad("x", AS_OF, AS_OF), AS_OF)).toBe(true);
     expect(isActiveAd(ad("x", addDays(AS_OF, 1), addDays(AS_OF, 2)), AS_OF)).toBe(false); // not started on asOf
+  });
+
+  it("an ad the source reported as ended runs through its last day only (stopped yesterday = not active)", () => {
+    expect(isActiveAd(ad("x", days(30), days(1), true), AS_OF)).toBe(false); // stopped yesterday
+    expect(isActiveAd(ad("x", days(30), days(2), true), AS_OF)).toBe(false);
+    expect(isActiveAd(ad("x", days(30), AS_OF, true), AS_OF)).toBe(true); // last delivery day = asOf
+    expect(isActiveAd(ad("x", days(30), days(1), true), days(1))).toBe(true); // it was running yesterday
+    expect(isActiveAd(ad("x", days(30), days(1), false), AS_OF)).toBe(true);
+  });
+
+  it("Meta: five ads stopped yesterday or the day before do not make an advertiser qualify", () => {
+    // metaAdRecord: a past ad_delivery_stop_time gives last_seen = stop date and active = false (→ ended).
+    const stopped = [days(1), days(1), days(1), days(2), days(2)].map((stop) => ad("Stopped Shop", "2026-09-01", stop, true));
+    expect(advertiserActivity(stopped, AS_OF).get("stopped shop")).toMatchObject({ activeAds: 0, activeSinceMinDays: 0, qualifies: false });
+    // Same ads still delivering when last synced yesterday: running.
+    const running = stopped.map((a) => ({ ...a, lastSeen: days(1), ended: false }));
+    expect(advertiserActivity(running, AS_OF).get("stopped shop")).toMatchObject({ activeAds: 5, qualifies: true });
   });
 
   it("qualifies with exactly 5 active ads running exactly 7 days, not with 4 ads or 6 days", () => {
@@ -67,11 +87,11 @@ describe("active-advertiser definition", () => {
     expect(advertiserActivity([...five.slice(0, 4), ad("Shop", days(6), AS_OF)], AS_OF).get("shop")).toMatchObject({ activeSinceMinDays: 4, qualifies: false });
   });
 
-  it("does not count an inactive ad, even an old one", () => {
-    const ads = [...Array.from({ length: 4 }, () => ad("Shop", days(40), AS_OF)), ad("Shop", days(40), days(3))];
-    expect(advertiserActivity(ads, AS_OF).get("shop")).toMatchObject({ activeAds: 4, activeSinceMinDays: 4, qualifies: false });
-    const atGrace = [...Array.from({ length: 4 }, () => ad("Shop", days(40), AS_OF)), ad("Shop", days(40), days(2))];
-    expect(advertiserActivity(atGrace, AS_OF).get("shop")).toMatchObject({ activeAds: 5, qualifies: true });
+  it("does not count an inactive or ended ad, even an old one", () => {
+    const four = Array.from({ length: 4 }, () => ad("Shop", days(40), AS_OF));
+    expect(advertiserActivity([...four, ad("Shop", days(40), days(2))], AS_OF).get("shop")).toMatchObject({ activeAds: 4, activeSinceMinDays: 4, qualifies: false });
+    expect(advertiserActivity([...four, ad("Shop", days(40), days(1), true)], AS_OF).get("shop")).toMatchObject({ activeAds: 4, qualifies: false });
+    expect(advertiserActivity([...four, ad("Shop", days(40), days(1))], AS_OF).get("shop")).toMatchObject({ activeAds: 5, qualifies: true });
   });
 
   it("groups case, accent and spacing variants of one advertiser", () => {
@@ -88,8 +108,11 @@ describe("active-advertiser definition", () => {
     const ads = Array.from({ length: 5 }, () => ad("Shop", "2026-10-01", "2026-10-20"));
     expect(advertiserActivity(ads, "2026-10-07").get("shop")!.qualifies).toBe(false); // 6 days
     expect(advertiserActivity(ads, "2026-10-08").get("shop")!.qualifies).toBe(true); // 7 days
-    expect(advertiserActivity(ads, "2026-10-22").get("shop")!.qualifies).toBe(true); // last seen 2 days before
-    expect(advertiserActivity(ads, "2026-10-23").get("shop")!.qualifies).toBe(false); // stopped
+    expect(advertiserActivity(ads, "2026-10-21").get("shop")!.qualifies).toBe(true); // last seen the day before
+    expect(advertiserActivity(ads, "2026-10-22").get("shop")!.qualifies).toBe(false); // stopped
+    const ended = ads.map((a) => ({ ...a, ended: true }));
+    expect(advertiserActivity(ended, "2026-10-20").get("shop")!.qualifies).toBe(true); // last delivery day
+    expect(advertiserActivity(ended, "2026-10-21").get("shop")!.qualifies).toBe(false); // stopped yesterday
   });
 
   for (const c of fixture.cases) {
@@ -109,10 +132,11 @@ describe("active-advertiser definition", () => {
   it("ranks qualifying advertisers first", () => {
     const map = advertiserActivity(fixture.ads, fixture.asOf);
     const ranked = rankAdvertisers([...map.values()]);
-    const firstNon = ranked.findIndex((s) => !s.qualifies);
-    expect(firstNon).toBe(3);
-    expect(ranked.slice(0, 3).every((s) => s.qualifies)).toBe(true);
-    expect(ranked.slice(3).every((s) => !s.qualifies)).toBe(true);
+    const qualifying = Object.values(fixture.cases[0].activity).filter((a) => a.qualifies).length;
+    expect(qualifying).toBe(5);
+    expect(ranked.findIndex((s) => !s.qualifies)).toBe(qualifying);
+    expect(ranked.slice(0, qualifying).every((s) => s.qualifies)).toBe(true);
+    expect(ranked.slice(qualifying).every((s) => !s.qualifies)).toBe(true);
   });
 
   it("clamps adjusted thresholds and defaults missing ones", () => {
@@ -120,6 +144,32 @@ describe("active-advertiser definition", () => {
     expect(resolveThresholds({ minAds: 3, minDays: 14 })).toEqual({ minAds: 3, minDays: 14 });
     expect(resolveThresholds({ minAds: 0, minDays: 500 })).toEqual({ minAds: 1, minDays: 90 });
     expect(resolveThresholds({ minAds: null, minDays: undefined })).toEqual(DEFAULT_THRESHOLDS);
+  });
+});
+
+describe("rule texts are pluralized in every language", () => {
+  const text = (lng: "en" | "fr" | "es" | "de" | "it", key: string, ads: number, days: number, extra: Record<string, unknown> = {}) => {
+    const { t } = createI18n(lng);
+    return t(key, { ...extra, ...ruleValues(t, ads, days) });
+  };
+  it("singular and plural thresholds", () => {
+    expect(text("en", "activeAdvertisers.toggle", 5, 7)).toBe("Active advertisers only — ≥ 5 active ads for ≥ 7 days");
+    expect(text("en", "activeAdvertisers.toggle", 1, 1)).toBe("Active advertisers only — ≥ 1 active ad for ≥ 1 day");
+    expect(text("fr", "activeAdvertisers.toggle", 1, 1)).toBe("Annonceurs actifs uniquement — ≥ 1 pub active depuis ≥ 1 jour");
+    expect(text("fr", "activeAdvertisers.badgeTip", 5, 7)).toBe("5 pubs actives depuis ≥ 7 jours");
+    expect(text("en", "activeAdvertisers.badgeTip", 3, 1)).toBe("3 active ads running for ≥ 1 day");
+    expect(text("en", "activeAdvertisers.emptyText", 1, 1)).toContain("at least 1 active ad currently running for at least 1 day.");
+    expect(text("de", "activeAdvertisers.toggle", 1, 1)).toBe("Nur aktive Werbetreibende — ≥ 1 aktive Anzeige seit ≥ 1 Tag");
+    expect(text("de", "activeAdvertisers.toggle", 5, 7)).toBe("Nur aktive Werbetreibende — ≥ 5 aktive Anzeigen seit ≥ 7 Tagen");
+    expect(text("es", "activeAdvertisers.suggestionActive", 1, 1)).toBe("Anunciante activo · 1 anuncio activo desde hace ≥ 1 día");
+    expect(text("it", "activeAdvertisers.searchHidden", 1, 1, { count: 2 })).toContain("≥ 1 annuncio attivo da ≥ 1 giorno");
+    for (const lng of ["en", "fr", "es", "de", "it"] as const) {
+      for (const key of ["toggle", "badgeTip", "emptyText", "suggestionActive", "searchHidden"]) {
+        const s = text(lng, `activeAdvertisers.${key}`, 1, 1, { count: 1 });
+        expect(s, `${lng} ${key}`).not.toMatch(/\{\{|activeAdvertisers\./);
+        expect(s, `${lng} ${key}`).not.toMatch(/\b1 (ads|days|pubs|jours|anuncios|días|Anzeigen|Tagen|annunci|giorni)\b/);
+      }
+    }
   });
 });
 
@@ -136,6 +186,16 @@ describe("ad query: active advertisers parameter", () => {
     expect(adQuerySchema.safeParse({ minActiveAds: "0" }).success).toBe(false);
     expect(adQuerySchema.safeParse({ minActiveDays: "91" }).success).toBe(false);
     expect(adQuerySchema.safeParse({ minActiveAds: "2.5" }).success).toBe(false);
+  });
+  it("treats a blank threshold as not set (never as 0)", () => {
+    for (const blank of ["", " ", "\t"]) {
+      expect(adThresholds(adQuerySchema.parse(paramsToObject(new URLSearchParams({ minActiveDays: blank }))))).toEqual(DEFAULT_THRESHOLDS);
+      expect(adThresholds(adQuerySchema.parse(paramsToObject(new URLSearchParams({ minActiveAds: blank }))))).toEqual(DEFAULT_THRESHOLDS);
+    }
+    expect(adQuerySchema.parse({ minActiveDays: "", minActiveAds: " " })).toMatchObject({ minActiveDays: undefined, minActiveAds: undefined });
+    // An explicit 0 days is still a valid (Pro) threshold.
+    expect(adThresholds(adQuerySchema.parse({ minActiveDays: "0" }))).toEqual({ minAds: 5, minDays: 0 });
+    expect(listAds(adQuerySchema.parse({ minActiveDays: "" })).total).toBe(listAds(adQuerySchema.parse({})).total);
   });
   it("is part of the metered search key (a new search when toggled or adjusted)", () => {
     const on = searchKey(adQuerySchema.parse({ q: "lamp" }));
@@ -201,7 +261,11 @@ describe("demo repository (pinned snapshot)", () => {
 
   it("composes with the other filters (active ads only, advertiser search)", () => {
     const active = listAds(q({ activeOnly: "true" }));
-    expect(active.items.every((a) => a.advertiserActivity.qualifies && a.lastSeen >= addDays(DEMO_BASE_SNAPSHOT, -2))).toBe(true);
+    expect(active.total).toBeGreaterThan(0);
+    // "Active ads only" uses the same definition as the rule: running on the snapshot day.
+    expect(active.items.every((a) => a.advertiserActivity.qualifies && isActiveAd(a, DEMO_BASE_SNAPSHOT) && a.lastSeen === DEMO_BASE_SNAPSHOT)).toBe(true);
+    const all = listAds(q({ activeAdvertisers: "false", activeOnly: "true", pageSize: "100" }));
+    expect(all.total).toBe(generateDemoDataset(DEMO_BASE_SNAPSHOT).ads.filter((a) => a.lastSeen === DEMO_BASE_SNAPSHOT).length);
     const name = listAds(q()).items[0].advertiser;
     const shouting = listAds(q({ advertiser: ` ${name.toUpperCase()} ` }));
     expect(shouting.total).toBeGreaterThan(0);
@@ -239,6 +303,68 @@ describe("demo repository (pinned snapshot)", () => {
       const store = detail.store;
       if (store) expect(getStore(store.id)!.ads.some((a) => a.advertiserActivity.qualifies)).toBe(true);
     }
+  });
+});
+
+describe("dashboard, creative viewer and reports follow the default (pinned and rolling days)", () => {
+  afterEach(() => vi.unstubAllEnvs());
+  const days = [...new Set([DEMO_BASE_SNAPSHOT, "2026-10-14", demoSnapshot(new Date(), "")])];
+
+  for (const day of days) {
+    it(`on ${day}`, () => {
+      vi.stubEnv("DEMO_SNAPSHOT", day);
+      const map = advertisersOf();
+      const qualifies = (a: { advertiser: string }) => map.get(advertiserKey(a.advertiser))?.qualifies === true;
+      const d = datasetForEngines();
+      expect(d.snapshot).toBe(day);
+
+      // Dashboard "Recent ads": the first ads of its "View all" target (Ad Spy, newest first), badged.
+      const o = overview();
+      expect(o.asOf).toBe(day);
+      expect(o.recentAds).toHaveLength(4);
+      expect(o.recentAds.every((a) => qualifies(a) && a.advertiserActivity.qualifies && a.advertiserActivity.activeSinceMinDays >= 5)).toBe(true);
+      expect(o.recentAds.map((a) => a.id)).toEqual(listAds(adQuerySchema.parse({ pageSize: 4 })).items.map((a) => a.id));
+      expect(o.advertiserRule).toEqual({ enabled: true, minAds: 5, minDays: 7, asOf: day });
+
+      // Creative viewer: related ads of active advertisers by default; every related ad one switch away.
+      let mixed = 0;
+      for (const { id } of listAds(adQuerySchema.parse({ pageSize: 60 })).items) {
+        const detail = getAd(id)!;
+        const sameProduct = d.ads.filter((a) => a.productId === detail.ad.productId && a.id !== id);
+        expect(detail.relatedCounts).toEqual({ qualifying: sameProduct.filter(qualifies).length, total: sameProduct.length });
+        expect(detail.related.length).toBe(Math.min(6, detail.relatedCounts.qualifying));
+        expect(detail.related.every((a) => qualifies(a) && a.advertiserActivity.qualifies && a.productId === detail.ad.productId)).toBe(true);
+        expect(detail.relatedAll.length).toBe(Math.min(6, sameProduct.length));
+        expect(detail.relatedAll.every((a) => a.advertiserActivity.qualifies === qualifies(a))).toBe(true);
+        if (detail.relatedAll.some((a) => !qualifies(a))) mixed++;
+      }
+      expect(mixed).toBeGreaterThan(0); // the switch matters
+
+      // Reports: ad examples come from active advertisers whenever the report has any, labelled either way.
+      for (const { id } of reportCatalog()) {
+        const r = buildReport(id);
+        const products = new Set(d.products.filter((p) => !r.category || p.category === r.category).map((p) => p.id));
+        const reportAds = d.ads.filter((a) => a.productId && products.has(a.productId));
+        const anyQualifying = reportAds.some(qualifies);
+        expect(r.adExamplesRule).toMatchObject({ enabled: anyQualifying, minAds: 5, minDays: 7, asOf: day, totalAds: reportAds.length, qualifyingAds: reportAds.filter(qualifies).length });
+        expect(r.adExamples.length).toBe(Math.min(4, anyQualifying ? reportAds.filter(qualifies).length : reportAds.length));
+        for (const a of r.adExamples) {
+          expect(a.advertiserActivity.qualifies).toBe(qualifies(a));
+          if (anyQualifying) expect(qualifies(a), `${id}: ${a.advertiser}`).toBe(true);
+        }
+      }
+    });
+  }
+
+  it("the reviewed cases: Glow House on the dashboard, ankle weights' related ads, the weekly report", () => {
+    vi.stubEnv("DEMO_SNAPSHOT", DEMO_BASE_SNAPSHOT);
+    expect(overview().recentAds.map((a) => a.id)).not.toContain("ad-self-cleaning-lint-roller-station-3");
+    const ankle = getAd("ad-adjustable-ankle-weights-pair-0")!;
+    expect(ankle.related.map((a) => a.advertiser)).not.toContain("Nimbo Wellness");
+    expect(ankle.relatedAll.map((a) => a.advertiser)).toContain("Nimbo Wellness");
+    const weekly = buildReport("weekly-opportunities");
+    expect(weekly.adExamplesRule.enabled).toBe(true);
+    expect(weekly.adExamples.map((a) => a.advertiser)).not.toContain("Lumi Shop");
   });
 });
 
@@ -326,6 +452,9 @@ describe("live mode (PostgREST)", () => {
     expect(list.url.searchParams.get("select")).toBe("*,products(name)");
     expect(list.url.searchParams.get("or")).toBe('(copy.ilike."%x,id.neq.zz%",headline.ilike."%x,id.neq.zz%",advertiser.ilike."%x,id.neq.zz%")');
     expect(list.url.searchParams.get("advertiser_key")).toBe("ilike.%maison eclat%");
+    // The needle is the same identity as the SQL column, Greek final sigma included (ΟΔΟΣ → οδοσ).
+    await listAdsDb(db, adQuerySchema.parse({ advertiser: "ΟΔΟΣ" }), "2026-10-15");
+    expect(calls.filter((c) => c.url.pathname.endsWith("/ads_of_active_advertisers")).at(-1)!.url.searchParams.get("advertiser_key")).toBe("ilike.%οδοσ%");
     // Stable pages: the sort column, then the id.
     expect(list.url.searchParams.get("order")).toBe("first_seen.desc,id.asc");
     expect(list.url.searchParams.get("offset")).toBe("0");
@@ -345,7 +474,10 @@ describe("live mode (PostgREST)", () => {
     const page = await listAdsDb(db, adQuerySchema.parse({ activeAdvertisers: "false", activeOnly: "true" }), "2026-10-15");
     expect(calls[0].method).toBe("GET");
     expect(calls[0].url.pathname).toBe("/rest/v1/advertisements");
-    expect(calls[0].url.searchParams.get("last_seen")).toBe("gte.2026-10-13");
+    // Active ads only = running on asOf: an ended ad through its last day, any other ad last seen at most a day before.
+    expect(calls[0].url.searchParams.get("last_seen")).toBeNull();
+    expect(calls[0].url.searchParams.get("first_seen")).toBe("lte.2026-10-15");
+    expect(calls[0].url.searchParams.get("or")).toBe("(last_seen.gte.2026-10-15,and(last_seen.gte.2026-10-14,ended.is.false))");
     expect(calls[1].url.pathname).toBe("/rest/v1/rpc/advertiser_activity");
     expect(page.advertiserRule.enabled).toBe(false);
     expect(page.items[0].advertiserActivity.qualifies).toBe(false);

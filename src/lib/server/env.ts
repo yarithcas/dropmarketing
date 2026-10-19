@@ -31,6 +31,8 @@ export const env = {
   cronSecret: e.CRON_SECRET,
   encryptionKey: e.ENCRYPTION_KEY, // 32-byte base64 key for integration tokens
   metaAccessToken: e.META_AD_LIBRARY_ACCESS_TOKEN,
+  /** Extra search keywords for the ad connectors (comma-separated), e.g. before any product is in the database. */
+  trackedKeywords: e.TRACKED_KEYWORDS,
   metaGraphVersion: e.META_GRAPH_VERSION ?? "v23.0",
   tiktokClientKey: e.TIKTOK_RESEARCH_CLIENT_KEY,
   tiktokClientSecret: e.TIKTOK_RESEARCH_CLIENT_SECRET,

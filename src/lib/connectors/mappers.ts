@@ -459,6 +459,22 @@ export function searchTermsFor(ctx: { keywords: string[]; searchTerms?: SearchTe
 }
 
 /** Valid query countries from the context, deduplicated (FR when none). */
+/**
+ * Keywords the ad connectors search for: the TRACKED_KEYWORDS list (comma, semicolon or new line separated)
+ * first, then the product names already in the database; case-insensitive duplicates dropped, at most `max`.
+ */
+export function connectorKeywords(tracked: string | undefined, productNames: string[], max = 50): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of [...(tracked ?? "").split(/[,;\n]/), ...productNames]) {
+    const term = raw.trim().replace(/\s+/g, " ").slice(0, 100);
+    if (!term || seen.has(term.toLowerCase())) continue;
+    seen.add(term.toLowerCase());
+    out.push(term);
+  }
+  return out.slice(0, max);
+}
+
 export function queryCountries(countries: string[]): Country[] {
   const list = Array.from(new Set(countries.map((c) => c.toUpperCase()))).filter((c): c is Country => (COUNTRIES as readonly string[]).includes(c));
   return list.length ? list : ["FR"];

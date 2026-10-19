@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { captionDomain, licensedAdRecord, MAX_AD_MEDIA, metaAdRecord, parseJsonKeepingIds, rotateDaily, safeHttpsUrl, searchTermsFor, tiktokAdRecord } from "@/lib/connectors/mappers";
+import { captionDomain, connectorKeywords, licensedAdRecord, MAX_AD_MEDIA, metaAdRecord, parseJsonKeepingIds, rotateDaily, safeHttpsUrl, searchTermsFor, tiktokAdRecord } from "@/lib/connectors/mappers";
 import { classifyCategory, matchProduct, type MatchableProduct } from "@/lib/connectors/matching";
 import { parseShopifyProducts, parseShopMeta, parseWooProducts, shopifyCurrency } from "@/lib/connectors/storefronts";
 import { summarize, tally } from "@/lib/connectors/ingest";
@@ -215,5 +215,15 @@ describe("run summary", () => {
     expect(summarize({ ...tally(), records: 3 }, "time_budget_exhausted").status).toBe("partial");
     expect(summarize({ ...tally(), failed: 2, errors: ["23503 fk"] })).toMatchObject({ status: "failed", records: 0, failed: 2 });
     expect(summarize({ ...tally(), requestFailures: 1, errors: ["http_500"] }).status).toBe("failed");
+  });
+});
+
+describe("connectorKeywords", () => {
+  it("puts TRACKED_KEYWORDS first, then product names, without duplicates", () => {
+    expect(connectorKeywords(" corde à sauter, brosse lissante;\nCorde à sauter ", ["Brosse lissante", "Smart jump rope"])).toEqual(["corde à sauter", "brosse lissante", "Smart jump rope"]);
+  });
+  it("works without TRACKED_KEYWORDS and caps the list", () => {
+    expect(connectorKeywords(undefined, ["a", "b", "c"], 2)).toEqual(["a", "b"]);
+    expect(connectorKeywords("", [])).toEqual([]);
   });
 });

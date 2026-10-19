@@ -1,6 +1,8 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { CONNECTORS } from "../connectors/registry";
+import { connectorKeywords } from "../connectors/mappers";
+import { env } from "./env";
 import type { SyncContext, SyncResult } from "../connectors/types";
 import type { DemoDataset } from "../demo/generate";
 import { computeMetrics, scoreProduct } from "../scoring";
@@ -106,7 +108,7 @@ async function syncContext(db: SupabaseClient): Promise<SyncContext> {
   const { data: prods } = await db.from("products").select("id, name, tags, countries").limit(500);
   const { data: storeRows } = await db.from("stores").select("domain").limit(500);
   return {
-    keywords: Array.from(new Set((prods ?? []).map((p) => p.name as string))).slice(0, 50),
+    keywords: connectorKeywords(env.trackedKeywords, (prods ?? []).map((p) => p.name as string)),
     domains: (storeRows ?? []).map((s) => s.domain as string).filter((d) => !d.endsWith(".example")),
     countries: Array.from(new Set((prods ?? []).flatMap((p) => (p.countries as string[]) ?? []))).slice(0, 10),
     since: addDays(today, -7),

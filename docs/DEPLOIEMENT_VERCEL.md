@@ -82,6 +82,84 @@ Le plan gratuit Vercel (Hobby) n'accepte que des tâches planifiées quotidienne
 
 ---
 
+## Activer les vraies publicités (Meta) — pas à pas
+
+En mode démo, les annonceurs, leurs pubs et leurs sites sont inventés. Pour voir
+les vraies pubs des concurrents (Facebook et Instagram), il faut trois choses :
+une base Supabase, une clé de la bibliothèque publicitaire Meta et quelques
+variables dans Vercel. Ne colle jamais une clé dans un chat ou un e-mail.
+
+### A. La base de données (Supabase, gratuit pour démarrer)
+
+1. Crée un compte sur https://supabase.com, puis **New project**. Choisis une
+   région en Europe et note le mot de passe de la base.
+2. Dans le projet : **SQL Editor** → **New query**. Copie le contenu de
+   `supabase/migrations/0001_init.sql` (sur GitHub, bouton « Copy raw file »),
+   colle-le, puis **Run**. Recommence avec chaque fichier du dossier
+   `supabase/migrations/`, **dans l'ordre**, jusqu'à `0008_active_advertisers.sql`.
+3. **Project Settings** → **API** (ou **API Keys**) : note
+   - l'URL du projet → `NEXT_PUBLIC_SUPABASE_URL`
+   - la clé `anon` (ou `publishable`) → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - la clé `service_role` (ou `secret`) → `SUPABASE_SERVICE_ROLE_KEY`. Elle est
+     secrète : elle ne va que dans Vercel.
+4. **Authentication** → **URL Configuration** : mets
+   `https://trendhunter-one.vercel.app` comme **Site URL**.
+
+### B. La clé de la bibliothèque publicitaire Meta
+
+1. Va sur https://www.facebook.com/ads/library/api et suis « Commencer ». Meta
+   demande de confirmer ton identité (pièce d'identité) : la validation peut
+   prendre un ou deux jours.
+2. Sur https://developers.facebook.com : **Mes apps** → **Créer une app**
+   (type « Autre » puis « Entreprise »).
+3. Ouvre l'**Explorateur de l'API Graph**
+   (https://developers.facebook.com/tools/explorer), choisis ton app, puis
+   **Generate Access Token**.
+4. Ce jeton expire vite : colle-le dans le **Débogueur de jeton d'accès**
+   (https://developers.facebook.com/tools/debug/accesstoken) et clique
+   **Prolonger le jeton d'accès**. Le jeton prolongé dure environ 60 jours :
+   il faudra le renouveler ensuite (même manipulation).
+5. Ce jeton prolongé est ta valeur `META_AD_LIBRARY_ACCESS_TOKEN`.
+
+Ce que Meta fournit : les pubs diffusées dans l'Union européenne (le pays de
+recherche par défaut est la France), avec le nom de l'annonceur, les textes, les
+dates de diffusion et le domaine affiché dans la pub. Meta ne fournit pas le
+fichier vidéo : le bouton « Voir dans la bibliothèque publicitaire Meta » ouvre
+la vraie pub, avec sa vidéo, sur Facebook ; « Voir le site » ouvre le domaine
+affiché dans la pub.
+
+### C. Les variables dans Vercel
+
+Vercel → projet **trendhunter** → **Settings** → **Environment Variables**. Pour
+chaque ligne : nom, valeur, environnement **Production**, coche **Sensitive**
+pour les clés secrètes, puis **Save**.
+
+| Nom | Valeur |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | l'URL du projet Supabase (A.3) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | la clé anon / publishable (A.3) |
+| `SUPABASE_SERVICE_ROLE_KEY` | la clé service_role / secret (A.3) — secrète |
+| `META_AD_LIBRARY_ACCESS_TOKEN` | le jeton prolongé (B.4) — secret |
+| `CRON_SECRET` | une longue suite aléatoire (40 caractères ou plus, par exemple tirée d'un générateur de mots de passe) — secrète |
+| `TRACKED_KEYWORDS` | les produits à surveiller, séparés par des virgules, par exemple `corde à sauter, brosse lissante, lampe coucher de soleil` |
+| `NEXT_PUBLIC_APP_URL` | `https://trendhunter-one.vercel.app` |
+
+Puis **Deployments** → menu « … » du dernier déploiement → **Redeploy**.
+
+### D. Vérifier
+
+1. Sur le site, crée ton compte (**Créer un compte**) : en mode réel,
+   l'espace de travail est enregistré dans ta base.
+2. La recherche des pubs tourne chaque jour à **05:15 UTC** (07:15 à Paris en
+   heure d'été, 06:15 en hiver). Le lendemain, la page **Alertes** →
+   « Actualisation des données » indique la dernière exécution, et
+   **Paramètres** → onglet **Intégrations** l'état du connecteur Meta.
+3. Dans **Ad Spy**, les pubs réelles portent le badge « Mesuré » (et non plus
+   « Données démo ») et les boutons « Voir dans la bibliothèque publicitaire Meta » et
+   « Voir le site ».
+
+---
+
 ## Actualisation quotidienne
 
 **En mode démo (aucune variable configurée)**, rien à faire : le jeu de données

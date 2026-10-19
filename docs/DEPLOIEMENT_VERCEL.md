@@ -91,13 +91,15 @@ variables dans Vercel. Ne colle jamais une clé dans un chat ou un e-mail.
 
 ### A. La base de données (Supabase, gratuit pour démarrer)
 
-1. Crée un compte sur https://supabase.com, puis **New project**. Choisis une
-   région en Europe et note le mot de passe de la base.
-2. Dans le projet : **SQL Editor** → **New query**. Copie le contenu de
-   `supabase/migrations/0001_init.sql` (sur GitHub, bouton « Copy raw file »),
-   colle-le, puis **Run**. Recommence avec chaque fichier du dossier
-   `supabase/migrations/`, **dans l'ordre**, jusqu'à `0008_active_advertisers.sql`.
-3. **Project Settings** → **API** (ou **API Keys**) : note
+1. Le plus simple : dans Vercel, projet **trendhunter** → **Storage** (ou
+   **Integrations**) → **Supabase** → crée la base (région Europe). Vercel ajoute
+   alors lui-même les clés Supabase au projet : rien à copier. Sinon, crée un
+   compte sur https://supabase.com, puis **New project** (région Europe).
+2. Dans Supabase : **SQL Editor** → **New query**. Copie tout le contenu de
+   `supabase/setup.sql` (sur GitHub, bouton « Copy raw file » : il regroupe les
+   migrations 0001 à 0008 dans l'ordre), colle-le, puis **Run**, une seule fois.
+3. Si tu n'es pas passé par Vercel à l'étape 1 : **Project Settings** → **API**
+   (ou **API Keys**), note
    - l'URL du projet → `NEXT_PUBLIC_SUPABASE_URL`
    - la clé `anon` (ou `publishable`) → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - la clé `service_role` (ou `secret`) → `SUPABASE_SERVICE_ROLE_KEY`. Elle est
@@ -140,11 +142,12 @@ pour les clés secrètes, puis **Save**.
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | la clé anon / publishable (A.3) |
 | `SUPABASE_SERVICE_ROLE_KEY` | la clé service_role / secret (A.3) — secrète |
 | `META_AD_LIBRARY_ACCESS_TOKEN` | le jeton prolongé (B.4) — secret |
-| `CRON_SECRET` | une longue suite aléatoire (40 caractères ou plus, par exemple tirée d'un générateur de mots de passe) — secrète |
+| `CRON_SECRET` | déjà configurée (valeur aléatoire secrète) |
 | `TRACKED_KEYWORDS` | les produits à surveiller, séparés par des virgules, par exemple `corde à sauter, brosse lissante, lampe coucher de soleil` |
-| `NEXT_PUBLIC_APP_URL` | `https://trendhunter-one.vercel.app` |
+| `NEXT_PUBLIC_APP_URL` | déjà configurée : `https://trendhunter-one.vercel.app` |
 
-Puis **Deployments** → menu « … » du dernier déploiement → **Redeploy**.
+Les trois variables Supabase n'ont pas à être saisies si la base a été créée
+depuis Vercel (étape A.1). Puis **Deployments** → menu « … » du dernier déploiement → **Redeploy**.
 
 ### D. Vérifier
 
